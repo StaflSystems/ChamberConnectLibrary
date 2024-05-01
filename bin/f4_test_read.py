@@ -9,6 +9,8 @@ program reads Temp value fro mthe controller stored at a register 100.
 """
 
 # comm port selected from PC selection 
+# NOTE: Make note of the COM no. selected and used by the OS
+#       and modify it in the line below.
 BTZ133 = minimalmodbus.Instrument("COM4", 1)
 
 # Set baudrate

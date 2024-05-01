@@ -9,7 +9,7 @@
 
 Application interface for controlling Watlow F4 operations. 
 This program may be and can be reimplemented with additional
-call methods to utilize the Watlow F4T control interface
+call methods to utilize the Watlow F4 control interface
 from its class and method definitions. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -25,8 +25,9 @@ the exact feature(s) not implemented here to meet their requirement. Thus, the
 following program serves as a starting point on how to utilize our 
 ChamberConnectLibrary in the Python 3 environment. 
 
-Tested: Pyhton 3.9.4 on MS Windows 10; 
-        Python 3.7.3 on Debian 10 GNU/Linux; Python 3.8.10 on Ubuntu 20.04 LT   
+Tested: 
+MS Windows 10: Python 3.9.x   
+GNU/Linux: Python 3.8.x, 3.9.x, 3.10.x 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 import time,re
@@ -42,9 +43,7 @@ def ip_addr():
     '''
     while True:
         try:
-            # for use on F4T 
             ip_addr = input('Enter F4T IP address (e.g., 192.168.0.101): ')
-            #ip_addr = '10.30.100.96'
             chk_ip = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", ip_addr)
             if chk_ip:
                 print ('\n')
@@ -53,7 +52,7 @@ def ip_addr():
             print ('Invalid IP address.')
     return ip_addr
     
-def setLoop(str, loop):
+def set_loop(str, loop):
     '''set new temp value
     '''
     print ('\n<Applying new Set Point>')
@@ -77,7 +76,7 @@ def setLoop(str, loop):
     currentPV = CONTROLLER.get_loop_pv(loop)
     print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}')
 
-def readTempVal(str,loop):
+def read_val(str,loop):
     """
     Read current values of Temp SP and PV
     """
@@ -86,7 +85,7 @@ def readTempVal(str,loop):
     currentPV = CONTROLLER.get_loop_pv(loop)
     print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}')
 
-def chkProg(): 
+def operation_status(): 
     '''Check current status of chamber before executing a new program
     '''
     str = CONTROLLER.get_status()
@@ -95,9 +94,9 @@ def chkProg():
         print ('\nrsp> Program execution in progress... must first terminate it.') 
     else:
         # execute new program 
-        runProg() 
+        run_prog() 
 
-def runProg(): 
+def run_prog(): 
     '''select and set profile for execution.
     '''
     print ('\n<Select a profile to execute>')
@@ -119,7 +118,7 @@ def runProg():
     except KeyboardInterrupt:
             pass
 
-def progMode(mode):
+def prog_mode(mode):
     '''set program mode of currently running profile
 
        available modes: 
@@ -129,10 +128,10 @@ def progMode(mode):
           mode: STOP, PAUSE, RESUME 
     '''
     nlist = { 
-        'nact': '\nrsp> No program running. Action terminated.',
+        'nact': f'\nrsp> No program running. Action terminated.',
         'act' : f'\nrsp> {mode} current program.',
-        'pau' : '\nrsp> Program is in paused...request is ignored.',
-        'run' : '\nrsp> Program is running...request is ignored.',
+        'pau' : f'\nrsp> Program is in paused...request is ignored.',
+        'run' : f'\nrsp> Program is running...request is ignored.',
     }
     str = CONTROLLER.get_status()
     time.sleep(0.5)
@@ -162,32 +161,20 @@ def progMode(mode):
     else:
         print (nlist['nact']) 
 
-def setTS_on():
+def set_time_signal(state):
     '''Set TS value on the selected TS number
     '''
     try:
         ts_num = int(input('Enter TS number: '))
         if isinstance(ts_num, int) and ts_num in range(1,9):
-            CONTROLLER.set_event(ts_num,True)
+            CONTROLLER.set_event(ts_num,state)
             print ('\nrsp> DONE') 
         else:
             print ('\nrsp> Invalid TS number.')
     except ValueError:
         print ('Invalid TS number.')
 
-def setTS_off():
-    '''turn off time signal (Event#)'''
-    try:
-        ts_num = int(input('Enter TS number: '))
-        if isinstance(ts_num, int) and ts_num in range(1,9):
-            CONTROLLER.set_event(ts_num,False)
-            print ('\nrsp> DONE') 
-        else:
-            print ('\nrsp> Invalid TS number.')
-    except ValueError:
-        print ('Invalid TS number.')
-
-def readTS():
+def read_time_signal():
     '''Read TS value on the select TS number
     '''
     print ('\nrsp> ')
@@ -196,7 +183,7 @@ def readTS():
         tsout = 'ON' if ts_list['current'] == True else 'OFF'
         print (f'    Time signal #{i+1} : {tsout}')
 
-def constStart():
+def const_start():
     '''Start Constant mode on chamber
     '''
     str = CONTROLLER.get_status()
@@ -210,32 +197,31 @@ def constStart():
         time.sleep(0.5)
         print (f'\nrsp> Done') 
 
-def stopConst():
+def stop_const():
     '''Stop constant mode on chamber
     '''
     CONTROLLER.stop()
     time.sleep(0.5) 
     print ('\nrsp > Done ') 
 
-def thCtrl():
+def temp_controller():
     '''
-       set options for Temp and Humi controls
+       set options for Temp controls
     '''
-    def thMenu(choice):
-        '''return T/H menu option'''
+    def temp_menu(choice):
+        '''return Temp menu option'''
         return {
-            'r': lambda: readTempVal('Temp',1),
-            't': lambda: setLoop('Temp',1),
-            'h': lambda: print ('No yet implemented.'),
+            'r': lambda: read_val('Temp',1),
+            't': lambda: set_loop('Temp',1),
             'z': lambda: main_menu()
         }.get(choice, lambda: print ('\nrsp> Not a valid option.') )()  
 
     while(True):
-        print_menu('2','Temp/Humi')
-        option = input('Select option (r,t, h, z): ')
-        thMenu(option)
+        print_menu('2','Temp')
+        option = input('Select option (r, t, z): ')
+        temp_menu(option)
 
-def progMenu():  # test 
+def prog_menu():  # test 
     '''set up selection menu for operation
        main menu 
        m: Program status
@@ -250,11 +236,11 @@ def progMenu():  # test
         '''return status option'''
         return {
             'm': lambda: print (f'\nrsp> {CONTROLLER.get_status()}'),
-            'e': lambda: chkProg(),
-            'n': lambda: progMode('SKIP'),
-            'p': lambda: progMode('PAUSE'),
-            'r': lambda: progMode('RESUME'),
-            's': lambda: progMode('STOP'),
+            'e': lambda: operation_status(),
+            'n': lambda: prog_mode('SKIP'),
+            'p': lambda: prog_mode('PAUSE'),
+            'r': lambda: prog_mode('RESUME'),
+            's': lambda: prog_mode('STOP'),
             'z': lambda: main_menu(),
         }.get(choice, lambda: print ('\nrsp> Not a valid option') )()
 
@@ -263,16 +249,16 @@ def progMenu():  # test
         option = input('Select option: ')
         progOperation(option)
 
-def eventCtrl():
+def event_controller():
     '''Test TS events
     '''
     def eventOpt(option) :
         '''get event seelction menu
         '''
         return {
-            'r': lambda: readTS(),
-            's': lambda: setTS_on(),
-            'o': lambda: setTS_off(),
+            'r': lambda: read_time_signal(),
+            's': lambda: set_time_signal(True),
+            'o': lambda: set_time_signal(False),
             'z': lambda: main_menu()
         }.get(option, lambda: print ('\nrsp> Not a valid option.') )()
 
@@ -290,8 +276,8 @@ def status_menu():
         '''return status options'''
         return {
             's': lambda: print (f'\nrsp> {CONTROLLER.get_status()}'),
-            'c': lambda: constStart(), 
-            'o': lambda: stopConst(), # print (f'\nrsp> {CONTROLLER.stop()}'),
+            'c': lambda: const_start(), 
+            'o': lambda: stop_const(), # print (f'\nrsp> {CONTROLLER.stop()}'),
             'a': lambda: print (f'\nrsp> {CONTROLLER.get_alarm_status()}'),
             'd': lambda: print (f'\nrsp> {CONTROLLER.get_datetime()}'),
             'z': lambda: main_menu(),
@@ -306,12 +292,12 @@ def main_menu():
     '''
        Set options for program control
     '''
-    def mainOption(choice):
+    def main_option(choice):
         '''return main menu options'''
         return {
-            't': lambda: thCtrl(),
-            'p': lambda: progMenu(),
-            'e': lambda: eventCtrl(),
+            't': lambda: temp_controller(),
+            'p': lambda: prog_menu(),
+            'e': lambda: event_controller(),
             's': lambda: status_menu(),
             'z': lambda: exit(),
         }.get(choice, lambda: print ('\nrsp> Not a valid option') )()
@@ -319,7 +305,7 @@ def main_menu():
     while(True):
         print_menu('1','Main Menu')
         option = input('Select option: ')
-        mainOption(option)
+        main_option(option)
 
 def print_menu(choice, menu_name):
     '''set up selection menu
@@ -333,15 +319,15 @@ def print_menu(choice, menu_name):
 def menu(choice):
     '''menu list
     main menu option: 
-       1: main menu
-       2: Temp/Humi menu
-       3: Program menu
+       1: main control menu
+       2: Temp control menu
+       3: Program control menu
        4: Output (Time Signal) menu
        5: Chamber operating mode
     '''
     # main menu 
     main_menu = {
-        't': 'Temp/Humi SP control          ',
+        't': 'Temp SP control               ',
         'p': 'Program control               ',
         'e': 'Event control                 ',        
         's': 'Chamber operating mode        ',
@@ -350,9 +336,8 @@ def menu(choice):
 
     # temp and humi ctrl menu
     th_menu = {
-        'r': 'Read Temperature SP and PV    ',
+        'r': 'Read Temeprature SP and PV    ',
         't': 'New Temperature Set Point     ',
-        'h': 'New Humidity Set Point        ',
         'z': 'Return to Main Menu           '
     }
 
@@ -409,7 +394,7 @@ if __name__ == "__main__":
     # uncomment the following line and check MS Window OS to confirm COM being used 
 
     #example interface_params for RS232 on port 4 (windows) Modbus address=1
-    interface_params = {'interface':'RTU', 'baudrate':19200, 'serialport':'//./COM4', 'adr':1}
+    interface_params = {'interface':'RTU', 'baudrate':19200, 'serialport':'//./COM5', 'adr':1}
 
     #example interface_params for RS232 on ttyUSB0 (linux) Modbus address=1
     #interface_params = {'interface':'RTU', 'baudrate':38400, 'serialport':'/dev/ttyUSB0', 'adr':1}
