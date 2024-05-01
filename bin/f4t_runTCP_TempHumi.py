@@ -26,7 +26,9 @@ the exact feature(s) not implemented here to meet their requirement. Thus, the
 following program serves as a starting point on how to utilize our 
 ChamberConnectLibrary in the Python 3 environment. 
 
-Tested: Python 3.8.x, 3.9.x, 3.10.x
+Tested: 
+GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
+MS Windows platform: Python 3.9.x 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 import time,re
