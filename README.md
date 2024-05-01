@@ -27,7 +27,7 @@ Sample programs are included in the bin folder, particularly for Watlow F4 and F
 * ```f4_runRTU.py```: Sample program via RTU Modbus for F4 w/ Temp
 * ```f4_test_read.py```: Sample program to test RTU modbus connection for F4 
 
-These and other sample programs may be modified to suite your application requirements. 
+These and other sample programs may be modified to include different communication interfaces for your application requirements as outlined in the [controllerinterface.md](controllerinterface.md). 
 
 **MS Windows**: To test the above program, navigate to first-level chamberconnectlibrary directory and execute the program as follows:
 
@@ -51,4 +51,4 @@ Any questions, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com> for as
 
 ## Documentation
 
-See [controllerinterface.md](controllerinterface.md)
+For further docuemntation on the different communication interface and controller type options, see [controllerinterface.md](controllerinterface.md)
