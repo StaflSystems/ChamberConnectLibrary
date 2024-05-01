@@ -4,103 +4,50 @@ Python library for interfacing with ESPEC North America chambers with P300, SCP-
 
 ## Requirements
 
-Python 3.6.8 and above is required for using this distributed library. 
+Python 3.8.x and above is required for using this distributed library. 
 
 This library has been completely tested under the following Python 3 versions: 
 
-* Python 3.6.8
-* Python 3.7.3
-* Python 3.9.4
+* Python 3.8.x
+* Python 3.9.x
+* Python 3.10.x
 
-Such requirements were due to the use of new print function calls to shorten the source code. 
+Such requirements were due to the use of new print function calls. 
 
-## Install
+## Installation
 
-**IMPORTANT NOTE:** The PyPI package has not yet been published. 
-In the meantime, if you would like to use this library, simply clone it and git checkout py3-chamberconnectlibrary, then select and execute:
+There are two ways to use this distribution: (1) PyPI and (2) src folder. HOWEVER, the PyPI package or the src distribution folder has not yet been published. 
+In the meantime, to take advantage of this free library, simply clone it to your local system and git checkout py3-chamberconnectlibrary. Then navigate to the root directory to execute and test run the sample provides provided as a starter. 
 
-```python3 bin/f4t_runTCP.py```
+Sample programs are included in the bin folder, particularly for Watlow F4 and F4T controllers. A virtualenv with specific Python 3 version can be created in the root directory to test and run these sample programs. For RTU modbus (serial connect), the ``serial_requirements.txt``` is needed to install the pyserial and/or minimalmodbus modules. 
+
+* ```f4t_runTCP.py```: Sample program via TCP/IP for F4T w/ Temp
+* ```f4t_runTCP_TempHumi.py```: Sample program via TCP/IP for F4T w/ Temp and Humi
+* ```f4t_runRTU.py```: Sample program via RTU Modbus for F4T w/ Temp
+* ```f4_runRTU.py```: Sample program via RTU Modbus for F4 w/ Temp
+* ```f4_test_read.py```: Sample program to test RTU modbus connection for F4 
+
+These and other sample programs may be modified to suite your application requirements. 
+
+**MS Windows**: To test the above program, navigate to first-level chamberconnectlibrary directory and execute the program as follows:
+
+```python bin/f4t_runTCP.py```
 
 or 
 
-```python3 bin/f4t_runRTU.py```
+```python bin/f4t_runRTU.py```
 
-for your specific protocol. Both programs should work as intended. Any questions, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com> for assistance.  
+**GNU/Linux**: To test the above program, navigate to first-level chamberconnectlibrary directory and execute the program follows:
 
+```sudo python3 bin/f4t_runTCP.py```
 
-There are two ways to use this distribution: 
+or 
 
-1. Obtain the PyPI package and install it:
+```su -c 'python bin/f4t_runTCP.py'```
 
-```pip3 install chamberconnectlibrary-3.6.8```
+Accessing TCP/IP or RTU modbus port requires a root privilege in GNU/Linux. The ```sudo``` may be used on a GNU/Linux system for a regular user with sudoer privilege; or, ```su -c``` may be used on a system with regular user to execute the program as root. 
 
-The version 3.6.8 actually refers to the Python 3 version number. 
-The command ```pip3``` should be the Python3 pip. 
-However, if the system is linked from pip to pip3, then this command should also work: 
-
-```pip install chamberconnectlibrary-3.6.8```
-
-To check and confirm if pip links to pip3, run: 
-
-```pip --version``` 
-
-and 
-
-```pip3 --version```
-
-Both commands should be able to run on Linux or MS Windows (CMD). 
-
-The following commands should also work: 
-
-For UNIX/Linux: ```python3 -m pip --version```
-
-For MS Windows 8/10/11: ```python -m pip --version```
-
-## Use the src Distribution
-
-The src distribution in .tar.gz may be obtaiend and extracted to use on the existing platform. 
-
-### For UNIX/Linux, run the following commands:
-
-1. Extract the package: ```tar -xzvf chamberconnectlibrary-3.6.8```
-2. Change directory to: chamberconnectlibrary-3.6.8 with command: ```cd chamberconnectlibrary-3.6.8```
-3. Execute the program directly from this parent directory at the shell prompt with:  
-   ```sudo python3 bin/f4t_runTCP.py```
-
-### For MS Windows 8/10
-
-1. Extract the package: ```tar -xzvf chamberconnectlibrary-3.6.8```
-2. Change directory to: chamberconnectlibrary-3.6.8 with command: ```cd chamberconnectlibrary-3.6.8```
-3. Copy the ```f4t_runTCP.py``` file from the bin folder into the main directory above it. 
-4. Open the text terminal within MS VS code or with cmd terminal in your working directory.
-5. Execute the program with this command: 
-   ```python f4t_runTCP.py```
-
-## Testing (using SRC distribution) 
-
-A test script for Watlow F4T using TCP/IP protocol has been prepared for testing, with filename in the bin directory.
-
-filename: f4t_runTCP.py
-
-This sample program provides a starting point for manipulating and using our ChamberConnectLibrary in the Python 3 environment. This program can be executed in GNU/Linux or MS Windows 8/10/11 as outlined previously. 
-
-For other controllers: 
-
-To test run chamberconnectlibrary-test.py or f4t_sample_run.py 
-
-P300: ```chamberconnectlibrary-test.py Espec Serial \\.\COM3 19200```
-
-SCP-220: ```chamberconnectlibrary-test.py EspecSCP220 Serial \\.\COM3 9600```
-
-Watlow F4T TCP: ```f4t_runTCP.py```
-
-Watlow F4T RTU: 
-
-```f4t_runRTU.py``` use \\.\COM# 38400 with # the COM value assigned in MS Windows 
-
-```f4t_runRTU.py``` use /dev/ttyUSB# 38400 with # the USB value assigned and listed in GNU/Linux with ```ls -l /dev/ttyUSB*```
-
-Watlow F4: ```chamberconnectlibrary-test.py WatlowF4 RTU \\.\COM3 19200```
+Any questions, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com> for assistance.  
 
 ## Documentation
 
