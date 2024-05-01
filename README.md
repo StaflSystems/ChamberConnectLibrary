@@ -37,13 +37,13 @@ or
 
 ```python bin/f4t_runRTU.py```
 
-**GNU/Linux**: To test the above program, navigate to first-level chamberconnectlibrary directory and execute the program follows:
+**GNU/Linux**: To test the above program, navigate to first-level chamberconnectlibrary directory and execute the program as follows:
 
 ```sudo python3 bin/f4t_runTCP.py```
 
 or 
 
-```su -c 'python bin/f4t_runTCP.py'```
+```su -c 'python3 bin/f4t_runTCP.py'```
 
 Accessing TCP/IP or RTU modbus port requires a root privilege in GNU/Linux. The ```sudo``` may be used on a GNU/Linux system for a regular user with sudoer privilege; or, ```su -c``` may be used on a system with regular user to execute the program as root. 
 
