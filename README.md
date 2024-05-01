@@ -17,7 +17,7 @@ Such requirements were due to the use of new print function calls.
 ## Installation
 
 There are two ways to use this distribution: (1) PyPI and (2) src folder. HOWEVER, the PyPI package or the src distribution folder has not yet been published. 
-In the meantime, to take advantage of this free library, simply clone it to your local system and git checkout py3-chamberconnectlibrary. Then navigate to the root directory to execute and test run the sample provides provided as a starter. 
+In the meantime, to take advantage of this free library, simply clone it to your local system and git checkout py3-chamberconnectlibrary. Then navigate to the root directory to execute and test run the sample programs provided as a starter. 
 
 Sample programs are included in the bin folder, particularly for Watlow F4 and F4T controllers. A virtualenv with specific Python 3 version can be created in the root directory to test and run these sample programs. For RTU modbus (serial connect), the ``serial_requirements.txt``` is needed to install the pyserial and/or minimalmodbus modules. 
 
