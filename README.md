@@ -56,9 +56,11 @@ or
 
 Accessing TCP/IP or RTU modbus port requires a root privilege in GNU/Linux. The ```sudo``` may be used on a GNU/Linux system for a regular user with sudoer privilege; or, ```su -c``` may be used on a system with regular user to execute the program as root.
 
-A virtualenv would be best since it requires no root or sudoer privielges: 
+A virtualenv would be best since it requires no root or sudoer privileges: 
 
 ```python bin/f4t_runTCP.py```
+
+In the venv, ```python``` symbolic links to ```python3```.  
 
 Any questions, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com> for assistance.  
 
