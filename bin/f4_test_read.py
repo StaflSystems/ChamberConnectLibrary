@@ -1,21 +1,31 @@
+#!/usr/bin/python
+"""
+:copyright: (C) ESPEC North America, INC., Paul Nong-Laolam <pnong-laolam@espec.com> 
+:license: MIT, see LICENSE for more details.
+:date: January 5, 2022
+:May 2024: reviewed and reconfirmed Python 3 testing for general use
+
+A simple procedure to perform communication test with the BTZ133 F4 controller.
+The following four lines set communication RS232 via a serial COMM port on MS Windows.
+F4 is assumed to use a baud rate at 19200 with address 1 (default settings). 
+
+The COM# is dictated by the OS; so check the COM number via the device manager.
+
+MS Windows: COM?           (? = number assigned by MS Windows OS)
+DOS command to list COM ports: \> chgport 
+
+GNU/Linux: /dev/ttyUSB?    (? = number (0,1,2) assigned by Linux)
+Linux command to list /dev/ttyUSB: $ ls -l /dev/ttyUSB* 
+"""
 import minimalmodbus
-"""
-A simple procedure to perform communication test with the BTZ133 F4 controller
-
-the following four lines set communication RS232 via COMM4 on MS Windows
-sets baud rate at 19200 with address 1 (default settings) 
-
-program reads Temp value fro mthe controller stored at a register 100. 
-"""
-
 # comm port selected from PC selection 
-# NOTE: Make note of the COM no. selected and used by the OS
-#       and modify it in the line below.
-BTZ133 = minimalmodbus.Instrument("COM4", 1)
+# NOTE: Check the COM no. selected and used by the OS.
+#       modify the COM no. to the one used by the OS. 
+BTZ133 = minimalmodbus.Instrument("COM5", 1)
 
 # Set baudrate
 BTZ133.serial.baudrate = 19200
 
 # set readTemp cmd 
 temp = BTZ133.read_register(100, 1, signed=True)
-print(temp)
+print(f'\nTemp value read from the F4: {temp}\n')
