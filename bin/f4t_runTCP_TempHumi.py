@@ -4,7 +4,7 @@
 :license: MIT, see LICENSE for more detail.
 :copyright: (c) 2020, 2022. ESPEC North America, INC.
 :updated: 2023 Included sample call programs to provide ease of use.
-:file: f4t_runTCP.py 
+:file: f4t_runTCP_TempHumi.py 
 
 Application interface for controlling Watlow F4T operations. 
 This program may be and can be reimplemented with additional

@@ -28,6 +28,12 @@ ChamberConnectLibrary in the Python 3 environment.
 Tested: 
 MS Windows 10: Python 3.9.x   
 GNU/Linux: Python 3.8.x, 3.9.x, 3.10.x 
+
+MS Windows: COM?           (? = number assigned by MS Windows OS)
+DOS command to list COM ports: \> chgport 
+
+GNU/Linux: /dev/ttyUSB?    (? = number (0,1,2) assigned by Linux)
+Linux command to list /dev/ttyUSB: $ ls -l /dev/ttyUSB* 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 import time,re
