@@ -16,10 +16,18 @@ Such requirements were due to the use of new print function calls.
 
 ## Installation
 
-There are two ways to use this distribution: (1) PyPI and (2) src folder. HOWEVER, the PyPI package or the src distribution folder has not yet been published. 
-In the meantime, to take advantage of this free library, simply clone it to your local system and git checkout py3-chamberconnectlibrary. Then navigate to the root directory to execute and test run the sample programs provided as a starter. 
+There are two ways to use this distribution: 
 
-Sample programs are included in the bin folder, particularly for Watlow F4 and F4T controllers. A virtualenv with specific Python 3 version can be created in the root directory to test and run these sample programs. For RTU modbus (serial connect), the ``serial_requirements.txt``` is needed to install the pyserial and/or minimalmodbus modules. 
+1. PyPI
+2. src folder
+
+HOWEVER, the PyPI package or the src distribution folder has not yet been published. 
+
+In the meantime, to take advantage of this free library, simply clone it to your local system and git checkout py3-chamberconnectlibrary. The clone directory must also carry the name ```chamberconnectlibrary```; navigate to this root directory to execute and test run the sample programs provided in the bin directory. 
+
+Sample programs are included in the bin folder, particularly for Watlow F4 and F4T controllers. With this clone, it is probably best that a virtualenv with specific Python 3 version created in the root directory to test and run these sample programs. For RTU modbus (serial connect), the ```serial_requirements.txt``` is needed to install the pyserial and/or minimalmodbus modules in this virtualenv. 
+
+Sample programs are available as follows: 
 
 * ```f4t_runTCP.py```: Sample program via TCP/IP for F4T w/ Temp
 * ```f4t_runTCP_TempHumi.py```: Sample program via TCP/IP for F4T w/ Temp and Humi
@@ -52,4 +60,4 @@ Any questions, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com> for as
 
 ## Documentation
 
-For further docuemntation on the different communication interface and controller type options, see [controllerinterface.md](controllerinterface.md)
+For further documentation on the different communication interface and controller type options, see [controllerinterface.md](controllerinterface.md)
