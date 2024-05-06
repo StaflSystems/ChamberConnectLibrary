@@ -26,6 +26,7 @@ Sample programs are included in the bin folder, particularly for Watlow F4 and F
 * ```f4t_runRTU.py```: Sample program via RTU Modbus for F4T w/ Temp
 * ```f4_runRTU.py```: Sample program via RTU Modbus for F4 w/ Temp
 * ```f4_test_read.py```: Sample program to test RTU modbus connection for F4 
+* ```f4nf4t_sample_run.py```: Sample program with options on F4 RTU, F4T RTU and F4T TCP/IP 
 
 These and other sample programs may be modified to include different communication interfaces for your application requirements as outlined in the [controllerinterface.md](controllerinterface.md). 
 
