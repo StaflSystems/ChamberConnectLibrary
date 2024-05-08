@@ -1151,14 +1151,14 @@ class EspecP300:
             spstr = None
         if spstr is not None and minimum is not None and maximum is not None:
             #self.interact('HUMI,%s H%0.1f L%0.1f' % (spstr, maximum, minimum))
-            (self.interact(f'HUMI,{spstr} H{maximum:.1f} {minmum:.1f}')).decode('utf-8', 'replace')
+            (self.interact(f'HUMI,{spstr} H{maximum:.1f} {minimum:.1f}')).decode('utf-8', 'replace')
         else:
             if spstr is not None:
                 self.interact('HUMI,' + spstr)
             if minimum is not None:
                 #self.interact('HUMI, L%0.1f' % minimum)
                 #self.interact('HUMI, L{0:.1f}'.format(minimum))
-                self.interact(f'HUMI, L{minmum:.1f}')                
+                self.interact(f'HUMI, L{minimum:.1f}')                
             if maximum is not None:
                 #self.interact('HUMI, H%0.1f' % maximum)
                 #self.interact('HUMI, H{0:.1f}'.format(maximum))
@@ -1227,7 +1227,7 @@ class EspecP300:
             mode: string, vaid options: "HOLD"/"CONST"/"OFF"/"STANDBY"(default)
         '''
         if mode in ["HOLD", "CONST", "OFF", "STANDBY"]:
-            (self.interact('PRGM,END,{mode}')).decode('utf-8', 'replace') 
+            (self.interact(f'PRGM,END,{mode}')).decode('utf-8', 'replace') 
         else:
             raise ValueError('"mode" must be "HOLD"/"CONST"/"OFF"/"STANDBY"')
 
@@ -1268,7 +1268,7 @@ class EspecP300:
             overwrite: boolean, when true programs/steps may be overwritten
         '''
         #tmp = 'PRGM DATA WRITE,PGM%d,%s %s'%(pgmnum, 'OVER WRITE' if overwrite else 'EDIT', mode)
-        tmp = 'PRGM DATA WRITE,PGM{},{} {}'.format(pgmnum, 'OVER WRITE' if overwrite else 'EDIT', mode)
+        tmp = f"PRGM DATA WRITE,PGM{pgmnum},{'OVER WRITE' if overwrite else 'EDIT'} {mode}"
         (self.interact(tmp)).decode('utf-8', 'replace')
 
     def write_prgm_data_details(self, pgmnum, **pgmdetail):
@@ -1338,11 +1338,11 @@ class EspecP300:
             pgmstep: the program parameters, see read_prgm_data_step for parameters
         '''
         #cmd = 'PRGM DATA WRITE,PGM%d,STEP%d' % (pgmnum, pgmstep['number'])
-        cmd = 'PRGM DATA WRITE,PGM{},STEP{}'.format(pgmnum, pgmstep['number'])
+        cmd = f"PRGM DATA WRITE,PGM{pgmnum},STEP{pgmstep['number']}"
         if 'temperature' in pgmstep:
             if 'setpoint' in pgmstep['temperature']:
                 #cmd = '%s,TEMP%0.1f' % (cmd, pgmstep['temperature']['setpoint'])
-                cmd = '{},TEMP{0:.1f}'.format(cmd, pgmstep['temperature']['setpoint'])
+                cmd = f"{cmd},TEMP{pgmstep['temperature']['setpoint']:.1f}"
             if 'ramp' in pgmstep['temperature']:
                 #cmd = '%s,TRAMP%s' % (cmd, 'ON' if pgmstep['temperature']['ramp'] else 'OFF')
                 cmd = '{},TRAMP{}'.format(cmd, 'ON' if pgmstep['temperature']['ramp'] else 'OFF')
