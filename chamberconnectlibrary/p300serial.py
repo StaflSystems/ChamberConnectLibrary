@@ -95,7 +95,7 @@ class EspecP300:
         return error_code[cmd_error]
 
     def interact(self, cmd):
-        str_cmd = ('{}{}'.format(cmd, self.delimiter))
+        str_cmd = f'{cmd}{self.delimiter}'
         self.ctrl.write(str_cmd.encode('ascii', 'ignore'))
         rsp = ''.encode('ascii', 'ignore')
         time.sleep(1)
@@ -632,7 +632,8 @@ class EspecP300:
         '''
         rsp = re.search(
             r'(.+)?,(\d+).(\d+)\/(\d+)',
-            (self.interact('PRGM USE?,{}:{}'.format(self.rom_pgm(pgmnum), pgmnum))).decode('utf-8', 'replace')
+            #(self.interact('PRGM USE?,{}:{}'.format(self.rom_pgm(pgmnum), pgmnum))).decode('utf-8', 'replace')
+            (self.interact(f'PRGM USE?,{self.rom_pgm(pgmnum)}:{pgmnum}')).decode('utf-8', 'replace')
         )
         #   self.interact('PRGM USE?,%s:%d' % (self.rom_pgm(pgmnum), pgmnum))
         return {
@@ -661,7 +662,7 @@ class EspecP300:
             "END"="OFF" or "CONSTANT" or "STANDBY" or "RUN"
         '''
         #pdata = self.interact('PRGM DATA?,%s:%d' % (self.rom_pgm(pgmnum), pgmnum))
-        pdata = (self.interact('PRGM DATA?,{}:{}'.format(self.rom_pgm(pgmnum), pgmnum))).decode('utf-8', 'replace')
+        pdata = (self.interact(f'PRGM DATA?,{self.rom_pgm(pgmnum)}:{pgmnum}')).decode('utf-8', 'replace')
         return self.parse_prgm_data(pdata)
 
     def read_prgm_data_detail(self, pgmnum):
@@ -677,7 +678,7 @@ class EspecP300:
             }
         '''
         # pdata = self.interact('PRGM DATA?,%s:%d,DETAIL'%(self.rom_pgm(pgmnum), pgmnum))
-        pdata = (self.interact('PRGM DATA?,{}:{},DETAIL'.format(self.rom_pgm(pgmnum), pgmnum))).decode('utf-8', 'replace')
+        pdata = (self.interact(f'PRGM DATA?,{self.rom_pgm(pgmnum)}:{pgmnum},DETAIL')).decode('utf-8', 'replace')
         return self.parse_prgm_data_detail(pdata)
 
     def read_prgm_data_step(self, pgmnum, pgmstep):
@@ -700,7 +701,8 @@ class EspecP300:
             }
         '''
         #tmp = self.interact('PRGM DATA?,%s:%d,STEP%d'%(self.rom_pgm(pgmnum), pgmnum, pgmstep))
-        tmp = (self.interact('PRGM DATA?,{}:{},STEP{}'.format(self.rom_pgm(pgmnum), pgmnum, pgmstep))).decode('utf-8', 'replace')
+        #tmp = (self.interact('PRGM DATA?,{}:{},STEP{}'.format(self.rom_pgm(pgmnum), pgmnum, pgmstep))).decode('utf-8', 'replace')
+        tmp = (self.interact(f'PRGM DATA?,{self.rom_pgm(pgmnum)}:{pgmnum},STEP{pgmstep}')).decode('utf-8', 'replace')        
         return self.parse_prgm_data_step(tmp)
 
     def read_system_set(self, arg='PTCOPT'):
@@ -821,7 +823,7 @@ class EspecP300:
             "END"="OFF" or "CONSTANT" or "STANDBY" or "RUN"
         '''
         #pdata = self.interact('PRGM DATA PTC?,%s:%d' % (self.rom_pgm(pgmnum), pgmnum))
-        pdata = (self.interact('PRGM DATA PTC?,{}:{}'.format(self.rom_pgm(pgmnum), pgmnum))).decode('utf-8', 'replace')
+        pdata = (self.interact(f'PRGM DATA PTC?,{self.rom_pgm(pgmnum)}:{pgmnum}')).decode('utf-8', 'replace')
         return self.parse_prgm_data(pdata)
 
     def read_prgm_data_ptc_detail(self, pgmnum):
@@ -836,7 +838,8 @@ class EspecP300:
                 "humidity":{"range":{"max":float, "min":float}, "mode":string, "setpoint":float}
             }
         '''
-        tmp = (self.interact('PRGM DATA PTC?,{}:{},DETAIL'.format(self.rom_pgm(pgmnum), pgmnum))).decode('utf-8', 'replace')
+        #tmp = (self.interact('PRGM DATA PTC?,{}:{},DETAIL'.format(self.rom_pgm(pgmnum), pgmnum))).decode('utf-8', 'replace')
+        tmp = (self.interact(f'PRGM DATA PTC?,{self.rom_pgm(pgmnum)}:{pgmnum},DETAIL')).decode('utf-8', 'replace')        
         return self.parse_prgm_data_detail(tmp)
 
     def read_prgm_data_ptc_step(self, pgmnum, pgmstep):
@@ -867,8 +870,9 @@ class EspecP300:
                 "relay":[int]
             }
         '''
-        tmp = (self.interact('PRGM DATA PTC?,{}:{},STEP{}'.format(self.rom_pgm(pgmnum),pgmnum, pgmstep))).decode('utf-8', 'replace')
         #tmp = self.interact('PRGM DATA PTC?,%s:%d,STEP%d' % (self.rom_pgm(pgmnum),pgmnum, pgmstep))
+        #tmp = (self.interact('PRGM DATA PTC?,{}:{},STEP{}'.format(self.rom_pgm(pgmnum),pgmnum, pgmstep))).decode('utf-8', 'replace')
+        tmp = (self.interact(f'PRGM DATA PTC?,{self.rom_pgm(pgmnum)}:{pgmnum},STEP{pgmstep}')).decode('utf-8', 'replace')        
         return self.parse_prgm_data_step(tmp)
 
     def read_run_prgm_mon(self):
@@ -953,7 +957,8 @@ class EspecP300:
         '''
         cyear = (year - 2000) if year > 2000 else year
         #self.interact('DATE,%d.%d/%d. %s' % (cyear, month, day, dow))
-        (self.interact('DATE,{}.{}/{}. {}'.format(cyear, month, day, dow))).decode('utf-8', 'replace')
+        #(self.interact('DATE,{}.{}/{}. {}'.format(cyear, month, day, dow))).decode('utf-8', 'replace')
+        (self.interact(f'DATE,{cyear}.{month}/{day}. {dow}')).decode('utf-8', 'replace')
 
     def write_time(self, hour, minute, second):
         '''
@@ -1112,15 +1117,16 @@ class EspecP300:
         #setpoint, maximum, minimum = 24,30,10
         setpoint, maximum, minimum = kwargs.get('setpoint'), kwargs.get('max'), kwargs.get('min')
         if setpoint is not None and minimum is not None and maximum is not None:
-            (self.interact('TEMP, S{0:.1f} H{0:.1f} L{0:.1f}'.format(setpoint, maximum, minimum))).decode('utf-8', 'replace')
+            (self.interact(f'TEMP, S{setpoint:.1f} H{maximum:.1f} L{minimum:.1f}')).decode('utf-8', 'replace')
+            #(self.interact('TEMP, S{0:.1f} H{0:.1f} L{0:.1f}'.format(setpoint, maximum, minimum))).decode('utf-8', 'replace')           
             #self.interact('TEMP, S%0.1f H%0.1f L%0.1f' % (setpoint, maximum, minimum))
         else:
             if setpoint is not None:
-                (self.interact('TEMP, S{0:.1f}'.format(setpoint))).decode('utf-8', 'replace')
+                (self.interact(f'TEMP, S{setpoint:.1f}')).decode('utf-8', 'replace')
             if minimum is not None:
-                (self.interact('TEMP, L{0:.1f}'.format(minimum))).decode('utf-8', 'replace')
+                (self.interact(f'TEMP, L{minimum:.1f}')).decode('utf-8', 'replace')
             if maximum is not None:
-                (self.interact('TEMP, H{0:.1f}'.format(maximum))).decode('utf-8', 'replace')
+                (self.interact('TEMP, H{maximum:.1f}')).decode('utf-8', 'replace')
 
     def write_humi(self, **kwargs):
         '''
@@ -1138,20 +1144,25 @@ class EspecP300:
         if enable is False:
             spstr = 'SOFF'
         elif setpoint is not None:
-            spstr = ' S{0:.1f}'.format(setpoint)
+            spstr = f' S{setpoint:.1f}'
+            #spstr = ' S{0:.1f}'.format(setpoint)
             #spstr = ' S%0.1f' % setpoint
         else:
             spstr = None
         if spstr is not None and minimum is not None and maximum is not None:
             #self.interact('HUMI,%s H%0.1f L%0.1f' % (spstr, maximum, minimum))
-            (self.interact('HUMI,{} H{0:.1f} {0:.1f}'.format(spstr, maximum, minimum))).decode('utf-8', 'replace')
+            (self.interact(f'HUMI,{spstr} H{maximum:.1f} {minmum:.1f}')).decode('utf-8', 'replace')
         else:
             if spstr is not None:
                 self.interact('HUMI,' + spstr)
             if minimum is not None:
-                self.interact('HUMI, L%0.1f' % minimum)
+                #self.interact('HUMI, L%0.1f' % minimum)
+                #self.interact('HUMI, L{0:.1f}'.format(minimum))
+                self.interact(f'HUMI, L{minmum:.1f}')                
             if maximum is not None:
-                self.interact('HUMI, H%0.1f' % maximum)
+                #self.interact('HUMI, H%0.1f' % maximum)
+                #self.interact('HUMI, H{0:.1f}'.format(maximum))
+                self.interact(f'HUMI, H{maximum:.1f}')
 
     def write_set(self, mode, setpoint=0):
         '''
@@ -1161,7 +1172,8 @@ class EspecP300:
             mode: string,"off" or "manual" or "auto"
             setpoint: int,20 or 50 or 100
         '''
-        (self.interact('SET,{}'.format(self.encode_refrig(mode, setpoint)))).decode('utf-8', 'replace')
+        #(self.interact('SET,{}'.format(self.encode_refrig(mode, setpoint)))).decode('utf-8', 'replace')
+        (self.interact(f'SET,{self.encode_refrig(mode, setpoint)}')).decode('utf-8', 'replace')        
 
     def write_relay(self, relays):
         '''
@@ -1172,9 +1184,11 @@ class EspecP300:
         '''
         vals = (self.parse_relays(relays)).decode('utr-8', 'replace')
         if len(vals['on']) > 0:
-            (self.interact('RELAY,ON,{}'.format(','.join(str(v) for v in vals['on'])))).decode('utf-8', 'replace')
+            #(self.interact('RELAY,ON,{}'.format(','.join(str(v) for v in vals['on'])))).decode('utf-8', 'replace')
+            (self.interact(f"RELAY,ON,{','.join(str(v) for v in vals['on'])}")).decode('utf-8', 'replace')
         if len(vals['off']) > 0:
-            (self.interact('RELAY,OFF,{}'.format(','.join(str(v) for v in vals['off'])))).decode('utf-8', 'replace') 
+            #(self.interact('RELAY,OFF,{}'.format(','.join(str(v) for v in vals['off'])))).decode('utf-8', 'replace') 
+            (self.interact(f"RELAY,OFF,{','.join(str(v) for v in vals['off'])}")).decode('utf-8', 'replace')
 
     def write_prgm_run(self, pgmnum, pgmstep):
         '''
@@ -1185,7 +1199,7 @@ class EspecP300:
             prgmstep: int, step to run
         '''
         #self.interact('PRGM,RUN,%s:%d,STEP%d' % (self.rom_pgm(pgmnum), pgmnum, pgmstep))
-        (self.interact('PRGM,RUN,{}:{},STEP{}'.format(self.rom_pgm(pgmnum), pgmnum, pgmstep))).decode('utf-8', 'replace')
+        (self.interact(f'PRGM,RUN,{self.rom_pgm(pgmnum)}:{pgmnum},STEP{pgmstep}')).decode('utf-8', 'replace')
 
     def write_prgm_pause(self):
         '''
@@ -1213,7 +1227,7 @@ class EspecP300:
             mode: string, vaid options: "HOLD"/"CONST"/"OFF"/"STANDBY"(default)
         '''
         if mode in ["HOLD", "CONST", "OFF", "STANDBY"]:
-            (self.interact('PRGM,END,{}'.format(mode))).decode('utf-8', 'replace') 
+            (self.interact('PRGM,END,{mode}')).decode('utf-8', 'replace') 
         else:
             raise ValueError('"mode" must be "HOLD"/"CONST"/"OFF"/"STANDBY"')
 
@@ -1242,7 +1256,7 @@ class EspecP300:
         Args:
             pgmnum: int, the program to run
         '''
-        (self.interact('MODE,RUN{}'.format(pgmnum))).decode('utf-8', 'replace')
+        (self.interact(f'MODE,RUN{pgmnum}')).decode('utf-8', 'replace')
 
     def write_prgm_data_edit(self, pgmnum, mode, overwrite=False):
         '''
