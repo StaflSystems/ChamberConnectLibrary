@@ -16,10 +16,10 @@ call methods to utilize the P300 operation modes from its
 class and method definitions. 
 
 The program has been modified from its original code that made use of
-the original call methods from chamberconenctlibrary file p300.py. 
+the original call methods from chamberconnectlibrary file p300.py. 
 To make is easy and accessible, this file has been modified 
-and palced under a new filename (p300serial.py) to provide a 
-direct call to each methods. The ESPEC P300 library has been 
+and placed under a new filename (p300serial.py) to provide a 
+direct call to each method. The ESPEC P300 library has been 
 extracted, modified and formalized to support all the available features. 
 
 The following is a simple sample call program to serve as a starting 
@@ -39,6 +39,8 @@ Linux command to list /dev/ttyUSB: $ ls -l /dev/ttyUSB*
 
 How to find COM or USB number: 
 1. apply the cmd before plugging in the cable; study the list
+    MS Windows/DOS:   \> chgport
+    GNU/Linux:         $ ls -l /dev/ttyUSB* 
 2. plug in the cable, apply the cmd again and study the list
 3. the new USB or COM port listed will be the one to use in the program 
 
