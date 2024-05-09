@@ -5,7 +5,7 @@
 :file: p300serial.py
 :date: March 2021
 :updated: May 2024 (bug fixes) 
------------------------------------------------------------------------
+------------------------------------------------------------------------
 
 Application interface for controlling ESPEC P300 operations. 
 This program may be and can be reimplemented with additional
@@ -35,10 +35,42 @@ GNU/Linux: /dev/ttyUSB? How to determine USB number assigned by Linux.
 Linux command to list /dev/ttyUSB: $ ls -l /dev/ttyUSB* 
 
 How to find COM or USB number: 
-1. apply the cmd before plugging in the cable; study the list
-2. plug in the cable, apply the cmd again and study the list
-3. the new USB or COM port listed will be the one to use in the program 
+MS Windows:
+1. At the CMD prompt, issue:
+   chgport
+2. Study the list of COM numbers in output.
+3. Plug in the USB-to-Serial cable and reissue the command: 
+   chgport
+4. Study the list of COM numbers in out put again. A new device with COM number 
+should be listed, such as (for example): 
 
+   COM5 = \Device\VCP0
+
+5. Use this COM number in the program. Example: 
+   port = '//./COM5' 
+
+GNU/Linux 
+1. At the shell terminal, issue:
+   ls -l /dev/ttyUSB* 
+2. Study the list of USB numbers in output.
+3. Plug in the USB-to-Serial cable and reissue the command: 
+   ls -l /dev/ttyUSB*
+4. Study the list of USB numbers in output again. A new device with USB? number 
+should be listed, such as (for example): 
+
+   /dev/ttyUSB0
+
+5. Use this number in the program. Example: 
+   port = '/dev/ttyUSB0' 
+   
+Python 3 version requirement: 
+At least Python 3.6 is required for the use of f-string implementation for
+statement compactness.  
+
+Tested: 
+GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
+MS Windows platform: Python 3.9.x 
+------------------------------------------------------------------------
 '''
 import time
 import serial
