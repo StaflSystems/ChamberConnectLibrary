@@ -29,14 +29,36 @@ F4T can also communicate via TCP/IP.
 Program performs communication test by reading temperature values from target controller.
 
 MS Windows: COM? How to determine COM number assigned by MS Windows OS.
-DOS command to list COM ports: \> chgport
-
-GNU/Linux: /dev/ttyUSB? How to determine USB number assigned by Linux. 
-Linux command to list /dev/ttyUSB: $ ls -l /dev/ttyUSB* 
+GNU/Linux: /dev/ttyUSB? How to determine USB number assigned by Linux.
 
 How to find COM or USB number: 
-1. apply the cmd before plugging in the cable; study the list
-2. plug in the cable, apply the cmd; study the list
+MS Windows:
+1. At the CMD prompt, issue:
+   chgport
+2. Study the list of COM numbers in output.
+3. Plug in the USB-to-Serial cable and reissue the command: 
+   chgport
+4. Study the list of COM numbers in out put again. A new device with COM number 
+should be listed, such as (for example): 
+
+   COM5 = \Device\VCP0
+
+5. Use this COM number in the program. Example: 
+   port = '//./COM5' 
+
+GNU/Linux 
+1. At the shell terminal, issue:
+   ls -l /dev/ttyUSB* 
+2. Study the list of USB numbers in output.
+3. Plug in the USB-to-Serial cable and reissue the command: 
+   ls -l /dev/ttyUSB*
+4. Study the list of USB numbers in output again. A new device with USB? number 
+should be listed, such as (for example): 
+
+   /dev/ttyUSB0
+
+5. Use this number in the program. Example: 
+   port = '/dev/ttyUSB0' 
 
 HOW TO USE THIS PROGRAM:
 -----------------------
