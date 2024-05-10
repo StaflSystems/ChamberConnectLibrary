@@ -6,9 +6,12 @@ Handle the actual communication with Espec Corp. Controllers
 
 Code modification for Python 3.6+
 :author: Paul Nong-Laolam  <pnong-laolam@espec.com>
-:date: October 2020: partial reimplementation; 
-       July 2022: completely reimplemented and tested on MS Windows and GNU/Linux
-:updated: May 2024: bug fixes and restructured code for simplication with f-string features.
+:date: 
+    October 2020: partial reimplementation; 
+    July 2022: completely reimplemented and tested on MS Windows and GNU/Linux
+:updated: May 2024: 
+    - bug fixes on byte-string decoding
+    - restructured source code with f-string for simplification on coding
 
 Tested: 
 GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
