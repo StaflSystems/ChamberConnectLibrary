@@ -197,7 +197,7 @@ if __name__ == "__main__":
                 )
                 print (f'\nWatlow F4:')
 
-            if SELECT_OPT == 1:
+            elif SELECT_OPT == 1:
             # SELECT_OPT = 1 for F4T TCP/IP INTERFACE 
                 CONTROLLER = WatlowF4T(
                     interface='TCP',
@@ -207,7 +207,7 @@ if __name__ == "__main__":
                 )
                 print (f'\nWatlow F4T via TCP/IP:')
 
-            if SELECT_OPT == 2:
+            elif SELECT_OPT == 2:
             # SELECT_OPT = 1 for F4T RTU SERIAL INTERFACE
                 CONTROLLER = WatlowF4T(
                     interface='RTU',
@@ -216,5 +216,8 @@ if __name__ == "__main__":
                     loop_names=LOOP_NAMES
                 )
                 print (f'\nWatlow F4T via RTU:')
+            else: 
+                print ("Number out of range. Try again") 
+                continue  
             break
     main()
