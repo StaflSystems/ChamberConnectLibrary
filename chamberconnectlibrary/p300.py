@@ -2,15 +2,32 @@
 A direct implimentation of the P300's communication interface.
 
 :copyright: (C) Espec North America, INC.
+:original author: Myles Metzler
 :license: MIT, see LICENSE for more details.
 
-update notice:
-:copyright (c): 2020, Espec North America, INC.
-:updated to support Python 3 implementation
+Code modification for Python 3.6+
+:author: Paul Nong-Laolam  <pnong-laolam@espec.com>
+:date: October 2020: partial reimplementation; 
+       July 2022: completely reimplemented and tested on MS Windows and GNU/Linux
+:updated: May 2024: bug fixes and restructured code for simplication with f-string features.
+
+Tested: 
+GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
+MS Windows platform: Python 3.9.x 
+
+NOTE: 
+The original source code was implemented for Python 2.7.x by Myles Metzler. 
+To set this library available for Python 3, the entire set of source code
+has been reimplemented to represent and handle byte-string encoding and decoding
+scheme.  
+
+Some changes were made within the Python 3 itself and this code as updated 
+to reflect those changes. 
 '''
 #pylint: disable=W0703
 import re
-from especinteract import EspecSerial, EspecTCP
+from chamberconnectlibrary.especinteract import EspecSerial, EspecTCP
+#from .especinteract import EspecSerial, EspecTCP
 
 def tryfloat(val, default):
     '''

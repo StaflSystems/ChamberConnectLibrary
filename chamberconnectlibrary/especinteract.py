@@ -1,24 +1,27 @@
 ﻿'''
 Handle the actual communication with Espec Corp. Controllers
-
 :copyright: (C) Espec North America, INC.
+:original author: Myles Metzler
 :license: MIT, see LICENSE for more details.
 
-Updated: Oct 2020; 2022
-Modified and updated for Python 3.6+ by Paul Nong-Laolam  <pnong-laolam@espec.com>
+Code modification for Python 3.6+
+:author: Paul Nong-Laolam  <pnong-laolam@espec.com>
+:date: October 2020: partial reimplementation; 
+       July 2022: completely reimplemented and tested on MS Windows and GNU/Linux
+:updated: May 2024: bug fixes and restructured code for simplication with f-string features.
 
-Note: The original source code written for Python 2.7.x by Myles Metzler 
-      To set this library available for Python 3, the entire set of source codes
-      have been updated to support Python 3. 
+Tested: 
+GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
+MS Windows platform: Python 3.9.x 
 
-      Some changes were made within the Python 3 itself and this code as updated 
-      to reflect those changes. 
+NOTE: 
+The original source code was implemented for Python 2.7.x by Myles Metzler. 
+To set this library available for Python 3, the entire set of source code
+has been reimplemented to represent and handle byte-string encoding and decoding
+scheme.  
 
-      Code has been completely tested on Python 3.6.8 and Python 3.7.3. 
-
-Updated: July 2022
-        -- bug fixes and modifications to run on Python 3.6.8 and above 
-        -- completely test on Python 3.9+ 
+Some changes were made within the Python 3 itself and this code as updated 
+to reflect those changes. 
 '''
 #pylint: disable=W0703
 import socket
@@ -72,7 +75,7 @@ class EspecSerial(object):
         self.delimiter = kwargs.get('delimiter', '\r\n')
         self.serial = serial.Serial(
             port=kwargs.get('port'),
-            baudrate=kwargs.get('baud', 9600),
+            baudrate=kwargs.get('baud', 19200), # set option for P300
             bytesize=kwargs.get('databits', 8),
             parity=kwargs.get('parity', 'N'),
             stopbits=kwargs.get('stopbits', 1),
@@ -87,45 +90,51 @@ class EspecSerial(object):
 
     def close(self):
         '''
-        Close the connection the the chamber
+        Close the connection to the chamber
         '''
         self.serial.close()
 
     def interact(self, message):
         '''
-        Send a message to the chamber and get its response
+        Send a message to the chamber and wait to get its response
 
         params:
-            message: the message to send (str)
+            message: the message to send encoded (str)
         returns:
-            string: response from the chamber
+            byte string: response from the chamber
         raises:
             EspecError
         '''
         if not isinstance(message, (list, tuple)):
             message = [message]
         recvs = []
+
         for msg in message:
             str_cmd1 = (f'{self.address},{msg}{self.delimiter}')
             str_cmd2 = (f'{msg}{self.delimiter}')
+            
             if self.address:
                 self.serial.write(str_cmd1.encode('ascii', 'ignore'))
             else:
                 self.serial.write(str_cmd2.encode('ascii', 'ignore'))
             recv = ''.encode('ascii', 'ignore')
-            while recv[0-len(self.delimiter):] != self.delimiter:
-                rbuff = self.serial.read(1)
+
+            while recv[0-len(self.delimiter):].decode("ascii","ignore") != self.delimiter: 
+                rbuff = self.serial.read(1)    # note: str object has no attribute decode 
+
                 if len(rbuff) == 0:
-                    raise EspecError('The chamber did not respond in time')
+                    raise EspecError('Chamber did not respond in time') 
+
                 recv += rbuff
-            if recv.startswith('NA:'):
-                errmsg = recv[3:0-len(self.delimiter)]
-                descriptErr=ERROR_DESCIPTIONS.get(errmsg, 'missing description')
+                #print (f'TYPE of string: {type(recv)}\n   Raw: {recv}\n   Decode: {recv.decode("ascii", "ignore")}')
+                
+            #if recv.startswith('NA:'):                         # call err msg in response to cmd error 
+            if recv.decode("ascii","ignore").startswith('NA:'): # requires decoding... 
+                errmsg = recv[3:0-len(self.delimiter)].decode("ascii","ignore")
+                descriptErr=ERROR_DESCIPTIONS.get(errmsg, "missing description")
                 msg = f'EspecError: command:"{message}" generated Error:"{errmsg}"({descriptErr})'
-                #msg = 'EspecError: command:"{}" generated Error:"{}"({})'.format(
-                #    message, errmsg, ERROR_DESCIPTIONS.get(errmsg, 'missing description')
-                #)
                 raise EspecError(msg)
+
             recvs.append(recv[:-1*len(self.delimiter)])
         return recvs if len(recvs) > 1 else recvs[0]
 
@@ -167,14 +176,12 @@ class EspecTCP(object):
         str_cmd = (f'{message}{self.delimiter}')
         self.socket.send(str_cmd.encode('ascii', 'ignore'))
         recv = ''.encode('ascii', 'ignore') 
-        while recv[0-len(self.delimiter):] != self.delimiter:
+        while recv[0-len(self.delimiter):].decode("ascii","ignore") != self.delimiter:
             recv += self.socket.recv(1)
-        if recv.startswith('NA:'):
-            errmsg = recv[3:0-len(self.delimiter)]
-            descriptErr=ERROR_DESCIPTIONS.get(errmsg, 'missing description')
+
+        if recv.decode("ascii","ignore").startswith('NA:'):            
+            errmsg = recv[3:0-len(self.delimiter)].decode("ascii","ignore")
+            descriptErr=ERROR_DESCIPTIONS.get(errmsg, "missing description")
             msg = f'EspecError: command:"{message}" generated Error:"{errmsg}"({descriptErr})'
-            #msg = 'EspecError: command:"{}" generated Error:"{}"({})'.format(
-            #    message, errmsg, ERROR_DESCIPTIONS.get(errmsg, 'missing description')
-            #)
             raise EspecError(msg)
         return recv[:-2]
