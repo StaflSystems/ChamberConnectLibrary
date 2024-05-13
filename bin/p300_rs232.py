@@ -189,7 +189,7 @@ if __name__ == "__main__":
                 controller_type = "P300"
                 interface_params = {
                      'interface':'TCP',
-                     'host':'10.30.100.10'
+                     'host':'10.30.100.10'  # use correct IP addr
                 }
                 CONTROLLER = Espec(
                     ctrl_type=controller_type,
@@ -203,6 +203,4 @@ if __name__ == "__main__":
                 continue  
             break 
 
-    main()
-
-
+    main() 

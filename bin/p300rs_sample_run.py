@@ -24,8 +24,10 @@ extracted, modified and formalized to support all the available features.
 
 The following is a simple sample call program to serve as a starting 
 point on how to utilize our ESPEC P300 library. Programmer can implement
-or/and modified to include more complex call methods for their 
-specific application.  
+or/and modify to include more complex call methods for their 
+specific application. All you need to do is create a new definition with 
+a specific call to the "p300serial.py" library and include that call
+in the main method.   
 --------------------------------------------------------------------------
 
 How to Determine Communication Port: 
@@ -81,7 +83,7 @@ sys.path.insert(0,'../chamberconnectlibrary')
 from chamberconnectlibrary.p300serial import EspecP300
 from chamberconnectlibrary.dictcode import dict_code
 
-def get_status():
+def get_temp():
     '''read parameters from chamber/controller
     
     this is a general method for reading a type of chamber
@@ -95,7 +97,7 @@ def get_status():
     get_val = p300.read_vib() 
 
     To read ROM value, modify the try statment as:
-    get_val = p300.read_rom() 
+    get_val = p300.read_rom()
 
     To read 'product temperature control' value (PTC value), modify the try statment as:
     get_val = p300.read_constant_ptc() 
@@ -104,22 +106,32 @@ def get_status():
     get_val = p300.read_alarm() 
     '''
     try:
-        get_val = p300.read_vib()
+        get_val = p300.read_temp()
     except Exception as e: 
         get_val = e 
+    return get_val 
+
+def get_vib():
+    '''read vib values'''
+    try:
+       get_val = p300.read_vib()
+    except Exception as e: 
+       get_val = e 
     return get_val 
 
 def get_mon():
     '''read MON value'''
     try: 
         mon_val = p300.read_mon()
-    except: 
-        mon_val = "reading failed..."
+    except Exception as e: 
+        mon_val = e        
     return mon_val 
 
 def main():
     '''main driver program'''
-    print (f'Temp Status:\n {get_status()}')
+    print (f'Temperature:\n {get_temp()}')
+    print (f'Vibration:\n {get_vib()}') 
+    print (f'Monitor Status: {get_mon()}')
 
 if __name__ == '__main__':
     '''set up low-level communication with ESPEC P300 via RS232C
