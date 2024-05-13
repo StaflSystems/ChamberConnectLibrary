@@ -28,5 +28,5 @@ setup(
         'Programming Language :: Python :: 3.8.10',
         'Programming Language :: Python :: 3.9.3',
         'Programming Language :: Python :: 3.10.12',
-    ]
+    ],
 )
