@@ -62,6 +62,7 @@ A virtualenv is a viable option, again, since all the necessary modules or libra
 Examples to run the sample programs: 
 
 ```sudo venv/bin/python bin/f4nf4t_sample_run.py```
+
 ```sudo venv/bin/python bin/p300_rs232-direct.py```
 
 In the venv, double check that ```python``` symbolic links to ```python3```.  
