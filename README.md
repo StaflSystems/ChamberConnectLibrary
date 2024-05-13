@@ -35,6 +35,8 @@ Sample programs are available as follows:
 * ```f4_runRTU.py```: Sample program via RTU Modbus for F4 w/ Temp
 * ```f4_test_read.py```: Sample program to test RTU modbus connection for F4 
 * ```f4nf4t_sample_run.py```: Sample program with options on F4 RTU, F4T RTU and F4T TCP/IP 
+* ```p300_rs232.py```: Sample program via serial connect RS232 for P300 w/ Temp and/or Humi 
+* ```p300rs_sample_run.py```: Sample program using a direct serial connect via RS232 to a "modified" ESPEC P300 main library (called "p300serial.py") with options on vibration; this program bypasses the chamberconnectlibrary (espec.py and especinteract.py).  
 
 These and other sample programs may be modified to include different communication interfaces for your application requirements as outlined in the [controllerinterface.md](controllerinterface.md). 
 
@@ -56,11 +58,13 @@ or
 
 Accessing TCP/IP or RTU modbus port requires a root privilege in GNU/Linux. The ```sudo``` may be used on a GNU/Linux system for a regular user with sudoer privilege; or, ```su -c``` may be used on a system with regular user to execute the program as root.
 
-A virtualenv would be best since it requires no root or sudoer privileges: 
+A virtualenv is a viable option, again, since all the necessary modules or libraries can be installed and used without interring with the main setup. 
+Examples to run the sample programs: 
 
-```python bin/f4t_runTCP.py```
+```sudo venv/bin/python bin/f4nf4t_sample_run.py```
+```sudo venv/bin/python bin/p300rs_sample_run.py```
 
-In the venv, ```python``` symbolic links to ```python3```.  
+In the venv, double check that ```python``` symbolic links to ```python3```.  
 
 Any questions, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com> for assistance.  
 
