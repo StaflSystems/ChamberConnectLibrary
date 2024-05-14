@@ -1,29 +1,74 @@
-# ChamberConnectLibrary
-Python library for interfacing with Espec North America chambers with P300, SCP-220, Watlow F4T &amp; Watlow F4S/D controllers.
+# ChamberConnectLibrary (codename: cclibrary-py3) 
+
+Python library for interfacing with ESPEC North America chambers with P300 with vibration features, SCP-220, ES-102 Watlow F4T and Watlow F4S/D controllers. 
 
 ## Requirements
-python 2.7.x
+
+Python 3.8.x and above is required for using this distributed library. 
+
+This library has been completely tested under the following Python 3 versions: 
+
+* Python 3.8.x
+* Python 3.9.x
+* Python 3.10.x
+
+Such requirements were due to the use of new print function calls. 
 
 ## Installation
-```pip install chamberconnectlibrary```
 
-## Updating
-Do to some renaming to make the library pep8 compliant some files have been renamed from version 1.x to 2.0.0.
-To ensure that the current version is used uninstall and then reinstall the library:
-```pip uninstall chamberconnectlibrary```
-```pip install chamberconnectlibrary```
+There are two ways to use this distribution: 
 
-## Testing
+1. PyPI
+2. src folder
 
-To test run chamberconnectlibrary-test.py(on windows using COM port #3, test script is located in Python2.7\Scripts directory)
+HOWEVER, the PyPI package or the src distribution folder has not yet been published. 
 
-P300: ```chamberconnectlibrary-test.py Espec Serial \\.\COM3 19200```
+In the meantime, to take advantage of this free library, simply clone it to your local system and git checkout py3-chamberconnectlibrary. The clone directory must also carry the name ```chamberconnectlibrary```; navigate to this root directory to execute and test run the sample programs provided in the bin directory. 
 
-SCP-220: ```chamberconnectlibrary-test.py EspecSCP220 Serial \\.\COM3 9600```
+Sample programs are included in the bin folder, particularly for Watlow F4 and F4T controllers. With this clone, it is probably best that a virtualenv with specific Python 3 version created in the root directory to test and run these sample programs. For RTU modbus (serial connect), the ```serial_requirements.txt``` is needed to install the pyserial and/or minimalmodbus modules in this virtualenv. 
 
-Watlow F4T: ```chamberconnectlibrary-test.py WatlowF4T RTU \\.\COM3 38400```
+Sample programs are available as follows: 
 
-Watlow F4: ```chamberconnectlibrary-test.py WatlowF4 RTU \\.\COM3 19200```
+* ```f4t_runTCP.py```: Sample program via TCP/IP for F4T w/ Temp
+* ```f4t_runTCP_TempHumi.py```: Sample program via TCP/IP for F4T w/ Temp and Humi
+* ```f4t_runRTU.py```: Sample program via RTU Modbus for F4T w/ Temp
+* ```f4_runRTU.py```: Sample program via RTU Modbus for F4 w/ Temp
+* ```f4_test_read.py```: Sample program to test RTU modbus connection for F4 
+* ```f4nf4t_sample_run.py```: Sample program with options on F4 RTU, F4T RTU and F4T TCP/IP. A connection to either F4 or F4T via RTU or TCP/IP must be established prior to selecting the option. Default baud rate for F4T is 38400 and F4 9600. It is best to select the one used by the controller. 
+* ```p300_rs232.py```: Sample program via serial connect RS232 for both ESPEC P300 and ESPEC SCP-220 w/ Temp and/or Humi. A connection to SCP-220 must be established prior to selecting the option. Default baud rate for P300 is 19200 and SCP-220 9600. 
+* ```p300_rs232-direct.py```: Sample program using a direct serial connect via RS232 to a "modified" ESPEC P300 main library (called "p300serial.py") with options on vibration; this program bypasses the chamberconnectlibrary (espec.py and especinteract.py).  
+
+These and other sample programs may be modified to include different communication interfaces for your application requirements as outlined in the [controllerinterface.md](controllerinterface.md). 
+
+**MS Windows**: To test the above program, navigate to first-level chamberconnectlibrary directory and execute the program as follows:
+
+```python bin/f4t_runTCP.py```
+
+or 
+
+```python bin/f4t_runRTU.py```
+
+**GNU/Linux**: To test the above program, navigate to first-level chamberconnectlibrary (root) directory and execute the program as follows:
+
+```sudo python3 bin/f4t_runTCP.py```
+
+or 
+
+```su -c 'python3 bin/f4t_runTCP.py'```
+
+Accessing TCP/IP or RTU modbus port requires a root privilege in GNU/Linux. The ```sudo``` may be used on a GNU/Linux system for a regular user with sudoer privilege; or, ```su -c``` may be used on a system with regular user to execute the program as root.
+
+A virtualenv is a viable option, again, since all the necessary modules or libraries can be installed and used without interring with the main setup. 
+Examples to run the sample programs: 
+
+```sudo venv/bin/python bin/f4nf4t_sample_run.py```
+
+```sudo venv/bin/python bin/p300_rs232-direct.py```
+
+In the venv, double check that ```python``` symbolic links to ```python3```.  
+
+Any questions, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com> for assistance.  
 
 ## Documentation
-See [controllerinterface.md](controllerinterface.md)
+
+For further documentation on the different communication interface and controller type options, see [controllerinterface.md](controllerinterface.md)
