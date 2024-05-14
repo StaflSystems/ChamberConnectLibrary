@@ -107,7 +107,7 @@ if __name__ == '__main__':
             elif SELECT_OPT == 2:
             # SELECT_OPT = 1 for P300 via RTU SERIAL 
                 baudrate_spd = 19200 
-                print ("\nESPEC P300 CONTROLLER via TCP/IP:")     
+                print ("\nESPEC P300 CONTROLLER via VIA RS232:")     
             else: 
                 print ("Number out of range. Try again.") 
                 continue  
