@@ -37,6 +37,8 @@ Sample programs are available as follows:
 * ```f4nf4t_sample_run.py```: Sample program with options on F4 RTU, F4T RTU and F4T TCP/IP. A connection to either F4 or F4T via RTU or TCP/IP must be established prior to selecting the option. Default baud rate for F4T is 38400 and F4 9600. It is best to select the one used by the controller. 
 * ```p300_rs232.py```: Sample program via serial connect RS232 for both ESPEC P300 and ESPEC SCP-220 w/ Temp and/or Humi. A connection to SCP-220 must be established prior to selecting the option. Default baud rate for P300 is 19200 and SCP-220 9600. 
 * ```p300_rs232-direct.py```: Sample program using a direct serial connect via RS232 to a "modified" ESPEC P300 main library (called "p300serial.py") with options on vibration; this program bypasses the chamberconnectlibrary (espec.py and especinteract.py).  
+* ```espec-ctlr_rs232```: Sample program with option to communicate and control ESPEC P#00, SCP-220 and ES-102. Vibration features w/ P300 will be reimplemented.   
+
 
 These and other sample programs may be modified to include different communication interfaces for your application requirements as outlined in the [controllerinterface.md](controllerinterface.md). 
 
