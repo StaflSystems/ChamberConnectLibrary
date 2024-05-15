@@ -5,7 +5,7 @@ A direct implementation of the SCP220's communication interface.
 :license: MIT, see LICENSE for more details.
 '''
 import re
-from p300extended import P300Extended, tryfloat
+from chamberconnectlibrary.p300extended import P300Extended, tryfloat
 
 class P300Vib(P300Extended):
     '''
@@ -181,8 +181,8 @@ class P300Vib(P300Extended):
             r'(?:,AIR(\d+)\/(\d+))?',
             arg
         )
-        print arg
-        print parsed
+        #print arg
+        #print parsed
         base = {'number':int(parsed.group(1)),
                 'time':{'hour':int(parsed.group(7)),
                         'minute':int(parsed.group(8))},

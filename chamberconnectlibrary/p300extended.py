@@ -5,7 +5,7 @@ A direct implementation of the SCP220's communication interface.
 :license: MIT, see LICENSE for more details.
 '''
 import re
-from p300 import P300, tryfloat
+from .p300 import P300, tryfloat
 
 class P300Extended(P300):
     '''

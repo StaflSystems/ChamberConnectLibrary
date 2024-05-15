@@ -7,8 +7,8 @@ Author: Paul Nong-Laolam, Software Engineer; pnong-laolam@espec.com
 :license: MIT, see LICENSE for more details.
 '''
 import re
-from p300 import P300
-from scp220 import SCP220
+from chamberconnectlibrary.p300 import P300
+from chamberconnectlibrary.scp220 import SCP220
 from datetime import datetime 
 
 def tryfloat(val, default):
@@ -266,7 +266,7 @@ class ES102(SCP220):
             "counter_?" is the cycles remaining
         '''
         rsp = self.ctlr.interact('PRGM MON?').split(',')
-        print('Print read_prgm_mon: {}'.format(rsp)) 
+        #print('Print read_prgm_mon: {}'.format(rsp)) 
         if len(rsp) == 6:  # ES102 with humidity feature 
             time = rsp[4].split(':')
             return {
@@ -308,8 +308,8 @@ class ES102(SCP220):
             r'(\d+),COUNT\((\d+).(\d+).(\d+)\),END\((\w+)\)', 
             rsp
         )
-        text0 = 'Test read_prgm_set: number of steps:{}, name:{}, mode:{}'
-        print (text0.format(parsed.group(1), self.rom_pgm(1), parsed.group(5)))
+        #text0 = 'Test read_prgm_set: number of steps:{}, name:{}, mode:{}'
+        #print (text0.format(parsed.group(1), self.rom_pgm(1), parsed.group(5)))
         return {
             'number':int(1),  # program number, default: 1  
             'name':' ' if rsp.startswith('NA:') else 'PGM',  
@@ -330,10 +330,10 @@ class ES102(SCP220):
         '''
         if self.ctlr.interact('PRGM DATA?,PGM:1').startswith('NA:'):
             rsp = '0'.split(',')   # no program stored in memory
-            print ('Program List empty; ES102 has no program.')
+            #print ('Program List empty; ES102 has no program.')
         else:
             rsp = '1,1'.split(',') # program is on the list 
-            print ('PGM:1 found in Program List.')
+            #print ('PGM:1 found in Program List.')
         return [str(i) in rsp[1:] for i in range(1,2)] 
 
     def read_prgm_use_num(self, pgmnum):
@@ -369,8 +369,8 @@ class ES102(SCP220):
             r'(.+)?,(\d+).(\d+)\/(\d+)', 
             prgmname + str(datetime.today().strftime('%Y.%m/%d')) 
         )
-        text0 = 'Test print on program info (def read_prgm_use_num): {} {} {} {}'
-        print (text0.format( rsp.group(1), int(rsp.group(2)), int(rsp.group(3)), int(rsp.group(4)) ))
+        #text0 = 'Test print on program info (def read_prgm_use_num): {} {} {} {}'
+        #print (text0.format( rsp.group(1), int(rsp.group(2)), int(rsp.group(3)), int(rsp.group(4)) ))
         return {
             'name':rsp.group(1) if rsp.group(1) else '', 
             'date':{
@@ -398,8 +398,8 @@ class ES102(SCP220):
             NOTE: ES102 does not support RUN NEXT PROGRAM 
         '''
         pdata = self.ctlr.interact('PRGM DATA?,{0:s}:{1:d}'.format(self.rom_pgm(pgmnum), pgmnum))
-        text0 = 'Test print on program name and location (def read_prgm_data): name:loc => {0:s}:{1:d}'
-        print (text0.format(self.rom_pgm(pgmnum), pgmnum)) 
+        #text0 = 'Test print on program name and location (def read_prgm_data): name:loc => {0:s}:{1:d}'
+        #print (text0.format(self.rom_pgm(pgmnum), pgmnum)) 
         return self.parse_prgm_data(pdata)
 
     def parse_prgm_data(self, arg):
@@ -412,7 +412,7 @@ class ES102(SCP220):
             r'(\d+),COUNT\((\d+).(\d+).(\d+)\),END\((\w+)\)',
             arg
         )
-        print ('Test print on program parameters (def parse_prgm_data): {}'.format(parsed.group(5))) 
+        #print ('Test print on program parameters (def parse_prgm_data): {}'.format(parsed.group(5))) 
         return {
             'steps':int(parsed.group(1)), # number of steps in program; max = 9
             'name': ' ' if arg.startswith('NA:') else 'PGM', # default profile name: PGM  
@@ -487,8 +487,8 @@ class ES102(SCP220):
         '''
         tmp = self.ctlr.interact('PRGM DATA?,{0:s}:{1:d},STEP{2:d}'.format(self.rom_pgm(pgmnum), pgmnum, pgmstep))
         # cmd> PRGM DATA?,PGM:1,STEP1
-        print ('read_prgm_data_step: ')
-        print tmp 
+        #print ('read_prgm_data_step: ')
+        #print tmp 
         return self.parse_prgm_data_step(tmp)
 
     def parse_prgm_data_step(self, arg):
@@ -676,14 +676,14 @@ class ES102(SCP220):
         # necessarily apply. However, an exception has been added to ensure 
         # its functionality.
         try: 
-            print ('Attempting to write relay signals to ES102.') 
+            #print ('Attempting to write relay signals to ES102.') 
             vals = self.parse_relays(relays)
             if len(vals['on']) > 0:
                 self.ctlr.interact('RELAY ON%s' % ','.join(str(v) for v in vals['on']))
             if len(vals['off']) > 0:
                 self.ctlr.interact('RELAY OFF%s' % ','.join(str(v) for v in vals['off']))
         except:
-            print('Error occurred...ES102 does not support "relay set cmd".')
+            #print('Error occurred...ES102 does not support "relay set cmd".')
             raise NotImplementedError(self.es102err + self.errmsg['relay'])
 
     def write_prgm_run(self, pgmnum, pgmstep):
@@ -693,7 +693,7 @@ class ES102(SCP220):
         There is no option to start a program from any step; additionally, 
         there is only one program, stored in location 1; hence, 'RUN1' is implied.  
         '''
-        print ('Start a program beginning at step 1 (write_prgm_run).')
+        #print ('Start a program beginning at step 1 (write_prgm_run).')
         self.ctlr.interact('MODE,RUN1') 
 
     def write_prgm_pause(self):
@@ -759,15 +759,15 @@ class ES102(SCP220):
         if 'counter_a' in pgmdetail and pgmdetail['counter_a']['cycles'] > 0:
             ttp = (pgmnum, pgmdetail['counter_a']['start'], 
                 pgmdetail['counter_a']['end'], pgmdetail['counter_a']['cycles'])
-            print ('Test print: counter info')  
-            print ttp # test print: counter raw parameters (x,x,x,x) 
+            #print ('Test print: counter info')  
+            #print ttp # test print: counter raw parameters (x,x,x,x) 
             cmd = 'PRGM DATA WRITE,PGM:{0:d},COUNT,({1:d}.{2:d}.{3:d})'
             tmp = ( cmd.format(ttp[0], ttp[1], ttp[2], ttp[3]) ) 
             self.ctlr.interact(tmp)
-            print tmp # test print : counter parameters  
+            #print tmp # test print : counter parameters  
         if 'end' in pgmdetail and pgmdetail['end'] != 'RUN':
             self.ctlr.interact('PRGM DATA WRITE,PGM:1,END,{0:s}'.format(pgmdetail['end']) )
-        print ('Test print: pgmdetail info: {}:'.format(pgmdetail))
+        #print ('Test print: pgmdetail info: {}:'.format(pgmdetail))
 
     def write_prgm_data_step(self, pgmnum, **pgmstep):
         '''
@@ -781,10 +781,10 @@ class ES102(SCP220):
         cmd = 'PRGM DATA WRITE,PGM:{0:d},STEP{1:d}'.format(pgmnum, pgmstep['number'])
         if 'temperature' in pgmstep:
             if 'setpoint' in pgmstep['temperature']:
-                print('Writing Temp values...')
+                #print('Writing Temp values...')
                 cmd = '{0:s},TEMP{1:0.1f}'.format(cmd, pgmstep['temperature']['setpoint'])
             if 'ramp' in pgmstep['temperature']:
-                print('Setting up Temp Ramp...')
+                #print('Setting up Temp Ramp...')
                 cmd = '{0:s},TRAMP{1:s}'.format(cmd, 'ON' if pgmstep['temperature']['ramp'] else 'OFF')
         
         if 'humidity' in pgmstep:
@@ -793,13 +793,13 @@ class ES102(SCP220):
                     htmp = '{0:0.0f}'.format(pgmstep['humidity']['setpoint']) 
                 else:
                     htmp = 'OFF'
-                print('Write humi values...')
+                #print('Write humi values...')
                 cmd = '{0:s},HUMI{1:s}'.format(cmd,htmp) 
-                print cmd 
+                #print cmd 
             if 'ramp' in pgmstep['humidity'] and pgmstep['humidity']['enable']:
-                print('Set Humi Ramp')
+                #print('Set Humi Ramp')
                 cmd = '{0:s},HRAMP{1:s}'.format(cmd, 'ON' if pgmstep['humidity']['ramp'] else 'OFF')
-                print cmd 
+                #print cmd 
 
         if 'time' in pgmstep:
             cmd = '{0:s},TIME{1:d}:{2:d}'.format(cmd, pgmstep['time']['hour'], pgmstep['time']['minute'])
@@ -824,8 +824,8 @@ class ES102(SCP220):
         #       raise NotImplementedError('Relay setting cannot be done.') 
 
         self.ctlr.interact(cmd)
-        print('prgm data step...successful.') # will remove in the final code 
-        print cmd                             # will remove in the final code 
+        #print('prgm data step...successful.') # will remove in the final code 
+        #print cmd                             # will remove in the final code 
 
     def write_prgm_erase(self, pgmnum):
         '''
@@ -876,7 +876,7 @@ class ES102(SCP220):
         The helper method: read the entire program
         ES102 does not have detail command feature for product temperature control.  
         '''
-        msg = 'Test print on def read_prgm method for proper operation:'
+        #msg = 'Test print on def read_prgm method for proper operation:'
         if pgmnum == 1:
             pgm = self.read_prgm_data(pgmnum)
             tmp = [self.read_prgm_data_step(pgmnum, i) for i in range(1, pgm['steps']+1)]
@@ -909,7 +909,7 @@ class ES102(SCP220):
         else:
             raise ValueError('ES102 can only store one program; its number must be 1')
 
-        print ('{} --> {}'.format(msg, pgm))
+        #print ('{} --> {}'.format(msg, pgm))
         return pgm
 
     def write_prgm(self, pgmnum, program):
@@ -926,19 +926,19 @@ class ES102(SCP220):
             set_humi = False
             for num, step in enumerate(program['steps']):
                 step['number'] = num+1 # to ensure sequential stepping 
-                print('Writing prgm step..')
-                print step['number'] 
+                #print('Writing prgm step..')
+                #print step['number'] 
                 self.write_prgm_data_step(pgmnum, **step)
-                print ('Writing prg data step...successful')
+                #print ('Writing prg data step...successful')
                 if step.get('humidity', {'enable':False})['enable']:
                     set_humi = True
             if not set_humi and 'humiDetail' in program:
-                print('Setting humiDetail...')
+                #print('Setting humiDetail...')
                 program['humiDetail'].pop('range', None)
             self.write_prgm_data_details(pgmnum, **program)
-            print('Writing data details...successful')
+            #print('Writing data details...successful')
             self.write_prgm_data_edit(pgmnum, 'END')
-            print('Editing data...successful')
+            #print('Editing data...successful')
         except:
             self.write_prgm_data_edit(pgmnum, 'CANCEL')
             if self.ctlr.interact('MODE?').startswith('RUN'):
