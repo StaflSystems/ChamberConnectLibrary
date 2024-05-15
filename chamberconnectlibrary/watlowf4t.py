@@ -863,7 +863,7 @@ class WatlowF4T(ControllerInterface):
         try:
             self.client.write_holding(18888, N) #set active profile
             self.client.write_holding(18890, self.inv_watlow_val_dict('delete')) #delete profile
-        except ModbusError, exp:
+        except ModbusError as exp:
             exp.message = 'Cannot delete program. (original message: %s)' % exp.message
             raise # something else went wrong pass the exception on up.
 

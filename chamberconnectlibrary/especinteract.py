@@ -1,14 +1,31 @@
 '''
 Handle the actual communication with Espec Corp. Controllers
-
 :copyright: (C) Espec North America, INC.
+:original author: Myles Metzler
 :license: MIT, see LICENSE for more details.
+
+Code modification for Python 3.6+
+:author: Paul Nong-Laolam  <pnong-laolam@espec.com>
+:date: May 2024 
+
+Tested: 
+GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
+MS Windows platform: Python 3.9.x 
+
+NOTE: 
+The original source code was implemented for Python 2.7.x by Myles Metzler. 
+To set this library available for Python 3, the entire set of source code
+has been reimplemented to represent and handle byte-string encoding and decoding
+scheme.  
+
+Some changes were made within the Python 3 itself and this code as updated 
+to reflect those changes. 
 '''
 #pylint: disable=W0703
 import socket
 import serial
 import time
-from controllerinterface import ControllerInterfaceError
+from chamberconnectlibrary.controllerinterface import ControllerInterfaceError
 
 ERROR_DESCIPTIONS = {
     'CMD ERR':'Unrecognized command',
@@ -53,10 +70,10 @@ class EspecSerial(object):
     '''
     def __init__(self, **kwargs):
         self.address = kwargs.get('address', None)
-        self.delimeter = kwargs.get('delimeter', '\r\n')
+        self.delimiter = kwargs.get('delimiter', '\r\n')
         self.serial = serial.Serial(
             port=kwargs.get('port'),
-            baudrate=kwargs.get('baud', 9600),
+            baudrate=kwargs.get('baud', 19200),
             bytesize=kwargs.get('databits', 8),
             parity=kwargs.get('parity', 'N'),
             stopbits=kwargs.get('stopbits', 1),
@@ -77,37 +94,46 @@ class EspecSerial(object):
 
     def interact(self, message):
         '''
-        Send a message to the chamber and get its response
+        Send a message to the chamber and wait to get its response
 
         params:
-            message: the message to send (str)
+            message: the message to send encoded (str)
         returns:
-            string: response from the chamber
+            byte string: response from the chamber
         raises:
             EspecError
         '''
         if not isinstance(message, (list, tuple)):
             message = [message]
         recvs = []
+
         for msg in message:
-            msg = msg.encode('ascii', 'ignore')
+            str_cmd1 = f'{self.address},{msg}{self.delimiter}'
+            str_cmd2 = f'{msg}{self.delimiter}'
+            
             if self.address:
-                self.serial.write('%d,%s%s'%(self.address, msg, self.delimeter))
+                self.serial.write(str_cmd1.encode('ascii', 'ignore'))
             else:
-                self.serial.write('%s%s' % (msg, self.delimeter))
-            recv = ''
-            while recv[0-len(self.delimeter):] != self.delimeter:
-                rbuff = self.serial.read(1)
+                self.serial.write(str_cmd2.encode('ascii', 'ignore'))
+            recv = ''.encode('ascii', 'ignore')
+
+            while recv[0-len(self.delimiter):].decode("ascii","ignore") != self.delimiter: 
+                rbuff = self.serial.read(1)    # note: str object has no attribute decode 
+
                 if len(rbuff) == 0:
-                    raise EspecError('The chamber did not respond in time')
+                    raise EspecError('Chamber did not respond in time') 
+
                 recv += rbuff
-            if recv.startswith('NA:'):
-                errmsg = recv[3:0-len(self.delimeter)]
-                msg = 'EspecError: command:"%s" generated Error:"%s"(%s)' % (
-                    message, errmsg, ERROR_DESCIPTIONS.get(errmsg, 'missing description')
-                )
+                #print (f'TYPE of string: {type(recv)}\n   Raw: {recv}\n   Decode: {recv.decode("ascii", "ignore")}')
+                
+            #if recv.startswith('NA:'):                         # call err msg in response to cmd error 
+            if recv.decode("ascii","ignore").startswith('NA:'): # requires decoding... 
+                errmsg = recv[3:0-len(self.delimiter)].decode("ascii","ignore")
+                descriptErr=ERROR_DESCIPTIONS.get(errmsg, "missing description")
+                msg = f'EspecError: command:"{message}" generated Error:"{errmsg}"({descriptErr})'
                 raise EspecError(msg)
-            recvs.append(recv[:-1*len(self.delimeter)])
+
+            recvs.append(recv[:-1*len(self.delimiter)])
         return recvs if len(recvs) > 1 else recvs[0]
 
 class EspecTCP(object):
@@ -119,7 +145,7 @@ class EspecTCP(object):
         self.socket.setblocking(True)
         self.socket.connect((kwargs.get('host'), kwargs.get('port', 10001)))
         self.address = kwargs.get('address', None)
-        self.delimeter = kwargs.get('delimeter', '\r\n')
+        self.delimiter = kwargs.get('delimiter', '\r\n')
 
     def __del__(self):
         try:
@@ -145,20 +171,15 @@ class EspecTCP(object):
         raises:
             EspecError
         '''
-        message = message.encode('ascii', 'ignore')
-        # TCP forwarder doesnt handle address properly so we are ignoring it.
-        # if self.address:
-        #     self.socket.send('%d,%s%s'%(self.address, message, self.delimeter))
-        # else:
-        #     self.socket.send('%s%s'%(message, self.delimeter))
-        self.socket.send('%s%s'%(message, self.delimeter))
-        recv = ''
-        while recv[0-len(self.delimeter):] != self.delimeter:
+        str_cmd = (f'{message}{self.delimiter}')
+        self.socket.send(str_cmd.encode('ascii', 'ignore'))
+        recv = ''.encode('ascii', 'ignore') 
+        while recv[0-len(self.delimiter):].decode("ascii","ignore") != self.delimiter:
             recv += self.socket.recv(1)
-        if recv.startswith('NA:'):
-            errmsg = recv[3:0-len(self.delimeter)]
-            msg = 'EspecError: command:"%s" generated Error:"%s"(%s)' % (
-                message, errmsg, ERROR_DESCIPTIONS.get(errmsg, 'missing description')
-            )
+
+        if recv.decode("ascii","ignore").startswith('NA:'):            
+            errmsg = recv[3:0-len(self.delimiter)].decode("ascii","ignore")
+            descriptErr=ERROR_DESCIPTIONS.get(errmsg, "missing description")
+            msg = f'EspecError: command:"{message}" generated Error:"{errmsg}"({descriptErr})'
             raise EspecError(msg)
         return recv[:-2]

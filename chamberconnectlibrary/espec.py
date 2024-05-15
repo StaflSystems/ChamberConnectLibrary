@@ -10,6 +10,7 @@ import time
 from chamberconnectlibrary.controllerinterface import ControllerInterface, exclusive
 from chamberconnectlibrary.controllerinterface import ControllerInterfaceError
 from chamberconnectlibrary.p300 import P300
+from chamberconnectlibrary.p300vib import P300Vib
 from chamberconnectlibrary.scp220 import SCP220
 from chamberconnectlibrary.es102 import ES102
 from chamberconnectlibrary.especinteract import EspecError
@@ -34,7 +35,8 @@ class Espec(ControllerInterface):
     '''
 
     def __init__(self, **kwargs):
-        print 'Warning: Espec Class is no longer being maintained as of version 2.3.0; use EspecP300 or EspecSCP220 classes instead.'
+        '''Warning: Espec Class is no longer being maintained as of version 2.3.0; use EspecP300 or EspecSCP220 classes instead.'''
+        #print ('Warning: Espec Class is no longer being maintained as of version 2.3.0; use EspecP300 or EspecSCP220 classes instead.')
         self.client, self.loops, self.cascades = None, None, None
         self.init_common(**kwargs)
         self.freshness = kwargs.get('freshness', 0)
