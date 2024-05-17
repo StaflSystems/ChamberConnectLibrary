@@ -99,7 +99,7 @@ class P300(object):
         returns:
             string: response
         '''
-        return self.ctlr.interact(message)
+        return (self.ctlr.interact(message)).decode('utf-8', 'replace') 
 
     # starting of P300 class methods here...to be tested in Python 3 env on P300.py
     def read_rom(self, display=False):
@@ -1116,11 +1116,11 @@ class P300(object):
             (self.ctlr.interact('HUMI,{} H{0:.1f} {0:.1f}'.format(spstr, maximum, minimum))).decode('utf-8', 'replace')
         else:
             if spstr is not None:
-                self.ctlr.interact('HUMI,' + spstr)
+                (self.ctlr.interact('HUMI,' + spstr)).decode('utf-8', 'replace')
             if minimum is not None:
-                self.ctlr.interact('HUMI, L%0.1f' % minimum)
+                (self.ctlr.interact('HUMI, L%0.1f' % minimum)).decode('utf-8', 'replace')
             if maximum is not None:
-                self.ctlr.interact('HUMI, H%0.1f' % maximum)
+                (self.ctlr.interact('HUMI, H%0.1f' % maximum)).decode('utf-8', 'replace')
 
     def write_set(self, mode, setpoint=0):
         '''
