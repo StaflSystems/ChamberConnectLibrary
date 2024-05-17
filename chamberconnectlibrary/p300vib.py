@@ -1,8 +1,20 @@
 '''
-A direct implementation of the SCP220's communication interface.
+A direct implimentation of the P300's communication interface to support 
+vibration features.
 
-:copyright: (C) Espec North America, INC.
+:copyright: (C) 2019 Espec North America, Inc.
+:author: Paul Nong-Laolam <pnong-laolam@espec.com>
 :license: MIT, see LICENSE for more details.
+
+Code modification for Python 3.6 and up.
+
+:author: Paul Nong-Laolam  <pnong-laolam@espec.com>
+:date: May 2024: completely reimplemented to support Python 3.6+ with byte strings
+       and f-string simplication for formatting strings in the simple and practical way.
+
+Tested: 
+GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
+MS Windows platform: Python 3.9.x 
 '''
 import re
 from chamberconnectlibrary.p300extended import P300Extended, tryfloat
@@ -34,7 +46,7 @@ class P300Vib(P300Extended):
               'range': {'max': float, 'min': float}
             }
         '''
-        rsp = self.ctlr.interact('VIB?').split(',')
+        rsp = ((self.ctlr.interact('VIB?')).decode('utf-8', 'replace')).split(',')
         try:
             hsp = float(rsp[1])
             enable = True
@@ -60,12 +72,14 @@ class P300Vib(P300Extended):
             "mode": see read_mode for valid parameters (with and without detail flag).
         '''
         if constant:
-            rsp = self.ctlr.interact('MON?,DETAIL,CONSTANT').split(',')
+            rsp = ((self.ctlr.interact('MON?,DETAIL,CONSTANT')).decode('utf-8', 'replace')).split(',')
         else:
-            rsp = self.ctlr.interact('MON?%s%s' % (',DETAIL' if detail else '', ',CONSTANT' if constant else '')).split(',')
+            #rsp = self.ctlr.interact('MON?%s%s' % (',DETAIL' if detail else '', ',CONSTANT' if constant else '')).split(',')
+            rsp = ((self.ctlr.interact('MON?{}{}'.format(',DETAIL' if detail else '', ',CONSTANT' if constant else ''))).decode('utf-8', 'replace')).split(',')     
+
         data = {'temperature':float(rsp[0]), 'mode':rsp[2], 'alarms':int(rsp[3])}
 
-        rsp = self.ctlr.interact('MON?,EXT1').split(',')
+        rsp = ((self.ctlr.interact('MON?,EXT1')).decode('utf-8','replace')).split(',')
         if rsp[1]:
             data['vibration'] = float(rsp[1])
         return data
@@ -81,7 +95,7 @@ class P300Vib(P300Extended):
                 'vib' is only present with vibration chambers
             }
         '''
-        rsp = self.ctlr.interact('%?,EXT1').split(',')
+        rsp = ((self.ctlr.interact('%?,EXT1')).decode('utf-8', 'replace')).split(',')
         if len(rsp) == 3:
             return {
                 'dry': float(rsp[1]),
@@ -101,7 +115,7 @@ class P300Vib(P300Extended):
         }
         '''
         if constant in [1, 2, 3]:
-            rsp = self.ctlr.interact('CONSTANT SET?, VIB, C{0:d}'.format(constant)).split(',')
+            rsp = ((self.ctlr.interact('CONSTANT SET?, VIB, C{0:d}'.format(constant))).decode('utf-8', 'replace')).split(',')
         else:
             raise ValueError("Constant must be None or 1, 2, 3.")
         return {'setpoint': float(rsp[0]), 'enable': rsp[1] == 'ON'}
@@ -124,7 +138,7 @@ class P300Vib(P300Extended):
             five parameters. Thus, two types of chambers are those with
             temperature and vibration, temperature and humidity.
         '''
-        rsp = self.ctlr.interact('PRGM MON?,EXT1').split(',')
+        rsp = ((self.ctlr.interact('PRGM MON?,EXT1')).decode('utf-8', 'replace')).split(',')
         if len(rsp) == 6:
             time = rsp[3].split(':')
             return {
@@ -165,9 +179,11 @@ class P300Vib(P300Extended):
             }
         '''
         cmd = 'PRGM DATA?,{0}:{1:d},STEP{2:d}'.format(self.rom_pgm(pgmnum), pgmnum, pgmstep)
-        rtrn = self.parse_prgm_data_step(self.ctlr.interact(cmd + ',EXT1'))
+        #rtrn = self.parse_prgm_data_step(self.ctlr.interact(cmd + ',EXT1'))
+        rtrn = self.parse_prgm_data_step((self.ctlr.interact(cmd + ',EXT1')).decode('utf-8', 'replace'))        
         if self.enable_air_speed:
-            rtrn['air'] = self.parse_prgm_data_step(self.ctlr.interact(cmd + ',AIR'))['air']
+            #rtrn['air'] = self.parse_prgm_data_step(self.ctlr.interact(cmd + ',AIR'))['air']
+            rtrn = self.parse_prgm_data_step( (self.ctlr.interact(cmd + ',EXT1')).decode('utf-8', 'replace') )            
         return rtrn
 
     def parse_prgm_data_step(self, arg):
@@ -232,8 +248,8 @@ class P300Vib(P300Extended):
                 "vibration":{"range":{"max":float,"min":float},"mode":string,"setpoint":float}
             }
         '''
-        pdata = self.ctlr.interact('PRGM DATA?,{0}:{1:d},DETAIL,EXT1'.format( self.rom_pgm(pgmnum),
-            pgmnum))
+        #pdata = self.ctlr.interact('PRGM DATA?,{0}:{1:d},DETAIL,EXT1'.format( self.rom_pgm(pgmnum), pgmnum))
+        pdata = (self.ctlr.interact('PRGM DATA?,{0}:{1:d},DETAIL,EXT1'.format( self.rom_pgm(pgmnum), pgmnum))).decode('utf-8', 'replace')
         return self.parse_prgm_data_detail(pdata) # need to write parse def
 
     def parse_prgm_data_detail(self, arg):
@@ -278,49 +294,49 @@ class P300Vib(P300Extended):
                        pgmdetail['counter_b']['cycles'])
                 #tmp = '%s,B(%d.%d.%d)' % ttp
                 tmp = ('{0:s},B({1:d}.{2:d}.{3:d})'.format(*ttp))
-            self.ctlr.interact(tmp)
+            (self.ctlr.interact(tmp)).decode('utf-8', 'replace') 
         elif 'counter_b' in pgmdetail and pgmdetail['counter_b']['cycles'] > 0:
             ttp = (pgmnum, pgmdetail['counter_b']['start'], pgmdetail['counter_b']['end'],
                    pgmdetail['counter_b']['cycles'])
-            self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},COUNT,B({1:d}.{2:d}.{3:d})'.format(*ttp))
+            (self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},COUNT,B({1:d}.{2:d}.{3:d})'.format(*ttp))).decode('utf-8', 'replace')
         if 'name' in pgmdetail:
-            self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},NAME,{1:s}'.format(pgmnum, pgmdetail['name']))
+            (self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},NAME,{1:s}'.format(pgmnum, pgmdetail['name']))).decode('utf-8', 'replace')
 
         if 'end' in pgmdetail:
             if pgmdetail['end'] != 'RUN':
                 ttp = (pgmnum, pgmdetail['end'])
             else:
                 ttp = (pgmnum, 'RUN,PTN{0:d}'.format(pgmdetail['next_prgm']))
-            self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},END,{1:s}'.format(*ttp))
+            (self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},END,{1:s}'.format(*ttp))).decode('utf-8', 'replace')
 
         if 'tempDetail' in pgmdetail:
             if 'range' in pgmdetail['tempDetail']:
                 ttp = (pgmnum, pgmdetail['tempDetail']['range']['max'])
-                self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},HTEMP,{1:0.1f}'.format(*ttp))
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},HTEMP,{1:0.1f}'.format(*ttp))).decode('utf-8', 'replace')
                 ttp = (pgmnum, pgmdetail['tempDetail']['range']['min'])
-                self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},LTEMP,{1:0.1f}'.format(*ttp))
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},LTEMP,{1:0.1f}'.format(*ttp))).decode('utf-8', 'replace')
             if 'mode' in pgmdetail['tempDetail']:
                 ttp = (pgmnum, pgmdetail['tempDetail']['mode'])
-                self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},PRE MODE,TEMP,{1:s}'.format(*ttp))
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},PRE MODE,TEMP,{1:s}'.format(*ttp))).decode('utf-8', 'replace')
             if 'setpoint' in pgmdetail['tempDetail'] and pgmdetail['tempDetail']['mode'] == 'SV':
                 ttp = (pgmnum, pgmdetail['tempDetail']['setpoint'])
                 (td, tsetp) = ttp   # splitting a tuple of mixed data type into individual arguments
-                self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},PRE TSV,{1:0.1f}'.format(td, float(tsetp)) )
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},PRE TSV,{1:0.1f}'.format(td, float(tsetp)) )).decode('utf-8', 'replace')
                 # self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},PRE TSV,{1:0.1f}'.format(*ttp))
 
         if 'vibDetail' in pgmdetail:
             if 'range' in pgmdetail['vibDetail']:
                 ttp = (pgmnum, pgmdetail['vibDetail']['range']['max'])
-                self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},HVIB,{1:0.1f}'.format(*ttp))
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},HVIB,{1:0.1f}'.format(*ttp))).decode('utf-8', 'replace')
                 ttp = (pgmnum, pgmdetail['vibDetail']['range']['min'])
-                self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},LVIB,{1:0.1f}'.format(*ttp))
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},LVIB,{1:0.1f}'.format(*ttp))).decode('utf-8', 'replace')
             if 'mode' in pgmdetail['vibDetail']:
                 ttp = (pgmnum, pgmdetail['vibDetail']['mode'])
-                self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},PRE MODE,VIB,{1:s}'.format(*ttp))
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},PRE MODE,VIB,{1:s}'.format(*ttp))).decode('utf-8', 'replace')
             if 'setpoint' in pgmdetail['vibDetail'] and pgmdetail['vibDetail']['mode'] == 'SV':
                 ttp = (pgmnum, pgmdetail['vibDetail']['setpoint'])
                 (vd, vsetp) = ttp  # splitting a tuple of mixed data type into individual arguments 
-                self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},PRE VSV,{1:0.1f}'.format(vd, float(vsetp)) )
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{0:d},PRE VSV,{1:0.1f}'.format(vd, float(vsetp)) )).decode('utf-8', 'replace')
 
     def write_prgm_data_step(self, pgmnum, **pgmstep):
         '''
@@ -374,7 +390,7 @@ class P300Vib(P300Extended):
                 cmd = '{0:s},RELAY ON{1:s}'.format(cmd, '.'.join(str(v) for v in rlys['on']))
             if rlys['off']:
                 cmd = '{0:s},RELAY OFF{1:s}'.format(cmd, '.'.join(str(v) for v in rlys['off']))
-        self.ctlr.interact(cmd)
+        (self.ctlr.interact(cmd)).decode('utf-8', 'replace')
 
     def write_prgm_erase(self, pgmnum):
         '''
@@ -383,7 +399,7 @@ class P300Vib(P300Extended):
         Args:
             pgmnum: int, the program to erase
         '''
-        self.ctlr.interact('PRGM ERASE,{0:s}:{1:d}'.format(self.rom_pgm(pgmnum), pgmnum))
+        (self.ctlr.interact('PRGM ERASE,{0:s}:{1:d}'.format(self.rom_pgm(pgmnum), pgmnum))).decode('utf-8', 'replace')
 
     def write_run_prgm(self, temp, hour, minute, gotemp=None, vib=None, govib=None, relays=None, air=None):
         '''
@@ -413,7 +429,7 @@ class P300Vib(P300Extended):
             cmd = '{0:s} RELAYOFF,{1:s}'.format(cmd, ','.join(str(v) for v in rlys['off']))
         if air is not None:
             cmd = '{0:s} AIR{1:d}'.format(cmd, air)
-        self.ctlr.interact(cmd)
+        (self.ctlr.interact(cmd)).decode('utf-8', 'replace')
 
     def write_vib(self, **kwargs):
         '''
@@ -437,14 +453,14 @@ class P300Vib(P300Extended):
             spstr = None
 
         if spstr is not None and minimum is not None and maximum is not None:
-            self.ctlr.interact('VIB, {0:s} H{1:0.1f} L{2:0.1f},C{3:d}'.format(spstr, maximum, minimum, constant))
+            (self.ctlr.interact('VIB, {0:s} H{1:0.1f} L{2:0.1f},C{3:d}'.format(spstr, maximum, minimum, constant))).decode('utf-8', 'replace')
         else:
             if spstr is not None:
-                self.ctlr.interact('VIB,%s, C%d' % (spstr, constant))
+                (self.ctlr.interact('VIB,%s, C%d' % (spstr, constant))).decode('utf-8', 'replace')
             if minimum is not None:
-                self.ctlr.interact('VIB, L%0.1f, C%d' % (minimum, constant))
+                (self.ctlr.interact('VIB, L%0.1f, C%d' % (minimum, constant))).decode('utf-8', 'replace')
             if maximum is not None:
-                self.ctlr.interact('VIB, H%0.1f, C%d' % (maximum, constant))
+                (self.ctlr.interact('VIB, H%0.1f, C%d' % (maximum, constant))).decode('utf-8', 'replace')
 
     def read_prgm(self, pgmnum, with_ptc=False):
         '''
