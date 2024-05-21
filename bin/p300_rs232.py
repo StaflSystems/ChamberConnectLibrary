@@ -2,7 +2,7 @@
 '''
 :author: Paul Nong-Laolam <pnong-laolam@espec.com>
 :license: MIT, see LICENSE for more detail.
-:copyright: (c) 2020, 2022, 2023. ESPEC North America, INC.
+:copyright: (c) 2020, 2022, 2023. ESPEC North America, Inc. 
 :file: p300_rs232.py 
 
 Application interface for controlling Watlow F4T operations. 
@@ -197,7 +197,8 @@ if __name__ == "__main__":
                     **interface_params
                     #loop_names = LOOP_NAMES
                 )
-                print ("\nESPEC P300 CONTROLLER via TCP/IP:")     
+                print ("\nThis option requires further implementation for IP address.")   
+                exit()     
             else: 
                 print ("Number out of range. Try again") 
                 continue  
