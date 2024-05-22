@@ -2,9 +2,10 @@
 A direct implementation of the ES102's command and instruction
 set for communication interface.
 
-Copyright (C) April 2019 ESPEC North America, INC. - All rights reserved 
-Author: Paul Nong-Laolam, Software Engineer; pnong-laolam@espec.com 
+:author: Paul Nong-Laolam <pnong-laolam@espec.com>
 :license: MIT, see LICENSE for more details.
+:copyright: (c) April 2019. ESPEC North America, Inc.
+:updated: May 2024. Modified to support Python 3 
 '''
 import re
 from chamberconnectlibrary.p300 import P300

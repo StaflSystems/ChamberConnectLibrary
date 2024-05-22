@@ -29,6 +29,9 @@ ChamberConnectLibrary in the Python 3 environment.
 Tested: 
 GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
 MS Windows platform: Python 3.9.x 
+
+DISCLAIMER: 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 import time,re
@@ -44,7 +47,8 @@ def ip_addr():
     '''
     while True:
         try:
-            ip_addr = input('Enter F4T IP address (e.g., 192.168.0.101): ')
+            #ip_addr = input('Enter F4T IP address (e.g., 192.168.0.101): ')
+            ip_addr ='10.30.100.115' 
             chk_ip = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", ip_addr)
             if chk_ip:
                 print ('\n')
@@ -56,14 +60,22 @@ def ip_addr():
 def set_loop(str, loop):
     '''set new temp value
     '''
+    # recording temp range 
+    val_range = CONTROLLER.get_loop_range(loop)
+    str1 = "Temperature Range" if loop == 1 else "Humidity Range"
+    print (f'\n{str1}:\nMAX: {val_range["max"]}\nMIN: {val_range["min"]}')
     print ('\n<Applying new Set Point>')
     try:
         while True:
             try:
                 val = float(input('Enter new SP value: '))
                 if isinstance(val, int) or isinstance(val,float):
-                    CONTROLLER.set_loop_sp(loop,val)
-                    break
+                    if loop == 1 or loop == 2: 
+                        if val_range["min"] <= val <= val_range["max"]:
+                            CONTROLLER.set_loop_sp(loop,val)
+                            break
+                        else:
+                            print ('ERROR!!! Value out of range. Try again. \n')
             except ValueError:
                 print ('Invalid value.\n')
             except KeyboardInterrupt:
@@ -89,13 +101,17 @@ def read_val(str,loop):
 def operation_status(): 
     '''Check current status of chamber before executing a new program
     '''
-    str = CONTROLLER.get_status()
-    time.sleep(0.5)
-    if 'Program Running' in str or 'Program Paused' in str:
-        print ('\nrsp> Program execution in progress... must first terminate it.') 
-    else:
-        # execute new program 
-        run_prog() 
+    chk_alarm = CONTROLLER.get_status() 
+    if chk_alarm == 'Alarm': 
+        print ("\nrsp> Chamber is in alarm state and must be cleared first.")
+    else: 
+        str = CONTROLLER.get_status()
+        time.sleep(0.5)
+        if 'Program Running' in str or 'Program Paused' in str or 'Constant' in str:
+            print ('\nrsp> Program execution in progress or chamber in Constant mode... must be terminated first.') 
+        else:
+            # execute new program 
+            run_prog()
 
 def run_prog(): 
     '''select and set profile for execution.
@@ -201,9 +217,14 @@ def const_start():
 def stop_const():
     '''Stop constant mode on chamber
     '''
-    CONTROLLER.stop()
-    time.sleep(0.5) 
-    print ('\nrsp > Done ') 
+    str = CONTROLLER.get_status()
+    time.sleep(0.5)
+    if ('Program Running' in str) or ('Program Paused' in str):
+        print (f'\nrsp> Chamber is currently in {str} mode. Must stop it first.')
+    else:
+        CONTROLLER.stop()
+        time.sleep(0.5) 
+        print ('\nrsp > Done ') 
 
 def temp_humi_controller():
     '''

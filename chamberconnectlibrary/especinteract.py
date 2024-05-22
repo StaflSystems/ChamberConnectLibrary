@@ -124,10 +124,8 @@ class EspecSerial(object):
                     raise EspecError('Chamber did not respond in time') 
 
                 recv += rbuff
-                #print (f'TYPE of string: {type(recv)}\n   Raw: {recv}\n   Decode: {recv.decode("ascii", "ignore")}')
                 
-            #if recv.startswith('NA:'):                         # call err msg in response to cmd error 
-            if recv.decode("ascii","ignore").startswith('NA:'): # requires decoding... 
+            if recv.decode("ascii","ignore").startswith('NA:'):
                 errmsg = recv[3:0-len(self.delimiter)].decode("ascii","ignore")
                 descriptErr=ERROR_DESCIPTIONS.get(errmsg, "missing description")
                 msg = f'EspecError: command:"{message}" generated Error:"{errmsg}"({descriptErr})'

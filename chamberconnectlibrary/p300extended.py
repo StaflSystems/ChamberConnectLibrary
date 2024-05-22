@@ -6,6 +6,7 @@ A direct implementation of the SCP220's communication interface.
 '''
 import re
 from .p300 import P300, tryfloat
+#from .p300vib import P300Vib, tryfloat
 
 class P300Extended(P300):
     '''
@@ -44,9 +45,9 @@ class P300Extended(P300):
                 "RUN PAUSE" or "RUN END HOLD" or "RMT RUN" or "RMT RUN PAUSE" or "RMT RUN END HOLD"
         '''
         if constant:
-            return self.ctlr.interact('MODE?,DETAIL,CONSTANT')
+            return (self.ctlr.interact('MODE?,DETAIL,CONSTANT')).decode('utf-8', 'replace')
         else:
-            return self.ctlr.interact('MODE?' + (',DETAIL' if detail else ''))
+            return (self.ctlr.interact('MODE?' + (',DETAIL' if detail else ''))).decode('utf-8', 'replace')
 
     def read_mon(self, detail=False, constant=False):
         '''
@@ -61,9 +62,9 @@ class P300Extended(P300):
             "mode": see read_mode for valid parameters (with and without detail flag).
         '''
         if constant:
-            rsp = self.ctlr.interact('MON?,DETAIL,CONSTANT').split(',')
+            rsp = (self.ctlr.interact('MON?,DETAIL,CONSTANT').split(',')).decode('utf-8', 'replace')
         else:
-            rsp = self.ctlr.interact('MON?%s%s' % (',DETAIL' if detail else '', ',CONSTANT' if constant else '')).split(',')
+            rsp = ((self.ctlr.interact('MON?%s%s' % (',DETAIL' if detail else '', ',CONSTANT' if constant else ''))).decode('utf-8', 'replace')).split(',')
         data = {'temperature':float(rsp[0]), 'mode':rsp[2], 'alarms':int(rsp[3])}
         if rsp[1]:
             data['humidity'] = float(rsp[1])
@@ -76,7 +77,7 @@ class P300Extended(P300):
         returns:
             {'selected':int, 'options':[int]}
         '''
-        selected, options = self.ctlr.interact('AIR?').split('/')
+        selected, options = ((self.ctlr.interact('AIR?')).decode('utf-8', 'replace')).split('/')
         return {'selected':int(selected), 'options':range(1, int(options)+1)}
 
     def read_constant_air(self, constant=1):
@@ -89,7 +90,7 @@ class P300Extended(P300):
             {'selected':int, 'options':[int]}
         '''
         if constant in [1, 2, 3]:
-            selected, options = self.ctlr.interact('CONSTANT SET?,AIR,C%d' % constant).split('/')
+            selected, options = ((self.ctlr.interact('CONSTANT SET?,AIR,C%d' % constant)).decode('utf-8', 'replace')).split('/')
         else: 
             raise ValueError("Constant must be None or 1, 2, 3") 
         return {'selected':int(selected), 'options':range(1, int(options)+1)}
@@ -102,7 +103,7 @@ class P300Extended(P300):
             {"setpoint":float,"enable":True}
         '''
         if constant in [1, 2, 3]:
-            rsp = self.ctlr.interact('CONSTANT SET?,TEMP,C%d' % constant).split(',')
+            rsp = ((self.ctlr.interact('CONSTANT SET?,TEMP,C%d' % constant)).decode('utf-8', 'replace')).split(',')
         else:
             raise ValueError("Constant must be None or 1, 2, 3")
         return {'setpoint':float(rsp[0]), 'enable':rsp[1] == 'ON'}
@@ -115,7 +116,7 @@ class P300Extended(P300):
             {"setpoint":float,"enable":boolean}
         '''
         if constant in [1, 2, 3]:
-            rsp = self.ctlr.interact('CONSTANT SET?,HUMI,C%d' % constant).split(',')
+            rsp = ((self.ctlr.interact('CONSTANT SET?,HUMI,C%d' % constant)).decode('utf-8', 'replace')).split(',')
         else: 
             raise ValueError("Constant must be None or 1, 2, 3")
         return {'setpoint':float(rsp[0]), 'enable':rsp[1] == 'ON'}
@@ -128,7 +129,7 @@ class P300Extended(P300):
             {"mode":string,"setpoint":float}
         '''
         if constant in [1, 2, 3]:
-            rsp = self.ctlr.interact('CONSTANT SET?,REF,C%d' % constant)
+            rsp = (self.ctlr.interact('CONSTANT SET?,REF,C%d' % constant)).decode('utf-8', 'replace')
         else: 
             raise ValueError("Constant must be None or 1, 2, 3")
         try:
@@ -144,7 +145,7 @@ class P300Extended(P300):
             [int]
         '''
         if constant in [1, 2, 3]:
-            rsp = self.ctlr.interact('CONSTANT SET?,RELAY,C%d' % constant).split(',')
+            rsp = ((self.ctlr.interact('CONSTANT SET?,RELAY,C%d' % constant)).decode('utf-8', 'replace')).split(',')
         else: 
             raise ValueError("Constant must be None or 1, 2, 3")
         return [str(i) in rsp[1:] for i in range(1, 13)]
@@ -157,7 +158,7 @@ class P300Extended(P300):
             {"enable":boolean,"deviation":{"positive":float,"negative":float}}
         '''
         if constant in [1, 2, 3]:
-            rsp = self.ctlr.interact('CONSTANT SET?,PTC,C%d' % constant).split(',')
+            rsp = ((self.ctlr.interact('CONSTANT SET?,PTC,C%d' % constant)).decode('utf-8', 'replace')).split(',')
         else: 
             raise ValueError("Constant must be None or 1, 2, 3")
         return {
@@ -213,7 +214,7 @@ class P300Extended(P300):
         cmd = 'PRGM DATA?,%s:%d,STEP%d'
         if self.enable_air_speed:
             cmd += ',AIR'
-        tmp = self.ctlr.interact(cmd % (self.rom_pgm(pgmnum), pgmnum, pgmstep))
+        tmp = (self.ctlr.interact(cmd % (self.rom_pgm(pgmnum), pgmnum, pgmstep))).decode('utf-8', 'replace')
         return self.parse_prgm_data_step(tmp)
 
     def read_prgm_data_ptc(self, pgmnum):
@@ -232,7 +233,7 @@ class P300Extended(P300):
             }
             "END"="OFF" or "CONSTANT1" or "CONSTANT2" or "CONSTANT3" or "STANDBY" or "RUN"
         '''
-        pdata = self.ctlr.interact('PRGM DATA PTC?,%s:%d,CONSTANT' % (self.rom_pgm(pgmnum), pgmnum))
+        pdata = (self.ctlr.interact('PRGM DATA PTC?,%s:%d,CONSTANT' % (self.rom_pgm(pgmnum), pgmnum))).decode('utf-8', 'replace')
         return self.parse_prgm_data(pdata)
 
     def read_prgm_data_ptc_step(self, pgmnum, pgmstep):
@@ -267,7 +268,7 @@ class P300Extended(P300):
         cmd = 'PRGM DATA PTC?,%s:%d,STEP%d'
         if self.enable_air_speed:
             cmd += ',AIR'
-        tmp = self.ctlr.interact(cmd % (self.rom_pgm(pgmnum), pgmnum, pgmstep))
+        tmp = (self.ctlr.interact(cmd % (self.rom_pgm(pgmnum), pgmnum, pgmstep))).decode('utf-8', 'replace')
         return self.parse_prgm_data_step(tmp)
 
     def read_run_prgm(self):
@@ -280,7 +281,7 @@ class P300Extended(P300):
                 "time":{"hours":int,"minutes":int},"refrig":{"mode":string,"setpoint":}
             }
         '''
-        rsp = self.ctlr.interact('RUN PRGM?' + ',AIR' if self.enable_air_speed else '')
+        rsp = (self.ctlr.interact('RUN PRGM?' + ',AIR' if self.enable_air_speed else '')).decode('utf-8', 'replace')
         parsed = re.search(
             r'TEMP([0-9.-]+) GOTEMP([0-9.-]+)(?: HUMI(\d+) GOHUMI(\d+))? TIME(\d+):(\d+) (\w+)'
             r'(?: RELAYON,([0-9,]+))?(?: AIR(\d+)\/(\d+))?',
@@ -315,7 +316,7 @@ class P300Extended(P300):
         '''
         parsed = re.search(
             r"(\w+)(?:,R[AO]M:(\d+),STEP(\d+))?,(\d+):(\d+)",
-            self.ctlr.interact('TIMER LIST?,0,CONSTANT')
+            (self.ctlr.interact('TIMER LIST?,0,CONSTANT')).decode('utf-8', 'replace')
         ) 
         ret = {
             'mode':parsed.group(1),
@@ -347,7 +348,7 @@ class P300Extended(P300):
         '''
         parsed = re.search(
             r"1,MODE(\d)(?:,(\d+).(\d+)/(\d+))?(?:,([A-Z/]+))?,(\d+):(\d+),(\w+[123])",
-            self.ctlr.interact('TIMER LIST?,1,CONSTANT')
+            (self.ctlr.interact('TIMER LIST?,1,CONSTANT')).decode('utf-8', 'replace')
         )
         ret = {
             'repeat':['once', 'weekly', 'daily'][int(parsed.group(1))-1],
@@ -374,7 +375,7 @@ class P300Extended(P300):
             constant: int, the constant mode to write to; valid range of 1 to 3; 1 is default
         '''
         if constant in [1, 2, 3]:
-            self.ctlr.interact('MODE,CONSTANT,C%d' % constant)
+            (self.ctlr.interact('MODE,CONSTANT,C%d' % constant)).decode('utf-8', 'replace')
         else:
             raise ValueError("Constant must be None or 1, 2 or 3")
 
@@ -393,14 +394,14 @@ class P300Extended(P300):
         constant = kwargs.get('constant', 1)
         if setpoint is not None and minimum is not None and maximum is not None:
             cmd = 'TEMP, S%0.1f H%0.1f L%0.1f, C%d'
-            self.ctlr.interact(cmd % (setpoint, maximum, minimum, constant))
+            (self.ctlr.interact(cmd % (setpoint, maximum, minimum, constant))).decode('utf-8', 'replace')
         else:
             if setpoint is not None:
-                self.ctlr.interact('TEMP, S%0.1f, C%d' % (setpoint, constant))
+                (self.ctlr.interact('TEMP, S%0.1f, C%d' % (setpoint, constant))).decode('utf-8', 'replace')
             if minimum is not None:
-                self.ctlr.interact('TEMP, L%0.1f, C%d' % (minimum, constant))
+                (self.ctlr.interact('TEMP, L%0.1f, C%d' % (minimum, constant))).decode('utf-8', 'replace')
             if maximum is not None:
-                self.ctlr.interact('TEMP, H%0.1f, C%d' % (maximum, constant))
+                (self.ctlr.interact('TEMP, H%0.1f, C%d' % (maximum, constant))).decode('utf-8', 'replace')
 
     def write_humi(self, **kwargs):
         '''
@@ -423,14 +424,14 @@ class P300Extended(P300):
         else:
             spstr = None
         if spstr is not None and minimum is not None and maximum is not None:
-            self.ctlr.interact('HUMI,%s H%0.1f L%0.1f, C%d' % (spstr, maximum, minimum, constant))
+            (self.ctlr.interact('HUMI,%s H%0.1f L%0.1f, C%d' % (spstr, maximum, minimum, constant))).decode('utf-8', 'replace')
         else:
             if spstr is not None:
-                self.ctlr.interact('HUMI,%s, C%d' % (spstr, constant))
+                (self.ctlr.interact('HUMI,%s, C%d' % (spstr, constant))).decode('utf-8', 'replace')
             if minimum is not None:
-                self.ctlr.interact('HUMI, L%0.1f, C%d' % (minimum, constant))
+                (self.ctlr.interact('HUMI, L%0.1f, C%d' % (minimum, constant))).decode('utf-8', 'replace')
             if maximum is not None:
-                self.ctlr.interact('HUMI, H%0.1f, C%d' % (maximum, constant))
+                (self.ctlr.interact('HUMI, H%0.1f, C%d' % (maximum, constant))).decode('utf-8', 'replace')
 
     def write_relay(self, relays, constant=1):
         '''
@@ -443,9 +444,9 @@ class P300Extended(P300):
         vals = self.parse_relays(relays)
         cmd = 'RELAY,%s,%s,C%d'
         if len(vals['on']) > 0:
-            self.ctlr.interact(cmd % ('ON', ','.join(str(v) for v in vals['on']), constant))
+            (self.ctlr.interact(cmd % ('ON', ','.join(str(v) for v in vals['on']), constant))).decode('utf-8', 'replace')
         if len(vals['off']) > 0:
-            self.ctlr.interact(cmd % ('OFF', ','.join(str(v) for v in vals['off']), constant))
+            (self.ctlr.interact(cmd % ('OFF', ','.join(str(v) for v in vals['off']), constant))).decode('utf-8', 'replace')
 
     def write_set(self, mode, setpoint=0, constant=1):
         '''
@@ -456,7 +457,7 @@ class P300Extended(P300):
             setpoint: int,20 or 50 or 100
             constant: int, the constant mode to write to; valid range of 1 to 3; 1 is default
         '''
-        self.ctlr.interact('SET,%s,C%d' % (self.encode_refrig(mode, setpoint), constant))
+        (self.ctlr.interact('SET,%s,C%d' % (self.encode_refrig(mode, setpoint), constant))).decode('utf-8', 'replace')
 
     def write_temp_ptc(self, enable, positive, negative, constant=1):
         '''
@@ -469,7 +470,7 @@ class P300Extended(P300):
             constant: int, the constant mode to write to; valid range of 1 to 3; 1 is default
         '''
         ttp = ('ON' if enable else 'OFF', positive, negative, constant)
-        self.ctlr.interact('TEMP PTC, PTC%s, DEVP%0.1f, DEVN%0.1f, C%d' % ttp)
+        (self.ctlr.interact('TEMP PTC, PTC%s, DEVP%0.1f, DEVN%0.1f, C%d' % ttp)).decode('utf-8', 'replace')
 
     def write_air(self, value, constant=1):
         '''
@@ -480,7 +481,7 @@ class P300Extended(P300):
             value: int, the selected air speed read_air()["options"] will give the allowable values
         '''
         if constant in [1, 2, 3]:
-            self.ctlr.interact('AIR,%d,C%d' % (value, constant))
+            (self.ctlr.interact('AIR,%d,C%d' % (value, constant))).decode('utf-8', 'replace')
         else:
             raise ValueError("Constant must be None or 1, 2, 3")
 
@@ -572,7 +573,7 @@ class P300Extended(P300):
             mode: string, vaid options: "HOLD"/"CONST"/"CONST1"/"CONST2"/"CONST3"/"OFF"/"STANDBY"
         '''
         if mode in ["HOLD", "CONST", "CONST1", "CONST2", "CONST3", "OFF", "STANDBY"]:
-            self.ctlr.interact('PRGM,END,%s' % mode)
+            (self.ctlr.interact('PRGM,END,%s' % mode)).decode('utf-8', 'replace')
         else:
             raise ValueError('"mode" must be "HOLD"/"CONST"/"CONST1"/"CONST2"/"CONST3"/"OFF"/"STANDBY"')
 

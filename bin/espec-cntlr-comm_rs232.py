@@ -27,6 +27,9 @@ the following configuration parameters:
 This program connects to ESPEC P300/SCP-220 or ES-102 for control and operation. 
 It allows a direct communication with the controller via its native text command. 
 Refer to the communication/command manual for the respective controller. 
+
+DISCLAIMER: 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
 '''
 import time
 import os
@@ -46,7 +49,11 @@ def close():
 
 def options():
     '''list of chamber/controller options'''
-    print ("\nChamber/Controller Option:\n"
+    print ("""This program connects to ESPEC controller P300, \n"""
+    + """SCP-220 or ES-102 directly via RS232 communication \n"""
+    + """interface to allow programmers to issue commands \n"""
+    + """to control and operate the target controller.""")
+    print ("\nChamber/Controller Selection:\n"
            "==================================\n"
            "0. ESPEC ES-102 via RS232\n"
            "1. ESPEC SCP-220 via RS232\n"
@@ -80,7 +87,8 @@ def main():
     cmd_rsp() 
 
 if __name__ == '__main__':
-    '''set up low-level communication with ESPEC P300, SCP-220 
+    '''
+    set up low-level communication with ESPEC P300, SCP-220 
     and ES-102 via RS232C
     '''
     os.system('clear||cls')
@@ -89,7 +97,7 @@ if __name__ == '__main__':
     options() 
     while True:
         try:
-            SELECT_OPT = int(input("Make Selection: "))
+            SELECT_OPT = int(input("Make Selection (0, 1, 2): "))
         except ValueError:
             print("Invalid number. Try again.")
             continue

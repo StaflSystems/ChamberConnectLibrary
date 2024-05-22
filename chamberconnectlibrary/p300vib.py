@@ -74,8 +74,8 @@ class P300Vib(P300Extended):
         if constant:
             rsp = ((self.ctlr.interact('MON?,DETAIL,CONSTANT')).decode('utf-8', 'replace')).split(',')
         else:
-            #rsp = self.ctlr.interact('MON?%s%s' % (',DETAIL' if detail else '', ',CONSTANT' if constant else '')).split(',')
-            rsp = ((self.ctlr.interact('MON?{}{}'.format(',DETAIL' if detail else '', ',CONSTANT' if constant else ''))).decode('utf-8', 'replace')).split(',')     
+            #rsp = self.ctlr.interact('MON?%s%s' % (',DETAIL' if detail else '', ',CONSTANT' if constant else '')).split(',')     
+            rsp = ((self.ctlr.interact(f"MON?{',DETAIL' if detail else ''}{',CONSTANT' if constant else ''}")).decode('utf-8', 'replace')).split(',')            
 
         data = {'temperature':float(rsp[0]), 'mode':rsp[2], 'alarms':int(rsp[3])}
 

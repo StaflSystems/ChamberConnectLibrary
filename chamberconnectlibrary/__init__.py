@@ -6,7 +6,10 @@ Espec North America uses.
 :license: MIT, see LICENSE for more details. 
 :author: Paul Nong-Laolam <pnong-laolam@espec.com>
 '''
+
+
 from .espec import Espec
+from .espec import EspecVib 
 from .especp300 import EspecP300
 from .especp300extended import EspecP300Extended
 from .especp300vib import EspecP300Vib

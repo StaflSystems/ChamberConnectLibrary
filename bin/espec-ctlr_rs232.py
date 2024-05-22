@@ -5,22 +5,27 @@
 :copyright: (c) 2020, 2022, 2023. ESPEC North America, Inc. 
 :file: p300_rs232.py 
 
-Application interface for controlling Watlow F4T operations. 
-This program may be and can be reimplemented with additional
-call methods to utilize the Watlow F4T control interface
-from its class and method definitions. 
+Application interface for controlling ESPEC P300 and SCP220
+features. This program may be reimplemented with additional
+call methods to utilize ESPEC P300 and ESPEC SCP-220 operations
+from each of their class and method definitions. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 README:
 ======
 
 The following is a sample program call to the Library to control ESPEC P300
-controller via the RS232 communication protocol. 
+controller via the RS232 communication protocol. The program provides options
+to select ESPEC P300 or ESPEC SCP-220 for operation. This sample program 
+had been successfully tested with: EPSEC P300 and SCP-220 via the RS232
+communication interface; P300 TCP/IP has not been tested (but should work);
+TCP/IP communication is offered here without further support.  
 
 It is programmed to provide a simple call function to our ESPEC 
 ChamberConnectLibrary to connect to "especinteract.py" program which in 
 turn communicates with the "p300.py" library offer and utilize the 
-operational features from "p300.py" in the chamberconenctlibrary directory. 
+operational features from "p300.py", including scp220.py, in the 
+chamberconenctlibrary directory. 
 
 Note: "especinteract.py" supports both features of communication protocl: 
     1. Serial RS-232/RS485
@@ -36,6 +41,9 @@ to utilize our ChamberConnectLibrary in the Python 3 environment.
 Tested: 
 GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
 MS Windows platform: Python 3.9.x 
+
+DISCLAIMER: 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 import time,re
@@ -45,49 +53,13 @@ import serial
 sys.path.insert(0,'../chamberconnectlibrary')
 
 from chamberconnectlibrary.espec import Espec
-from chamberconnectlibrary.p300 import P300 
-from chamberconnectlibrary.p300vib import P300Vib
+from chamberconnectlibrary.p300 import P300
 from chamberconnectlibrary.especinteract import EspecSerial, EspecTCP 
 from chamberconnectlibrary.controllerinterface import ControllerInterfaceError
 
 '''
-The following is a list of communication options: 
-
-#example interface_params for RS232/RS485 on port 7 (windows) RS485 address = 1
-interface_params = { 'interface':'Serial', 
-                    'baudrate':19200, 
-                    'serialport':'//./COM7', 
-                    'adr':1}
-
-#example interface_params for RS232/RS485 on ttyUSB0 (linux) RS485 address = 1
-interface_params = {'interface':'Serial', 
-                    'baudrate':19200, 
-                    'serialport':'/dev/ttyUSB0',
-                    'adr':1}
-
-#example interface_params for a TCP connection to 10.30.100.55
-interface_params = {'interface':'TCP', 'host':10.30.100.55}
-
-#when connecting to a P300:
-controller_type = 'P300'
-
-#when connecting to a SCP220:
-#controller_type = 'SCP220'
-
-#example for temp only chamber
-controller = Espec(ctlr_type=controller_type, loops=1, **interface_params)
-
-#example for temp/humidity chamber
-#controller = Espec(ctlr_type=controller_type, loops=2, **interface_params)
-
-#example for temp only chamber w/ product temperature control (aka PTCON)
-#controller = Espec(ctlr_type=controller_type, loops=0, cascades=1, **interface_params)
-
-#example for temp/humidity chamber w/ product temperature control (aka PTCON)
-#controller = Espec(ctlr_type=controller_type, loops=1, cascades=1, **interface_params)
-
-#or the library can figure it out automatically:
-#controller = Espec(ctlr_type=controller_type, **interface_params)
+Refer to "controllerinterface.md" for guidance on the use of 
+communication interface and options for MS Windows or GNU/Linux. 
 
 get_refrig()
 get_datetime() 
@@ -120,11 +92,22 @@ def fetch_event_pwr_status():
     val = CONTROLLER.get_loop_power(1)
     print (f'Power: {val}')
 
+def set_new_val(loop,x): 
+    CONTROLLER.set_loop_sp(loop,x)
+    if loop == 1: 
+        print (f"Setting Temp to new value: {x}") 
+    if loop == 2: 
+        print (f"Setting Humi to new value: {x}")
+
 def main():
     '''main driver program'''
     fetch_temp_pv_sp() 
     fetch_event_pwr_status() 
     print ('\n') 
+    l,x=1,38.5   # set new values for testing...
+    set_new_val(l,x)
+    time.sleep(3)
+    fetch_temp_pv_sp() 
 
 def options():
     '''list of chamber/controller options'''
@@ -199,7 +182,8 @@ if __name__ == "__main__":
                     **interface_params
                     #loop_names = LOOP_NAMES
                 )
-                print ("\nESPEC P300 CONTROLLER via TCP/IP:")     
+                print ("\nThis option requires further implementation for IP address.")   
+                exit()   
             else: 
                 print ("Number out of range. Try again.") 
                 continue  

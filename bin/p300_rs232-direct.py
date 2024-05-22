@@ -71,6 +71,9 @@ should be listed, such as (for example):
 Tested: 
 GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
 MS Windows platform: Python 3.9.x 
+
+DISCLAIMER: 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 import time
@@ -112,26 +115,32 @@ def get_temp():
     return get_val 
 
 def get_vib():
-    '''read vib values'''
+    '''read vib values
+    if target chamber only supports temperature only 
+    and/or temperature and humidity, it will throw an 
+    exception.
+    '''
     try:
        get_val = p300.read_vib()
     except Exception as e: 
        get_val = e 
     return get_val 
 
-def get_mon():
-    '''read MON value'''
+def get_op_mode():
+    '''read operating mode value'''
     try: 
-        mon_val = p300.read_mon()
+        mon_val = p300.read_mode()
     except Exception as e: 
         mon_val = e        
     return mon_val 
 
 def main():
     '''main driver program'''
-    print (f'Temperature:\n {get_temp()}')
-    print (f'Vibration:\n {get_vib()}') 
-    print (f'Monitor Status: {get_mon()}')
+    print ("Probing the target controller...")
+    time.sleep(1) 
+    print (f'\nrsp> Temperature:\n {get_temp()}')
+    print (f'\nrsp> Vibration:\n {get_vib()}') 
+    print (f'\nrsp> Operating Mode: {get_op_mode()}')
 
 if __name__ == '__main__':
     '''set up low-level communication with ESPEC P300 via RS232C
