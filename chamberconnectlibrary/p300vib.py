@@ -34,7 +34,17 @@ class P300Vib(P300Extended):
         address (int): The RS485 address of the chamber to connect to.
         host (str): The IP address or hostname of the chamber when interface="TCP"
     '''
+    def read_rom(self, display=False):
+        '''
+        Get the rom version of the controller
 
+        Args:
+            display: If true get the controllers display rom
+        returns:
+            rom version as a string
+        '''
+        return (self.ctlr.interact('ROM?{}'.format(',DISP' if display else ''))).decode('utf-8', 'replace')
+        
     def read_vib(self):
         '''
         Read and return vibration values

@@ -6,7 +6,6 @@ A direct implementation of the SCP220's communication interface.
 '''
 import re
 from .p300 import P300, tryfloat
-#from .p300vib import P300Vib, tryfloat
 
 class P300Extended(P300):
     '''
