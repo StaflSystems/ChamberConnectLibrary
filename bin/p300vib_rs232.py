@@ -12,7 +12,12 @@ call methods to utilize ESPEC P300 w/ Vibration
 from its class and method definitions. 
 
 DISCLAIMER: 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 README:
 ======
@@ -121,45 +126,6 @@ def main():
     fetch_temp_loop_range(1) 
     fetch_temp_loop_range(2) 
 
-    print ('\n') 
-
-    print (fetch_loop_mode(1)) 
-
-    start_const()
-    time.sleep(3)
-    print (f"OPERATION STATUS: {fetch_status(1)}")
-    print (fetch_loop_mode(1))  
-    stop()
-    time.sleep(3)
-    print (f"OPERATION STATUS: {fetch_status(1)}")
-    print (fetch_loop_mode(1))  
-
-    start_const()
-    time.sleep(3)
-    print (f"OPERATION STATUS: {fetch_status(1)}")
-
-    time.sleep(1) 
-    print (f"All properties: {fetch_loop_all(1)}")
-    '''
-    set_new_val(1,32.5)
-    time.sleep(3)
-    fetch_temp_pv_sp(1) 
-    fetch_vib_pv_sp(2) 
-    fetch_temp_loop_range(1) 
-    fetch_temp_loop_range(2) 
-
-    set_new_val(2,23.5) 
-    time.sleep(3)
-    fetch_temp_pv_sp(1) 
-    fetch_vib_pv_sp(2) 
-    fetch_temp_loop_range(1) 
-    fetch_temp_loop_range(2)     
-    '''
-    print (f"OPERATION STATUS: {fetch_status(1)}")
-    time.sleep(1)
-    print (f"OPERATION STATUS: {fetch_status(2)}")    
-
-    print (f"OPERATING MODE: {fetch_mode()}") 
 
 if __name__ == "__main__":
     '''main menu for the driver'''

@@ -1241,6 +1241,7 @@ class EspecVib(ControllerInterface):
             'RMT RUN END HOLD':'Program Remote End Hold'
         }[self.client.read_mode(True)]
 
+    # added exclusively for P300 w/ Vibration 
     @exclusive
     def get_mode(self):
         return {
