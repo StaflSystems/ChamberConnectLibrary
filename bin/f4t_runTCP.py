@@ -64,14 +64,22 @@ def ip_addr():
 def set_loop(str, loop):
     '''set new temp value
     '''
+    # recording temp range 
+    val_range = CONTROLLER.get_loop_range(loop)
+    str1 = "Temperature Range" if loop == 1 else "Humidity Range"
+    print (f'\n{str1}:\nMAX: {val_range["max"]}\nMIN: {val_range["min"]}')
     print ('\n<Applying new Set Point>')
     try:
         while True:
             try:
                 val = float(input('Enter new SP value: '))
                 if isinstance(val, int) or isinstance(val,float):
-                    CONTROLLER.set_loop_sp(loop,val)
-                    break
+                    if loop == 1 or loop == 2: 
+                        if val_range["min"] <= val <= val_range["max"]:
+                            CONTROLLER.set_loop_sp(loop,val)
+                            break
+                        else:
+                            print ('ERROR! Value out of range. Try again. \n')
             except ValueError:
                 print ('Invalid value.\n')
             except KeyboardInterrupt:

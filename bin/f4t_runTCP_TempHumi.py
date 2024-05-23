@@ -80,7 +80,7 @@ def set_loop(str, loop):
                             CONTROLLER.set_loop_sp(loop,val)
                             break
                         else:
-                            print ('ERROR!!! Value out of range. Try again. \n')
+                            print ('ERROR! Value out of range. Try again. \n')
             except ValueError:
                 print ('Invalid value.\n')
             except KeyboardInterrupt:
