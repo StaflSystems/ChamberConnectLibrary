@@ -25,6 +25,7 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
 '''
 import re
+from chamberconnectlibrary.p300 import P300   # added for testing ....
 from chamberconnectlibrary.p300extended import P300Extended, tryfloat
 
 class P300Vib(P300Extended):

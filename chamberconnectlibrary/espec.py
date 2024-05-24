@@ -1,20 +1,8 @@
 '''
-Upper level interface for Espec Corp. Controllers:
-    (1) ESPEC P300 (Temp. only and/or Temp/Humi)
-    (2) ESPEC P300 Temp and Vibration 
-    (3) ESPEC SCP-200 
-    (4) ESPEC ES-102: to be determined (unsupported yet) 
+Upper level interface for Espec Corp. Controllers (just the P300 for now)
 
-:author: Paul Nong-Laolam <pnong-laolam@espec.com>
-:license: MIT, see LICENSE for more detail.
-:copyright: (C) Espec North America, Inc. 
-:updated: May 2024; modified and expanded to support P300 Vib and Python 3.6+
-
-Two classes:
-
-    (1) class Espec(): implemented for standard P300, SCP-220 and ES-102 
-    (2) class EspecVib(): implemented specifically for ESPEC P300 w/ Vibration
-    
+:copyright: (C) Espec North America, INC.
+:license: MIT, see LICENSE for more details. 
 '''
 #pylint: disable=R0902,R0904
 import datetime
@@ -25,7 +13,7 @@ from chamberconnectlibrary.p300 import P300
 from chamberconnectlibrary.p300vib import P300Vib
 from chamberconnectlibrary.p300extended import P300Extended 
 from chamberconnectlibrary.scp220 import SCP220
-from chamberconnectlibrary.es102 import ES102      # included but unused 
+from chamberconnectlibrary.es102 import ES102
 from chamberconnectlibrary.especinteract import EspecError
 
 class Espec(ControllerInterface):
@@ -144,6 +132,16 @@ class Espec(ControllerInterface):
     @exclusive
     def get_refrig(self):
         return self.client.read_constant_ref()
+
+    # added to allow reading of ROM info 
+    @exclusive
+    def get_rom(self):
+        return self.client.read_rom()
+
+    # added to allow reading of operating mode 
+    @exclusive
+    def get_mode(self):
+        return self.client.read_mode()
 
     @exclusive
     def set_refrig(self, value):
@@ -529,6 +527,21 @@ class Espec(ControllerInterface):
             'RMT RUN END HOLD':'Program Remote End Hold'
         }[self.client.read_mode(True)]
 
+    # added exclusively for P300 w/ Vibration 
+    @exclusive
+    def get_mode(self):
+        return {
+            'OFF':'Off',
+            'STANDBY':'Standby',
+            'CONSTANT':'Constant',
+            'RUN':'Program Running',
+            'RUN PAUSE':'Program Paused',
+            'RUN END HOLD':'Program End Hold',
+            'RMT RUN':'Program Remote Running',
+            'RMT RUN PAUSE':'Program Remote Paused',
+            'RMT RUN END HOLD':'Program Remote End Hold'
+        }[self.client.read_mode(True)]
+
     @exclusive
     def get_alarm_status(self):
         active = self.client.read_alarm()
@@ -728,10 +741,9 @@ class Espec(ControllerInterface):
         else:
             self.client.write_ip_set('0.0.0.0', '0.0.0.0', '0.0.0.0')
 
-
-class EspecVib(ControllerInterface):
+class EspecVib(Espec):
     '''
-    A class for interfacing with ESPEC controller, P300 w/ Vibration
+    A class for interfacing with Espec controllers (P300Vib, SCP220, ES102)
 
     Kwargs:
         interface (str): The connection method::
@@ -740,18 +752,20 @@ class EspecVib(ControllerInterface):
         adr (int): The address of the controller (default=1)
         host (str): The hostname (IP address) of the controller when interface="TCP"
         serialport (str): The serial port to use when interface="Serial" (default=3(COM4))
-        baudrate (int): The serial port's baud rate to use when interface="Serial" (default=19200)
+        baudrate (int): The serial port's baud rate to use when interface="Serial" (default=9600)
         loops (int): The number of control loops the controller has (default=1, max=2)
         cascades (int): The number of cascade control loops the controller has (default=0, max=1)
         lock (RLock): The locking method to use when accessing the controller (default=RLock())
         freshness (int): The length of time (in seconds) a command is cached (default = 0)
-        ctlr_type (str): "P300Vib"
+        ctlr_type (str): "SCP220" or "P300" (default = "P300")
     '''
 
     def __init__(self, **kwargs):
         '''
-        Initialization specifically for ESPEC P300 w/ Vib 
+        Warning: Espec Class is no longer being maintained as of version 2.3.0; use EspecP300 
+        or EspecSCP220 classes instead.
         '''
+        #print ('Warning: Espec Class is no longer being maintained as of version 2.3.0; use EspecP300 or EspecSCP220 classes instead.')
         self.client, self.loops, self.cascades = None, None, None
         self.init_common(**kwargs)
         self.freshness = kwargs.get('freshness', 0)
@@ -776,6 +790,7 @@ class EspecVib(ControllerInterface):
         self.profiles = True
         self.events = 12
         self.total_programs = 40 if self.ctlr_type == 'P300Vib' else 30 if self.ctlr_type == 'SCP220' else 1
+        #self.total_programs = 1 if self.ctlr_type == 'ES102' else 40 if self.ctlr_type == 'P300Vib' else 30
         self.__update_loop_map()
 
     def __update_loop_map(self):
@@ -799,57 +814,16 @@ class EspecVib(ControllerInterface):
         args = {'serialport':self.serialport, 'baudrate':self.baudrate, 'host':self.host,
                 'address':self.adr}
         if self.ctlr_type == 'P300Vib':
-            self.client = P300Vib(self.interface, **args)          
+            self.client = P300Vib(self.interface, **args)
+        elif self.ctlr_type == 'P300':
+            self.client = P300(self.interface, **args)  
+        elif self.ctlr_type == 'SCP220':
+            self.client = SCP220(self.interface, **args)              
+        elif self.ctlr_type == 'ES102':
+            self.client = ES102(self.interface, **args)           
         else:
-            raise ValueError(f'"{self.ctlr_type}" is not a supported controller type')
+            raise ValueError('"%s" is not a supported controller type' % self.ctlr_type)
 
-    def close(self):
-        '''
-        close the connection to the controller
-        '''
-        try:
-            self.client.close()
-        except AttributeError:
-            pass
-        self.client = None
-
-    def cached(self, func, *args, **kwargs):
-        '''
-        The P300Vib returns multiple parameters with each command. 
-        The commands responses will be cached; 
-        cached responses returned if they are fresh enough (settable property)
-        '''
-        now = time.time()
-        incache = func.__name__ not in self.cache
-        if incache or (now - self.cache[func.__name__]['timestamp'] > self.freshness):
-            self.cache[func.__name__] = {'timestamp':now, 'values':func(*args, **kwargs)}
-        return self.cache[func.__name__]['values']
-
-    @exclusive
-    def raw(self, command):
-        '''
-        connect directly to the controller
-        '''
-        try:
-            return self.client.interact(command)
-        except EspecError as exc:
-            emsg = str(exc)
-            if 'The chamber did not respond in time' in emsg:
-                return 'NA: SERIAL TIMEOUT'
-            qps = [i for i, c in enumerate(emsg) if c == '"']
-            return 'NA:' + emsg[qps[len(qps)-2]+1:qps[len(qps)-1]]
-
-    @exclusive
-    def get_rom(self):
-        return self.client.read_rom()
-
-    @exclusive
-    def get_refrig(self):
-        return self.client.read_constant_ref()
-
-    @exclusive
-    def set_refrig(self, value):
-        self.client.write_set(**value)
 
     @exclusive
     def set_loop(self, identifier, loop_type='loop', param_list=None, **kwargs):
@@ -934,16 +908,6 @@ class EspecVib(ControllerInterface):
                 pass
 
     @exclusive
-    def get_datetime(self):
-        return datetime.datetime(**self.client.read_date_time())
-
-    @exclusive
-    def set_datetime(self, value):
-        weekday = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'][value.weekday()]
-        self.client.write_time(value.hour, value.minute, value.second)
-        self.client.write_date(value.year, value.month, value.day, weekday)
-
-    @exclusive
     def get_loop_sp(self, N):
         if N not in self.lpd:
             raise ValueError(self.lp_exmsg)
@@ -970,19 +934,10 @@ class EspecVib(ControllerInterface):
         if self.lpd[N] == self.temp:
             return {'air':self.cached(self.client.read_temp)['processvalue']}
         elif self.lpd[N] == self.vib:
-            return {'vib':self.cached(self.client.read_vib)['processvalue']} # read just process value
+            return {'air':self.cached(self.client.read_vib)['processvalue']}
+            #return {'vib':self.cached(self.client.read_vib)} # returen entire range of vib properties      
         else:
             raise ValueError(self.lp_exmsg)
-
-    @exclusive
-    def get_loop_all(self, N):
-        '''probe and fetch entire range of values for each variable property'''
-        if self.lpd[N] == self.temp:
-            return {'air':self.cached(self.client.read_temp)}
-        elif self.lpd[N] == self.vib:
-            return {'vib':self.cached(self.client.read_vib)}   
-        else:
-            raise ValueError(self.lp_exmsg)            
 
     @exclusive
     def set_loop_range(self, N, value):
@@ -1031,21 +986,9 @@ class EspecVib(ControllerInterface):
         if self.lpd[N] == self.temp:
             return u'\xb0C'
         elif self.lpd[N] == self.vib:
-            return u'%RH'
+            return u'Grms'
         else:
             raise ValueError(self.lp_exmsg)
-
-    @exclusive
-    def set_loop_mode(self, N, value):
-        value = value['constant'] if isinstance(value, dict) else value
-        if N > 2:
-            raise ValueError(self.lp_exmsg)
-        if value in ['Off', 'OFF', 'off']:
-            self.set_loop_en(N, False, exclusive=False)
-        elif value in ['On', 'ON', 'on']:
-            self.set_loop_en(N, True, exclusive=False)
-        else:
-            raise ValueError('Mode must be on or off, recived:' + value)
 
     @exclusive
     def get_loop_mode(self, N):
@@ -1074,346 +1017,13 @@ class EspecVib(ControllerInterface):
         if self.lpd[N] == self.temp:
             val = self.cached(self.client.read_htr)['dry']
         elif self.lpd[N] == self.vib:
-            val = self.cached(self.client.read_htr)['wet']
+            val = self.cached(self.client.read_htr)['vib']
         else:
             raise ValueError(self.lp_exmsg)
         return {'current':val, 'constant':val}
 
     def set_loop_power(self, N, value):
         raise NotImplementedError
-
-    @exclusive
-    def get_cascade_sp(self, N):
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        cur = self.cached(self.client.read_temp_ptc)
-        enc = cur['enable_cascade']
-        return {
-            'constant':self.cached(self.client.read_constant_temp)['setpoint'],
-            'current':cur['setpoint']['product'] if enc else cur['setpoint']['air'],
-            'air':cur['setpoint']['air'],
-            'product':cur['setpoint']['product']
-        }
-
-    @exclusive
-    def set_cascade_sp(self, N, value):
-        value = value['constant'] if isinstance(value, dict) else value
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        self.client.write_temp(setpoint=value)
-
-    @exclusive
-    def get_cascade_pv(self, N):
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        return self.cached(self.client.read_temp_ptc)['processvalue']
-
-    @exclusive
-    def get_cascade_range(self, N):
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        return self.get_loop_range(self.temp, exclusive=False)
-
-    @exclusive
-    def set_cascade_range(self, N, value):
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        self.set_loop_range(self.temp, value, exclusive=False)
-
-    @exclusive
-    def get_cascade_en(self, N):
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        return self.get_loop_en(self.temp, exclusive=False)
-
-    @exclusive
-    def set_cascade_en(self, N, value):
-        value = value['constant'] if isinstance(value, dict) else value
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        return self.set_loop_en(self.temp, value, exclusive=False)
-
-    @exclusive
-    def get_cascade_units(self, N):
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        return self.get_loop_units(self.temp, exclusive=False)
-
-    @exclusive
-    def set_cascade_mode(self, N, value):
-        value = value['constant'] if isinstance(value, dict) else value
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        return self.set_loop_mode(N, value, exclusive=False)
-
-    @exclusive
-    def get_cascade_mode(self, N):
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        return self.get_loop_mode(self.temp, exclusive=False)
-
-    def get_cascade_modes(self, N):
-        return self.get_loop_modes(N)
-
-    @exclusive
-    def get_cascade_ctl(self, N):
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        return {
-            'current': self.cached(self.client.read_temp_ptc)['enable_cascade'],
-            'constant': self.cached(self.client.read_constant_ptc)['enable']
-        }
-
-    @exclusive
-    def set_cascade_ctl(self, N, value):
-        value = value['constant'] if isinstance(value, dict) else value
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        params = self.cached(self.client.read_temp_ptc)
-        params['deviation'].update({'enable':value})
-        self.client.write_temp_ptc(**params['deviation'])
-
-    @exclusive
-    def get_cascade_deviation(self, N):
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        return self.cached(self.client.read_constant_ptc)['deviation']
-
-    @exclusive
-    def set_cascade_deviation(self, N, value):
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        if 'positive' not in value or 'negative' not in value:
-            raise ValueError('value must contain "positive" and "negative" keys')
-        self.client.write_temp_ptc(self.get_cascade_ctl(self.temp, exclusive=False), **value)
-
-    @exclusive
-    def get_cascade_power(self, N):
-        if self.lpd[N] != self.temp:
-            raise ValueError(self.cs_exmsg)
-        return self.get_loop_power(self.temp, exclusive=False)
-
-    @exclusive
-    def set_cascade_power(self, N, value):
-        raise NotImplementedError
-
-    @exclusive
-    def get_event(self, N):
-        if N >= 13:
-            raise ValueError('There are only 12 events')
-        return {
-            'current':self.cached(self.client.read_relay)[N-1],
-            'constant':self.cached(self.client.read_constant_relay)[N-1]
-        }
-
-    @exclusive
-    def set_event(self, N, value):
-        value = value['constant'] if isinstance(value, dict) else value
-        if N >= 13:
-            raise ValueError('There are only 12 events')
-        self.client.write_relay([value if i == N else None for i in range(1, 13)])
-
-    @exclusive
-    def get_air_speed(self):
-        raise NotImplementedError
-
-    @exclusive
-    def get_air_speeds(self):
-        raise NotImplementedError
-
-    @exclusive
-    def set_air_speed(self, value): 
-        raise NotImplementedError
-
-    @exclusive
-    def get_status(self):
-        if self.cached(self.client.read_mon)['alarms'] > 0:
-            return 'Alarm'
-        return {
-            'OFF':'Off',
-            'STANDBY':'Standby',
-            'CONSTANT':'Constant',
-            'RUN':'Program Running',
-            'RUN PAUSE':'Program Paused',
-            'RUN END HOLD':'Program End Hold',
-            'RMT RUN':'Program Remote Running',
-            'RMT RUN PAUSE':'Program Remote Paused',
-            'RMT RUN END HOLD':'Program Remote End Hold'
-        }[self.client.read_mode(True)]
-
-    # added exclusively for P300 w/ Vibration 
-    @exclusive
-    def get_mode(self):
-        return {
-            'OFF':'Off',
-            'STANDBY':'Standby',
-            'CONSTANT':'Constant',
-            'RUN':'Program Running',
-            'RUN PAUSE':'Program Paused',
-            'RUN END HOLD':'Program End Hold',
-            'RMT RUN':'Program Remote Running',
-            'RMT RUN PAUSE':'Program Remote Paused',
-            'RMT RUN END HOLD':'Program Remote End Hold'
-        }[self.client.read_mode(True)]
-
-    @exclusive
-    def get_alarm_status(self):
-        active = self.client.read_alarm()
-        alarmlist = [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 18, 19, 21, 22, 23, 26,
-                     30, 31, 40, 41, 43, 46, 48, 50, 51, 99]
-        inactive = [x for x in alarmlist if x not in active]
-        return {'active':active, 'inactive':inactive}
-
-    @exclusive
-    def const_start(self):
-        self.client.write_mode_constant()
-
-    @exclusive
-    def stop(self):
-        self.client.write_mode_standby()
-
-    @exclusive
-    def prgm_start(self, N, step):
-        self.client.write_prgm_run(N, step)
-
-    @exclusive
-    def prgm_pause(self):
-        self.client.write_prgm_pause()
-
-    @exclusive
-    def prgm_resume(self):
-        self.client.write_prgm_continue()
-
-    @exclusive
-    def prgm_next_step(self):
-        self.client.write_prgm_advance()
-
-    @exclusive
-    def get_prgm_counter(self):
-        prgm_set = self.client.read_prgm_set()
-        prgm_data = self.client.read_prgm_data(prgm_set['number'])
-        prgm_mon = self.client.read_prgm_mon()
-        ret = [
-            {
-                'name':'A',
-                'remaining':prgm_mon['counter_a'],
-                'count':prgm_data['counter_a']['cycles'] - prgm_mon['counter_a']
-            },
-            {
-                'name':'B',
-                'remaining':prgm_mon['counter_b'],
-                'count':prgm_data['counter_b']['cycles'] - prgm_mon['counter_b']
-            }
-        ]
-        ret[0].update(prgm_data['counter_a'])
-        ret[1].update(prgm_data['counter_b'])
-        return ret
-
-    @exclusive
-    def get_prgm_cur(self):
-        return self.cached(self.client.read_prgm_set)['number']
-
-    @exclusive
-    def get_prgm_cstep(self):
-        return self.cached(self.client.read_prgm_mon)['pgmstep']
-
-    @exclusive
-    def get_prgm_cstime(self):
-        try:
-            rtime = self.cached(self.client.read_prgm_mon)['time']
-        except EspecError:
-            rtime = self.cached(self.client.read_run_prgm_mon)['time']
-        return '%d:%02d:00' % (rtime['hour'], rtime['minute'])
-
-    @exclusive
-    def get_prgm_time(self, pgm=None):
-        if pgm is None:
-            pgm = self.client.read_prgm(self.cached(self.client.read_prgm_set)['number'])
-        try:
-            pgms = self.cached(self.client.read_prgm_mon)
-        except EspecError:
-            rtime = self.cached(self.client.read_run_prgm_mon)['time']
-            return '%d:%02d:00' % (rtime['hour'], rtime['minute'])
-
-        #counter_a must be the inner counter or the only counter
-        use_a = pgm['counter_a']['cycles'] != 0
-        use_b = pgm['counter_b']['cycles'] != 0
-        ae_gte_be = pgm['counter_a']['end'] >= pgm['counter_b']['end']
-        as_lte_bs = pgm['counter_a']['start'] <= pgm['counter_b']['start']
-        same_end = pgm['counter_a']['end'] == pgm['counter_b']['end']
-
-        if (ae_gte_be and as_lte_bs) or not use_a and use_b:
-            pgm['counter_a'], pgm['counter_b'] = pgm['counter_b'], pgm['counter_a']
-            pgms['counter_a'], pgms['counter_b'] = pgms['counter_b'], pgms['counter_a']
-            use_a, use_b = use_b, use_a
-
-        nested = use_a and use_b and pgm['counter_a']['start'] >= pgm['counter_b']['start']
-        nested = nested and pgm['counter_a']['end'] <= pgm['counter_b']['end']
-        tminutes, tta, ttb = -1, 0, 0
-        if use_a:
-            for i in range(pgm['counter_a']['start']-1, pgm['counter_a']['end']):
-                tta += pgm['steps'][i]['time']['hour']*60 + pgm['steps'][i]['time']['minute']
-        if use_b:
-            for i in range(pgm['counter_b']['start']-1, pgm['counter_b']['end']):
-                if nested and i >= pgm['counter_a']['start']-1 and i < pgm['counter_a']['end']-1:
-                    pass
-                elif nested and i >= pgm['counter_a']['start']-1 and i == pgm['counter_a']['end']-1:
-                    ttb += tta*(pgm['counter_a']['cycles'] + 1)
-                else:
-                    ttb += pgm['steps'][i]['time']['hour']*60 + pgm['steps'][i]['time']['minute']
-
-        # correct for p300 not resetting the nested counter until it hits counter.start
-        if nested and pgms['pgmstep'] < pgm['counter_a']['start']:
-            count_a = pgm['counter_a']['cycles']
-        else:
-            count_a = pgms['counter_a']
-        for i in range(pgms['pgmstep']-1, len(pgm['steps'])): #ensure that this is not off by 1
-            if tminutes == -1:
-                tminutes = pgms['time']['hour']*60 + pgms['time']['minute']
-            else:
-                mystep = pgm['steps'][i]
-                tminutes += mystep['time']['hour']*60 + mystep['time']['minute']
-            if use_a and i == pgm['counter_a']['end']-1:
-                tminutes += tta*count_a
-            if use_b and i == pgm['counter_b']['end']-1:
-                tminutes += ttb*pgms['counter_b']
-        return "%d:%02d:00" % (int(tminutes/60), tminutes%60)
-
-    @exclusive
-    def get_prgm_name(self, N):
-        return self.cached(self.client.read_prgm_data, N)['name']
-
-    def set_prgm_name(self, N, value):
-        raise NotImplementedError
-
-    @exclusive
-    def get_prgm_steps(self, N):
-        return self.client.read_prgm_data(N)['steps']
-
-    @exclusive
-    def get_prgms(self):
-        names = []
-        for i in range(1, self.total_programs+1):
-            try:
-                names.append({'number':i, 'name':self.client.read_prgm_use_num(i)['name']})
-            except EspecError:
-                names.append({'number':i, 'name':''})
-        return names
-
-    @exclusive
-    def get_prgm(self, N):
-        try:
-            return self.client.read_prgm(N, self.cascades > 0)
-        except EspecError:
-            raise ControllerInterfaceError('Could not read program from chamber controller.')
-
-    @exclusive
-    def set_prgm(self, N, prgm):
-        self.client.write_prgm(N, prgm)
-
-    @exclusive
-    def prgm_delete(self, N):
-        self.client.write_prgm_erase(N)
 
 
     @exclusive
@@ -1441,16 +1051,3 @@ class EspecVib(ControllerInterface):
         self.__update_loop_map()
         return msg
 
-    @exclusive
-    def get_network_settings(self):
-        ret = self.client.read_ip_set()
-        ret.update({'message':'', 'host':''})
-        return ret
-
-    @exclusive
-    def set_network_settings(self, value):
-        if value:
-            self.client.write_ip_set(value.get('address', '0.0.0.0'),
-                                     value.get('mask', '0.0.0.0'), value.get('gateway', '0.0.0.0'))
-        else:
-            self.client.write_ip_set('0.0.0.0', '0.0.0.0', '0.0.0.0')
