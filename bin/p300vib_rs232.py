@@ -52,9 +52,8 @@ import logging
 import serial 
 sys.path.insert(0,'../chamberconnectlibrary')
 
-from chamberconnectlibrary.espec import EspecVib
-#from chamberconnectlibrary.p300 import P300 
-from chamberconnectlibrary.p300vib import P300Vib
+from chamberconnectlibrary.espec import EspecVib  
+from chamberconnectlibrary.p300vib import P300Vib 
 from chamberconnectlibrary.especinteract import EspecSerial, EspecTCP 
 from chamberconnectlibrary.controllerinterface import ControllerInterfaceError
 
@@ -120,7 +119,13 @@ def main():
     '''main driver program'''
     # TEMP: loop = 1
     # VIB: loop = 2
-    
+    print ("""\nThis simple program probes ESPEC P300 via RS232 and reads\n"""
+        + """a few parameters from the controller and display them as follows.\n"""
+        + """Programmers may add their own method definitions using the p300.py\n"""
+        + """library to meet their programming requirements.\n"""
+    )
+    print ("Probing...reading...")
+    time.sleep(1)
     fetch_temp_pv_sp(1) 
     fetch_vib_pv_sp(2) 
     fetch_temp_loop_range(1) 
@@ -130,15 +135,15 @@ def main():
 if __name__ == "__main__":
     '''main menu for the driver'''
 
-    LOOP_NAMES = ['Temperature', 'Vibration']
+    LOOP_NAMES = ['Temperature', 'Vibration']   # set for Vibration/Humidity 
     #os.system('clear||cls') 
 
-    controller_type = "P300Vib"
+    controller_type = "P300Vib"      # custom define for P300 or P300Vib 
     interface_params = {
         'interface':'Serial',
         'baudrate':'19200',          # opt: 9600, 19200
         #'serialport':'//./COM5',    # for MS Windows platform
-        'serialport':'/dev/ttyUSB0', # GNU/Linux platform 
+        'serialport':'/dev/ttyUSB1', # GNU/Linux platform 
         'adr':1
     }
     
