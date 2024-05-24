@@ -62,27 +62,6 @@ from chamberconnectlibrary.p300 import P300
 from chamberconnectlibrary.especinteract import EspecSerial, EspecTCP 
 from chamberconnectlibrary.controllerinterface import ControllerInterfaceError
 
-'''
-Refer to "controllerinterface.md" for guidance on the use of 
-communication interface and options for MS Windows or GNU/Linux. 
-
-get_refrig()
-get_datetime() 
-get_loop_sp(N) # N = number of loop 
-get_loop_pv(1) 
-get_loop_range(N)
-get_loop_en(N)
-get_loop_units(N) 
-get_loop_mode(N) 
-get_loop_power(N)
-get_cascade_sp(N)
-get_cascade_pv(N) 
-get_cascade_range(N) 
-get_cascade_en(N) 
-get_cascade_units(N) 
-get_cascade_modes(N) 
-'''
-
 def fetch_temp_pv_sp():
     val = CONTROLLER.get_loop_pv(1)
     print (f'Temp PV: {val}')
@@ -162,7 +141,7 @@ if __name__ == "__main__":
                     'interface':'Serial',
                     'baudrate':'19200',          # opt: 9600, 19200
                     #'serialport':'//./COM5',    # for MS Windows platform
-                    'serialport':'/dev/ttyUSB0', # GNU/Linux platform 
+                    'serialport':'/dev/ttyUSB1', # GNU/Linux platform 
                     'adr':1
                 }
                 CONTROLLER = Espec(
@@ -179,16 +158,16 @@ if __name__ == "__main__":
                 controller_type = "P300"
                 interface_params = {
                      'interface':'TCP',
-                     'host':'10.30.100.10'  # use correct IP addr
+                     'host':'10.30.200.249'  # use correct IP addr
                 }
                 CONTROLLER = Espec(
                     ctrl_type=controller_type,
-                    loops = 1,
+                    loops = 2,
                     **interface_params
                     #loop_names = LOOP_NAMES
                 )
-                print ("\nThis option requires further implementation for IP address.")   
-                exit()   
+                #print ("\nThis option requires further implementation for IP address.")   
+                #exit()   
             else: 
                 print ("Number out of range. Try again.") 
                 continue  

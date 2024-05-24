@@ -52,8 +52,8 @@ def ip_addr():
     '''
     while True:
         try:
-            #ip_addr = input('Enter F4T IP address (e.g., 192.168.0.101): ')
-            ip_addr ='10.30.100.115' 
+            ip_addr = input('Enter F4T IP address (e.g., 192.168.0.101): ')
+            #ip_addr ='10.30.100.115' # set for testing  
             chk_ip = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", ip_addr)
             if chk_ip:
                 print ('\n')
@@ -66,16 +66,17 @@ def set_loop(str, loop):
     '''set new temp value
     '''
     # recording temp range 
+    loop_num = [1,2] 
     val_range = CONTROLLER.get_loop_range(loop)
     str1 = "Temperature Range" if loop == 1 else "Humidity Range"
     print (f'\n{str1}:\nMAX: {val_range["max"]}\nMIN: {val_range["min"]}')
-    print ('\n<Applying new Set Point>')
+    print ('\n<Apply new Set Point>')
     try:
         while True:
             try:
-                val = float(input('Enter new SP value: '))
+                val = float(input('Enter new SP value (Ctrl-C to cancel): '))
                 if isinstance(val, int) or isinstance(val,float):
-                    if loop == 1 or loop == 2: 
+                    if loop in loop_num:    #if loop == 1 or loop == 2: 
                         if val_range["min"] <= val <= val_range["max"]:
                             CONTROLLER.set_loop_sp(loop,val)
                             break
@@ -224,12 +225,14 @@ def stop_const():
     '''
     str = CONTROLLER.get_status()
     time.sleep(0.5)
-    if ('Program Running' in str) or ('Program Paused' in str):
-        print (f'\nrsp> Chamber is currently in {str} mode. Must stop it first.')
-    else:
+    if 'Constant' in str:
         CONTROLLER.stop()
         time.sleep(0.5) 
-        print ('\nrsp > Done ') 
+        print ('\nrsp > Done ')
+    elif ('Program Running' in str) or ('Program Paused' in str):
+        print (f'\nrsp> Chamber is in {str} mode. Request ignored.')
+    else:    
+        print ("\nrsp> Chamber not in Constant mode. Nothing to do.")
 
 def temp_humi_controller():
     '''

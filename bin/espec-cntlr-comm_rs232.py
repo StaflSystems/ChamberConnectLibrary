@@ -55,15 +55,15 @@ def close():
 def options():
     '''list of chamber/controller options'''
     print ("""This program connects to ESPEC controller P300, \n"""
-    + """SCP-220 or ES-102 directly via RS232 communication \n"""
-    + """interface to allow programmers to issue commands \n"""
-    + """to control and operate the target controller.""")
+    + """SCP-220 or ES-102 via RS232 communication interface\n"""
+    + """to allow programmers to issue commands to control and\n"""
+    + """operate the target controller directly via the CLI.""")
     print ("\nChamber/Controller Selection:\n"
-           "==================================\n"
-           "0. ESPEC ES-102 via RS232\n"
-           "1. ESPEC SCP-220 via RS232\n"
-           "2. ESPEC P300 via via RS232\n"
-           "==================================")
+           "=================================\n"
+           "0. ESPEC ES-102, baud rate: 9600 \n"
+           "1. ESPEC SCP-220, baud rate: 9600\n"
+           "2. ESPEC P300, baud rate: 19200\n"
+           "=================================")
 
 def cmd_rsp():
     '''controller command and response'''

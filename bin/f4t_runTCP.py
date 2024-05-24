@@ -65,16 +65,17 @@ def set_loop(str, loop):
     '''set new temp value
     '''
     # recording temp range 
+    loop_num = [1,2]
     val_range = CONTROLLER.get_loop_range(loop)
     str1 = "Temperature Range" if loop == 1 else "Humidity Range"
     print (f'\n{str1}:\nMAX: {val_range["max"]}\nMIN: {val_range["min"]}')
-    print ('\n<Applying new Set Point>')
+    print ('\n<Apply new Set Point>')
     try:
         while True:
             try:
-                val = float(input('Enter new SP value: '))
+                val = float(input('Enter new SP value (Ctrl-C to cancel): '))
                 if isinstance(val, int) or isinstance(val,float):
-                    if loop == 1 or loop == 2: 
+                    if loop in loop_num: # if loop == 1:   only one loop (Temp) 
                         if val_range["min"] <= val <= val_range["max"]:
                             CONTROLLER.set_loop_sp(loop,val)
                             break
@@ -217,9 +218,16 @@ def const_start():
 def stop_const():
     '''Stop constant mode on chamber
     '''
-    CONTROLLER.stop()
-    time.sleep(0.5) 
-    print ('\nrsp > Done ') 
+    str = CONTROLLER.get_status()
+    time.sleep(0.5)
+    if 'Constant' in str:
+        CONTROLLER.stop()
+        time.sleep(0.5) 
+        print ('\nrsp > Done ')
+    elif ('Program Running' in str) or ('Program Paused' in str):
+        print (f'\nrsp> Chamber is in {str} mode. Request ignored.')
+    else:    
+        print ("\nrsp> Chamber not in Constant mode. Nothing to do.")
 
 def temp_controller():
     '''
