@@ -2,9 +2,15 @@
 
 Python 3 library for interfacing with ESPEC North America chambers with P300 and P300 w/ vibration, SCP-220, ES-102 Watlow F4T and Watlow F4S/D controllers. 
 
+ESPEC Chamber Connect Library for Python 3 is offered as-is without 
+technical support or guaranttee. However, the offered product here has been prepared and tested by ESPEC software engineer to ensure
+operability and compatibility. 
+
+Please read the disclaimer on liability in the LICENSE document as well as in all sample programs. 
+
 ## Requirements
 
-Python 3.8.x and above is required for using this distributed library. 
+Python 3.6 and above is required for using this distributed library. 
 
 This library has been completely tested under the following Python 3 versions: 
 
