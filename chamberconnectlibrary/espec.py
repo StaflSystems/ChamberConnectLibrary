@@ -743,7 +743,7 @@ class Espec(ControllerInterface):
 
 class EspecVib(Espec):
     '''
-    A class for interfacing with Espec controllers (P300Vib, SCP220, ES102)
+    A class for interfacing with Espec controllers (P300Vib)
 
     Kwargs:
         interface (str): The connection method::
@@ -762,10 +762,8 @@ class EspecVib(Espec):
 
     def __init__(self, **kwargs):
         '''
-        Warning: Espec Class is no longer being maintained as of version 2.3.0; use EspecP300 
-        or EspecSCP220 classes instead.
+        EspecVib is an extension of the Espec class, even though it is no longer maintained; set for inheritance
         '''
-        #print ('Warning: Espec Class is no longer being maintained as of version 2.3.0; use EspecP300 or EspecSCP220 classes instead.')
         self.client, self.loops, self.cascades = None, None, None
         self.init_common(**kwargs)
         self.freshness = kwargs.get('freshness', 0)
@@ -813,14 +811,14 @@ class EspecVib(Espec):
         '''
         args = {'serialport':self.serialport, 'baudrate':self.baudrate, 'host':self.host,
                 'address':self.adr}
-        if self.ctlr_type == 'P300Vib':
+        if self.ctlr_type == 'P300Vib': # only P300 w/ vibration feature 
             self.client = P300Vib(self.interface, **args)
-        elif self.ctlr_type == 'P300':
-            self.client = P300(self.interface, **args)  
-        elif self.ctlr_type == 'SCP220':
-            self.client = SCP220(self.interface, **args)              
-        elif self.ctlr_type == 'ES102':
-            self.client = ES102(self.interface, **args)           
+        #elif self.ctlr_type == 'P300':
+        #    self.client = P300(self.interface, **args)  
+        #elif self.ctlr_type == 'SCP220':
+        #    self.client = SCP220(self.interface, **args)              
+        #elif self.ctlr_type == 'ES102':
+        #    self.client = ES102(self.interface, **args)           
         else:
             raise ValueError('"%s" is not a supported controller type' % self.ctlr_type)
 
