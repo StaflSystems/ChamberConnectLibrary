@@ -44,7 +44,9 @@ Sample programs are available as follows:
 * ```p300_rs232.py```: Sample program via serial connect RS232 for both ESPEC P300 and ESPEC SCP-220 w/ Temp and/or Humi. A connection to SCP-220 must be established prior to selecting the option. Default baud rate for P300 is 19200 and SCP-220 9600. 
 * ```p300_rs232-direct.py```: Sample program using a direct serial connect via RS232 to a "modified" ESPEC P300 main library (called ```p300serial.py```); this program bypasses the chamberconnectlibrary (espec.py and especinteract.py). ```p300serial.py``` is simply a modified ```p300.py``` to provide a direct connect via RS232. 
 * ```espec-ctlr_rs232.py```: Sample program with option to communicate and control ESPEC P300, SCP-220 and ES-102. Vibration features w/ P300 will be reimplemented.  
-* ```p300vib_rs232.py```: Sample program to test, control and operate P300 w/ Vibration. 
+* ```p300vib_sample_run.py```: Sample program to test, control and operate P300 w/ Vibration. 
+* ```p300_sample_run.py```: Sample program to test, control and operate P300 w/ Temp and Humi. 
+* ```scp220_sample_run.py```: Sample program to test, control and operate SCP220 w/ Temp and Humi. 
 
 
 These and other sample programs may be modified to include different communication interfaces for your application requirements as outlined in the [controllerinterface.md](controllerinterface.md). 
@@ -67,14 +69,16 @@ or
 
 Accessing TCP/IP or RTU modbus port requires a root privilege in GNU/Linux. The ```sudo``` may be used on a GNU/Linux system for a regular user with sudoer privilege; or, ```su -c``` may be used on a system with regular user to execute the program as root.
 
-A virtualenv is a viable option, again, since all the necessary modules or libraries can be installed and used without interring with the main setup. 
+A virtualenv is a viable option, again, since all the necessary modules or libraries can be installed and used without interfering with the main setup. 
 Examples to run the sample programs: 
 
 ```sudo venv/bin/python bin/f4nf4t_sample_run.py```
 
-```sudo venv/bin/python bin/p300_rs232-direct.py```
+```sudo venv/bin/python bin/p300vib_sample_run.py```
 
-In the venv, double check that ```python``` symbolic links to ```python3```.  
+```sudo venv/bin/python bin/p300_sample_run.py```
+
+A ```sudo``` prefix in the command may be required to access and use the USB port in Linux. Double check that ```python``` symbolic links to ```python3```.  
 
 Any questions, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com> for assistance.  
 
