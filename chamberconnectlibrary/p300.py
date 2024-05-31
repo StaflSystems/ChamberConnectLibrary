@@ -1138,7 +1138,7 @@ class P300(object):
         Args:
             relays: [boolean] True=turn relay on, False=turn relay off, None=do nothing
         '''
-        vals = (self.parse_relays(relays)).decode('utr-8', 'replace')
+        vals = (self.parse_relays(relays))     
         if len(vals['on']) > 0:
             (self.ctlr.interact('RELAY,ON,{}'.format(','.join(str(v) for v in vals['on'])))).decode('utf-8', 'replace')
         if len(vals['off']) > 0:
@@ -1430,7 +1430,7 @@ class P300(object):
             r'(\d+),TEMP([0-9.-]+),TEMP RAMP (\w+)(?:,PTC (\w+))?(?:,HUMI([^,]+)'
             r'(?:,HUMI RAMP (\w+))?)?,TIME(\d+):(\d+),GRANTY (\w+),REF(\w+)'
             r'(?:,RELAY ON([0-9.]+))?(?:,PAUSE (\w+))?(?:,DEVP([0-9.-]+),DEVN([0-9.-]+))?',
-            arg
+            arg.decode('utf-8', 'replace')
         )
         base = {'number':int(parsed.group(1)),
                 'time':{'hour':int(parsed.group(7)),
@@ -1471,7 +1471,7 @@ class P300(object):
         parsed = re.search(
             r'([0-9.-]+),([0-9.-]+),(?:(\d+),(\d+),)?TEMP(\w+)'
             r'(?:,([0-9.-]+))?(?:,HUMI(\w+)(?:,(\d+))?)?',
-            arg
+            arg.decode('utf-8', 'replace')
         )
         ret = {
             'tempDetail':{
@@ -1502,7 +1502,7 @@ class P300(object):
         parsed = re.search(
             r'(\d+),<(.+)?>,COUNT,A\((\d+).(\d+).(\d+)\),B\((\d+).(\d+).(\d+)\),'
             r'END\(([a-zA-Z0-9:]+)\)',
-            arg
+            arg.decode('utf-8', 'replace')
         )
         return {
             'steps':int(parsed.group(1)),

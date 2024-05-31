@@ -90,6 +90,7 @@ import logging
 import serial 
 sys.path.insert(0,'../chamberconnectlibrary')
 
+from chamberconnectlibrary.dictcode import dict_code
 from chamberconnectlibrary.espec import Espec 
 from chamberconnectlibrary.scp220 import SCP220
 from chamberconnectlibrary.especinteract import EspecSerial, EspecTCP 
@@ -191,7 +192,7 @@ def prog_mode(mode):
     }
     str = CONTROLLER.get_mode()
     time.sleep(0.5)
-    if "RUN" in str:  
+    if "Program Running" in str:  
         if "STOP" in mode:
             print (nlist["act"])
             CONTROLLER.stop()        
@@ -204,31 +205,19 @@ def prog_mode(mode):
         if "RESUME" in mode:
             print (nlist['run'])
             CONTROLLER.prgm_resume()     
-    #if "Program Running" in str:
-    #    if mode == 'STOP':
-    #        print (nlist["act"])
-    #        CONTROLLER.stop()        
-    #    if mode == 'PAUSE':
-    #        print (nlist["act"])
-    #        CONTROLLER.prgm_pause()
-    #    if mode == 'SKIP':  
-    #        print ('\nrsp> Skip to next step in program...') 
-    #        CONTROLLER.prgm_next_step()
-    #    if mode == 'RESUME':
-    #        print (nlist['run'])
-    #elif "Program Paused" in str: 
-    #    if mode == 'RESUME':
-    #        print (nlist["act"])
-    #        CONTROLLER.prgm_resume()
-    #    if mode == 'STOP':
-    #        print (nlist["act"])
-    #        CONTROLLER.stop()
-    #    if mode == 'SKIP':  
-    #        print (nlist["pau"])
-    #    if mode == 'PAUSE':  
-    #        print (nlist["pau"])
+    elif "Program Paused" in str: 
+        if mode == 'RESUME':
+            print (nlist["act"])
+            CONTROLLER.prgm_resume()
+        if mode == 'STOP':
+            print (nlist["act"])
+            CONTROLLER.stop()
+        if mode == 'SKIP':  
+            print (nlist["pau"])
+        if mode == 'PAUSE':  
+            print (nlist["pau"])
     else:
-        print (nlist['nact'])  
+        print (nlist['nact']) 
 
 def set_time_signal(state):
     '''Set TS value on the selected TS number

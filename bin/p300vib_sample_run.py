@@ -154,7 +154,7 @@ def operation_status():
         else:
             #execute new program 
             #set to: run_prog() 
-            print("\nrsp> Feature not implemented yet.")
+            run_prog()
 
 def run_prog(): 
     '''select and set profile for execution.

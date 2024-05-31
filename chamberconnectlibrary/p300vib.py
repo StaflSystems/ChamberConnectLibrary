@@ -214,7 +214,7 @@ class P300Vib(P300Extended):
             r'(?:,VIB RAMP (\w+))?)?,TIME(\d+):(\d+),GRANTY (\w+),REF(\w+)'
             r'(?:,RELAY ON([0-9.]+))?(?:,PAUSE (\w+))?(?:,DEVP([0-9.-]+),DEVN([0-9.-]+))?'
             r'(?:,AIR(\d+)\/(\d+))?',
-            arg
+            arg.decode('utf-8', 'replace') 
         )
         #print arg
         #print parsed
@@ -278,7 +278,7 @@ class P300Vib(P300Extended):
         parsed = re.search(
             r'([0-9.-]+),([0-9.-]+),([0-9.-]+),([0-9.-]+),TEMP(\w+)'
             r'(?:,([0-9.-]+))?,VIB(\w+)(?:,([0-9.-]+))?',
-            arg
+            arg.decode('utf-8', 'replace') 
         )
 
         ret = {
