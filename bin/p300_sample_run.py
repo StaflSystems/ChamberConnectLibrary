@@ -92,6 +92,7 @@ sys.path.insert(0,'../chamberconnectlibrary')
 
 from chamberconnectlibrary.espec import Espec 
 from chamberconnectlibrary.p300 import P300
+from chamberconnectlibrary.dictcode import dict_code
 from chamberconnectlibrary.especinteract import EspecSerial, EspecTCP 
 from chamberconnectlibrary.controllerinterface import ControllerInterfaceError
 
@@ -477,7 +478,7 @@ if __name__ == "__main__":
     # IP addr is requried to use this interface. 
     interface_params = {
             'interface':'TCP',
-            'host':'10.30.100.115'  # use correct IP addr
+            'host':'10.30.200.237'  # use correct IP addr
     }
 
     CONTROLLER = Espec(
