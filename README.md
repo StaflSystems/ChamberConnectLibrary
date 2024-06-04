@@ -1,12 +1,20 @@
 # ChamberConnectLibrary (codename: cclibrary-py3) 
 
-Python 3 library for interfacing with ESPEC North America chambers with P300 and P300 w/ vibration, SCP-220, ES-102 Watlow F4T and Watlow F4S/D controllers. 
+ESPEC Chamber Connect Library for Python 3 is offered "as is" without 
+technical support or guaranttee. However, the offered product here has been prepared and carefully tested by ESPEC software engineer to ensure its operability and compatibility. The library also comes with a long list various sample programs to help ESPEC customers or the public to get started with their project.
 
-ESPEC Chamber Connect Library for Python 3 is offered as-is without 
-technical support or guaranttee. However, the offered product here has been prepared and tested by ESPEC software engineer to ensure
-operability and compatibility. 
+This library for interfacing with ESPEC North America chambers supports the following controllers: ESPEC P300 and P300 w/ vibration, SCP-220, ES-102, Watlow F4T and Watlow F4S/D controllers. Interfacing con be configured to use Serial RS232C or TCP/IP. 
 
 Please read the disclaimer on liability in the LICENSE document as well as in all sample programs. 
+
+The disclaimer is also presented here in its entirety: 
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Requirements
 
@@ -40,13 +48,12 @@ Sample programs are available as follows:
 * ```f4t_runRTU.py```: Sample program via RTU Modbus for F4T w/ Temp
 * ```f4_runRTU.py```: Sample program via RTU Modbus for F4 w/ Temp
 * ```f4_test_read.py```: Sample program to test RTU modbus connection for F4; a quick and small program to test the cable as well as communication settings.  
-* ```f4nf4t_sample_run.py```: Sample program with options on F4 RTU, F4T RTU and F4T TCP/IP. A connection to either F4 or F4T via RTU or TCP/IP must be established prior to selecting the option. Default baud rate for F4T is 38400 and F4 9600. It is best to select the one used by the controller. 
-* ```p300_rs232.py```: Sample program via serial connect RS232 for both ESPEC P300 and ESPEC SCP-220 w/ Temp and/or Humi. A connection to SCP-220 must be established prior to selecting the option. Default baud rate for P300 is 19200 and SCP-220 9600. 
+* ```f4nf4t_sample_run.py```: Sample program with options on F4 RTU, F4T RTU and F4T TCP/IP. A connection to either F4 or F4T via RTU or TCP/IP must be established prior to selecting the option. Default baud rate for F4T is 38400 and F4 9600. It is best to select the one used by the controller.  
 * ```p300_rs232-direct.py```: Sample program using a direct serial connect via RS232 to a "modified" ESPEC P300 main library (called ```p300serial.py```); this program bypasses the chamberconnectlibrary (espec.py and especinteract.py). ```p300serial.py``` is simply a modified ```p300.py``` to provide a direct connect via RS232. 
-* ```espec-ctlr_rs232.py```: Sample program with option to communicate and control ESPEC P300, SCP-220 and ES-102. Vibration features w/ P300 will be reimplemented.  
-* ```p300vib_sample_run.py```: Sample program to test, control and operate P300 w/ Vibration. 
-* ```p300_sample_run.py```: Sample program to test, control and operate P300 w/ Temp and Humi. 
-* ```scp220_sample_run.py```: Sample program to test, control and operate SCP220 w/ Temp and Humi. 
+* ```espec-ctlr_rs232.py```: Sample program with option to communicate and control ESPEC P300, SCP-220 and ES-102. Vibration features w/ P300 will be reimplemented.
+* ```espec-cntlr-comm_rs232.py```: Sample program with option to communicate and control ESPEC P300, P300 w/ vibration, SCP-220 and ES-102 directly via raw text commands. This is a good program to test communication between the device and the target chamber/controller through controller's native commands. 
+* ```p300vib_sample_run.py```: Sample program to test, control and operate P300 w/ Vibration. Programmer may modify communication using RS232 or TCP/IP.  
+* ```p300_sample_run.py```: Sample program to test, control and operate P300. Programmer may modify communication using RS232 or TCP/IP.  
 
 
 These and other sample programs may be modified to include different communication interfaces for your application requirements as outlined in the [controllerinterface.md](controllerinterface.md). 
@@ -78,7 +85,10 @@ Examples to run the sample programs:
 
 ```sudo venv/bin/python bin/p300_sample_run.py```
 
-A ```sudo``` prefix in the command may be required to access and use the USB port in Linux. Double check that ```python``` symbolic links to ```python3```.  
+A ```sudo``` prefix in the command is to ensure the privilege to access and use USB port. 
+In the venv, double check that ```python``` symbolic links to ```python3```. Otherwise, explicitely apply:   
+
+```sudo venv/bin/python3 bin/p300_sample_run.py```
 
 Any questions, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com> for assistance.  
 
