@@ -249,7 +249,7 @@ def const_start():
     '''
     str = CONTROLLER.get_mode()
     time.sleep(0.5)
-    if 'RUN' in str: # or ('Program Paused' in str):
+    if 'Program Running' in str or 'Program Paused' in str:        
         print (f'\nrsp> Chamber is in {str} mode. Must stop it first.')
     elif str in ['constant', 'Constant', 'CONSTANT']:
         print (f'\nrsp> Chamber is already in {str} mode.')
@@ -267,8 +267,6 @@ def stop_const():
         CONTROLLER.stop()
         time.sleep(0.5) 
         print ('\nrsp > Done ')
-    elif ('RUN' in str): # or ('Program Paused' in str):
-        print (f'\nrsp> Chamber is in {str} mode. Request ignored.')
     else:    
         print ("\nrsp> Chamber not in Constant mode. Nothing to do.")
 
