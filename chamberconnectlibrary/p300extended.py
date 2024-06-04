@@ -63,13 +63,14 @@ class P300Extended(P300):
         if constant:
             rsp = (self.ctlr.interact('MON?,DETAIL,CONSTANT').split(',')).decode('utf-8', 'replace')
         else:
-            rsp = ((self.ctlr.interact('MON?%s%s' % (',DETAIL' if detail else '', ',CONSTANT' if constant else ''))).decode('utf-8', 'replace')).split(',')
+            rsp = ((self.ctlr.interact(f"MON?{',DETAIL' if detail else '':s}{',CONSTANT' if constant else '':s}")).decode('utf-8', 'replace')).split(',')
+            #rsp = ((self.ctlr.interact('MON?%s%s' % (',DETAIL' if detail else '', ',CONSTANT' if constant else ''))).decode('utf-8', 'replace')).split(',')            
         data = {'temperature':float(rsp[0]), 'mode':rsp[2], 'alarms':int(rsp[3])}
         if rsp[1]:
             data['humidity'] = float(rsp[1])
         return data
     
-    def read_air(self): #is this correct??????
+    def read_air(self): #is this correct? correct or not, it is implemented...
         '''
         Read the currently selected air speed value and the options values.
 
@@ -102,7 +103,7 @@ class P300Extended(P300):
             {"setpoint":float,"enable":True}
         '''
         if constant in [1, 2, 3]:
-            rsp = ((self.ctlr.interact('CONSTANT SET?,TEMP,C%d' % constant)).decode('utf-8', 'replace')).split(',')
+            rsp = ((self.ctlr.interact(f"CONSTANT SET?,TEMP,C{constant:d}")).decode('utf-8', 'replace')).split(',')
         else:
             raise ValueError("Constant must be None or 1, 2, 3")
         return {'setpoint':float(rsp[0]), 'enable':rsp[1] == 'ON'}
@@ -115,7 +116,7 @@ class P300Extended(P300):
             {"setpoint":float,"enable":boolean}
         '''
         if constant in [1, 2, 3]:
-            rsp = ((self.ctlr.interact('CONSTANT SET?,HUMI,C%d' % constant)).decode('utf-8', 'replace')).split(',')
+            rsp = ((self.ctlr.interact(f"CONSTANT SET?,HUMI,C{constant:d}")).decode('utf-8', 'replace')).split(',')
         else: 
             raise ValueError("Constant must be None or 1, 2, 3")
         return {'setpoint':float(rsp[0]), 'enable':rsp[1] == 'ON'}
@@ -128,7 +129,7 @@ class P300Extended(P300):
             {"mode":string,"setpoint":float}
         '''
         if constant in [1, 2, 3]:
-            rsp = (self.ctlr.interact('CONSTANT SET?,REF,C%d' % constant)).decode('utf-8', 'replace')
+            rsp = (self.ctlr.interact(f"CONSTANT SET?,REF,C{constant:d}")).decode('utf-8', 'replace')
         else: 
             raise ValueError("Constant must be None or 1, 2, 3")
         try:
@@ -144,7 +145,7 @@ class P300Extended(P300):
             [int]
         '''
         if constant in [1, 2, 3]:
-            rsp = ((self.ctlr.interact('CONSTANT SET?,RELAY,C%d' % constant)).decode('utf-8', 'replace')).split(',')
+            rsp = ((self.ctlr.interact(f"CONSTANT SET?,RELAY,C{constant:d}")).decode('utf-8', 'replace')).split(',')
         else: 
             raise ValueError("Constant must be None or 1, 2, 3")
         return [str(i) in rsp[1:] for i in range(1, 13)]
@@ -157,7 +158,7 @@ class P300Extended(P300):
             {"enable":boolean,"deviation":{"positive":float,"negative":float}}
         '''
         if constant in [1, 2, 3]:
-            rsp = ((self.ctlr.interact('CONSTANT SET?,PTC,C%d' % constant)).decode('utf-8', 'replace')).split(',')
+            rsp = ((self.ctlr.interact(f"CONSTANT SET?,PTC,C{constant}")).decode('utf-8', 'replace')).split(',')
         else: 
             raise ValueError("Constant must be None or 1, 2, 3")
         return {
@@ -187,7 +188,8 @@ class P300Extended(P300):
             }
             "END"="OFF" or "CONSTANT" or "STANDBY" or "RUN"
         '''
-        pdata = self.ctlr.interact('PRGM DATA?,%s:%d,CONSTANT' % (self.rom_pgm(pgmnum), pgmnum))
+        pdata = (self.ctlr.interact(f"PRGM DATA?,{self.rom_pgm(pgmnum):s}:{pgmnum:d},CONSTANT")).decode('utf-8', 'replace') 
+        #pdata = self.ctlr.interact('PRGM DATA?,%s:%d,CONSTANT' % (self.rom_pgm(pgmnum), pgmnum))        
         return self.parse_prgm_data(pdata)
 
     def read_prgm_data_step(self, pgmnum, pgmstep):
@@ -213,7 +215,8 @@ class P300Extended(P300):
         cmd = 'PRGM DATA?,%s:%d,STEP%d'
         if self.enable_air_speed:
             cmd += ',AIR'
-        tmp = (self.ctlr.interact(cmd % (self.rom_pgm(pgmnum), pgmnum, pgmstep))).decode('utf-8', 'replace')
+        tmp = self.ctlr.interact(cmd % (self.rom_pgm(pgmnum), pgmnum, pgmstep))
+        tmp = (self.ctlr.interact(cmd % (self.rom_pgm(pgmnum), pgmnum, pgmstep))).decode('utf-8', 'replace')        
         return self.parse_prgm_data_step(tmp)
 
     def read_prgm_data_ptc(self, pgmnum):

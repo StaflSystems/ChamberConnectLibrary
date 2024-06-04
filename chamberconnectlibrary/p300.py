@@ -1502,7 +1502,7 @@ class P300(object):
         parsed = re.search(
             r'(\d+),<(.+)?>,COUNT,A\((\d+).(\d+).(\d+)\),B\((\d+).(\d+).(\d+)\),'
             r'END\(([a-zA-Z0-9:]+)\)',
-            arg.decode('utf-8', 'replace')
+            arg
         )
         return {
             'steps':int(parsed.group(1)),
