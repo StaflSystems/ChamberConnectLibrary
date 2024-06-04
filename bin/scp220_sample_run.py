@@ -91,7 +91,7 @@ import serial
 sys.path.insert(0,'../chamberconnectlibrary')
 
 from chamberconnectlibrary.dictcode import dict_code
-from chamberconnectlibrary.espec import Espec 
+from chamberconnectlibrary.espec import Espec220 
 from chamberconnectlibrary.scp220 import SCP220
 from chamberconnectlibrary.especinteract import EspecSerial, EspecTCP 
 from chamberconnectlibrary.controllerinterface import ControllerInterfaceError
@@ -479,7 +479,7 @@ if __name__ == "__main__":
     #    'host':'10.30.200.252'  # use correct IP addr
     #}
    
-    CONTROLLER = Espec(
+    CONTROLLER = Espec220(
         ctrl_type=controller_type,
         loops = 1,
         **interface_params #,
