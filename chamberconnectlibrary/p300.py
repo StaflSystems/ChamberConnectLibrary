@@ -1236,19 +1236,19 @@ class P300(object):
         if 'counter_a' in pgmdetail and pgmdetail['counter_a']['cycles'] > 0:
             ttp = (pgmnum, pgmdetail['counter_a']['start'], pgmdetail['counter_a']['end'],
                    pgmdetail['counter_a']['cycles'])
-            tmp = 'PRGM DATA WRITE,PGM%d,COUNT,A({}.{}.{})'.format(ttp)
-            #tmp = 'PRGM DATA WRITE,PGM%d,COUNT,A(%d.%d.%d)' % ttp
+            #tmp = 'PRGM DATA WRITE,PGM%d,COUNT,A({}.{}.{})'.format(ttp)
+            tmp = 'PRGM DATA WRITE,PGM%d,COUNT,A(%d.%d.%d)' % ttp
             if 'counter_b' in pgmdetail and pgmdetail['counter_b']['cycles'] > 0:
                 ttp = (tmp, pgmdetail['counter_b']['start'], pgmdetail['counter_b']['end'],
                        pgmdetail['counter_b']['cycles'])
-                tmp = '{},B({}.{}.{})'.format(ttp)
+                tmp = '{},B({}.{}.{})'.format(*ttp)
                 #tmp = '%s,B(%d.%d.%d)' % ttp
             (self.ctlr.interact(tmp)).decode('utf-8', 'replace') 
         elif 'counter_b' in pgmdetail and pgmdetail['counter_b']['cycles'] > 0:
             ttp = (pgmnum, pgmdetail['counter_b']['start'], pgmdetail['counter_b']['end'],
                    pgmdetail['counter_b']['cycles'])
             #self.ctlr.interact('PRGM DATA WRITE,PGM%d,COUNT,B(%d.%d.%d)' % ttp)
-            (self.ctlr.interact('PRGM DATA WRITE,PGM{},COUNT,B({}.{}.{})'.format(ttp))).decode('utf-8', 'replace') 
+            (self.ctlr.interact('PRGM DATA WRITE,PGM{},COUNT,B({}.{}.{})'.format(*ttp))).decode('utf-8', 'replace')              
         if 'name' in pgmdetail:
             #self.ctlr.interact('PRGM DATA WRITE,PGM%d,NAME,%s' % (pgmnum, pgmdetail['name']))
             (self.ctlr.interact('PRGM DATA WRITE,PGM{},NAME,{}'.format(pgmnum, pgmdetail['name']))).decode('utf-8', 'replace') 
@@ -1257,31 +1257,31 @@ class P300(object):
                 ttp = (pgmnum, pgmdetail['end'])
             else:
                 ttp = (pgmnum, 'RUN,PTN{}'.format(pgmdetail['next_prgm']))
-            (self.ctlr.interact('PRGM DATA WRITE,PGM{},END,{}'.format(ttp))).decode('utf-8', 'replace') 
+            (self.ctlr.interact('PRGM DATA WRITE,PGM{},END,{}'.format(*ttp))).decode('utf-8', 'replace') 
         if 'tempDetail' in pgmdetail:
             if 'range' in pgmdetail['tempDetail']:
                 ttp = (pgmnum, pgmdetail['tempDetail']['range']['max'])
-                (self.ctlr.interact('PRGM DATA WRITE,PGM{},HTEMP,{0:.1f}'.format(ttp))).decode('utf-8', 'replace') 
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{},HTEMP,{0:.1f}'.format(*ttp))).decode('utf-8', 'replace') 
                 ttp = (pgmnum, pgmdetail['tempDetail']['range']['min'])
-                (self.ctlr.interact('PRGM DATA WRITE,PGM{},LTEMP,{0:.1f}'.format(ttp))).decode('utf-8', 'replace') 
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{},LTEMP,{0:.1f}'.format(*ttp))).decode('utf-8', 'replace') 
             if 'mode' in pgmdetail['tempDetail']:
                 ttp = (pgmnum, pgmdetail['tempDetail']['mode'])
-                (self.ctlr.interact('PRGM DATA WRITE,PGM{},PRE MODE,TEMP,{}'.format(ttp))).decode('utf-8', 'replace') 
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{},PRE MODE,TEMP,{}'.format(*ttp))).decode('utf-8', 'replace') 
             if 'setpoint' in pgmdetail['tempDetail'] and pgmdetail['tempDetail']['mode'] == 'SV':
                 ttp = (pgmnum, pgmdetail['tempDetail']['setpoint'])
-                (self.ctlr.interact('PRGM DATA WRITE,PGM{},PRE TSV,{0:.1f}'.format(ttp))).decode('utf-8', 'replace') 
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{},PRE TSV,{0:.1f}'.format(*ttp))).decode('utf-8', 'replace') 
         if 'humiDetail' in pgmdetail:
             if 'range' in pgmdetail['humiDetail']:
                 ttp = (pgmnum, pgmdetail['humiDetail']['range']['max'])
-                (self.ctlr.interact('PRGM DATA WRITE,PGM{},HHUMI,{0:.0f}'.format(ttp))).decode('utf-8', 'replace') 
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{},HHUMI,{0:.0f}'.format(*ttp))).decode('utf-8', 'replace') 
                 ttp = (pgmnum, pgmdetail['humiDetail']['range']['min'])
-                (self.ctlr.interact('PRGM DATA WRITE,PGM{},LHUMI,{0:.0f}'.format(ttp))).decode('utf-8', 'replace') 
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{},LHUMI,{0:.0f}'.format(*ttp))).decode('utf-8', 'replace') 
             if 'mode' in pgmdetail['humiDetail']:
                 ttp = (pgmnum, pgmdetail['humiDetail']['mode'])
-                (self.ctlr.interact('PRGM DATA WRITE,PGM{},PRE MODE,HUMI,{}'.format(ttp))).decode('utf-8', 'replace') 
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{},PRE MODE,HUMI,{}'.format(*ttp))).decode('utf-8', 'replace') 
             if 'setpoint' in pgmdetail['humiDetail'] and pgmdetail['humiDetail']['mode'] == 'SV':
                 ttp = (pgmnum, pgmdetail['humiDetail']['setpoint'])
-                (self.ctlr.interact('PRGM DATA WRITE,PGM{},PRE HSV,{0:.0f}'.format(ttp))).decode('utf-8', 'replace') 
+                (self.ctlr.interact('PRGM DATA WRITE,PGM{},PRE HSV,{0:.0f}'.format(*ttp))).decode('utf-8', 'replace') 
 
     def write_prgm_data_step(self, pgmnum, **pgmstep):
         '''
@@ -1296,7 +1296,7 @@ class P300(object):
         if 'temperature' in pgmstep:
             if 'setpoint' in pgmstep['temperature']:
                 #cmd = '%s,TEMP%0.1f' % (cmd, pgmstep['temperature']['setpoint'])
-                cmd = '{},TEMP{0:.1f}'.format(cmd, pgmstep['temperature']['setpoint'])
+                cmd = '{},TEMP{:.1f}'.format(cmd, pgmstep['temperature']['setpoint'])
             if 'ramp' in pgmstep['temperature']:
                 #cmd = '%s,TRAMP%s' % (cmd, 'ON' if pgmstep['temperature']['ramp'] else 'OFF')
                 cmd = '{},TRAMP{}'.format(cmd, 'ON' if pgmstep['temperature']['ramp'] else 'OFF')
@@ -1307,12 +1307,12 @@ class P300(object):
                 ttp = (cmd, pgmstep['temperature']['deviation']['positive'],
                        pgmstep['temperature']['deviation']['negative'])
                 #cmd = '%s,DEVP%0.1f,DEVN%0.1f' % ttp
-                cmd = '{},DEVP{0:.1f},DEVN{0:.1f}'.format(ttp)
+                cmd = '{},DEVP{:.1f},DEVN{:.1f}'.format(*ttp)
         if 'humidity' in pgmstep:
             if 'setpoint' in pgmstep['humidity']:
                 if pgmstep['humidity']['enable']:
                     #htmp = '%0.0f' % pgmstep['humidity']['setpoint']
-                    htmp = '{0:.0f}'.format(pgmstep['humidity']['setpoint'])
+                    htmp = '{:.0f}'.format(pgmstep['humidity']['setpoint'])
                 else:
                     htmp = 'OFF'
                 #cmd = '%s,HUMI%s' % (cmd, htmp)
@@ -1396,7 +1396,7 @@ class P300(object):
         '''
         ttp = ('ON' if enable else 'OFF', positive, negative)
         #self.ctlr.interact('TEMP PTC, PTC%s, DEVP%0.1f, DEVN%0.1f' % ttp)
-        (self.ctlr.interact('TEMP PTC, PTC{}, DEVP{0:.1f}, DEVN{0:.1f}'.format(ttp))).decode('utf-8', 'replace') 
+        (self.ctlr.interact('TEMP PTC, PTC{}, DEVP{:0.1f}, DEVN{:0.1f}'.format(*ttp))).decode('utf-8', 'replace') 
 
     def write_ptc(self, op_range, pid_p, pid_filter, pid_i, **kwargs):
         '''
@@ -1412,7 +1412,7 @@ class P300(object):
         opt1, opt2 = kwargs.get('opt1', 0), kwargs.get('opt2', 0)
         ttp = (op_range['max'], op_range['min'], pid_p, pid_filter, pid_i, opt1, opt2)
         #self.ctlr.interact('PTC,%0.1f,%0.1f,%0.1f,%0.1f,%0.1f,%0.1f,%0.1f' % ttp)
-        (self.ctlr.interact('PTC,{0:.1f},{0:.1f},{0:.1f},{0:.1f},{0:.1f},{0:.1f},{0:.1f}'.format(ttp))).decode('utf-8', 'replace') 
+        (self.ctlr.interact('PTC,{:.1f},{:.1f},{:.1f},{:.1f},{:.1f},{:.1f},{:.1f}'.format(*ttp))).decode('utf-8', 'replace') 
 
     def write_ip_set(self, address, mask, gateway):
         '''

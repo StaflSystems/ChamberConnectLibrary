@@ -1,7 +1,9 @@
 '''
 A direct implementation of the SCP220's communication interface.
 
-:copyright: (C) Espec North America, INC.
+:copyright: (C) Espec North America, Inc.
+:update note: 2022, 2024 Reimplemented for Python 3.6+ 
+:author: Paul Nong-Laolam <pnong-laolam@espec.com> 
 :license: MIT, see LICENSE for more details.
 '''
 import re
@@ -158,7 +160,7 @@ class P300Extended(P300):
             {"enable":boolean,"deviation":{"positive":float,"negative":float}}
         '''
         if constant in [1, 2, 3]:
-            rsp = ((self.ctlr.interact(f"CONSTANT SET?,PTC,C{constant}")).decode('utf-8', 'replace')).split(',')
+            rsp = ((self.ctlr.interact(f"CONSTANT SET?,PTC,C{constant:d}")).decode('utf-8', 'replace')).split(',')
         else: 
             raise ValueError("Constant must be None or 1, 2, 3")
         return {
@@ -215,7 +217,7 @@ class P300Extended(P300):
         cmd = 'PRGM DATA?,%s:%d,STEP%d'
         if self.enable_air_speed:
             cmd += ',AIR'
-        tmp = self.ctlr.interact(cmd % (self.rom_pgm(pgmnum), pgmnum, pgmstep))
+        #tmp = self.ctlr.interact(cmd % (self.rom_pgm(pgmnum), pgmnum, pgmstep))
         tmp = (self.ctlr.interact(cmd % (self.rom_pgm(pgmnum), pgmnum, pgmstep))).decode('utf-8', 'replace')        
         return self.parse_prgm_data_step(tmp)
 
@@ -377,7 +379,8 @@ class P300Extended(P300):
             constant: int, the constant mode to write to; valid range of 1 to 3; 1 is default
         '''
         if constant in [1, 2, 3]:
-            (self.ctlr.interact('MODE,CONSTANT,C%d' % constant)).decode('utf-8', 'replace')
+            #self.ctlr.interact('MODE,CONSTANT,C%d' % constant)
+            (self.ctlr.interact(f"MODE,CONSTANT,C{constant:d}")).decode('utf-8', 'replace')
         else:
             raise ValueError("Constant must be None or 1, 2 or 3")
 
@@ -589,7 +592,7 @@ class P300Extended(P300):
             r'(?:,HUMI RAMP (\w+))?)?,TIME(\d+):(\d+),GRANTY (\w+),REF(\w+)'
             r'(?:,RELAY ON([0-9.]+))?(?:,PAUSE (\w+))?(?:,DEVP([0-9.-]+),DEVN([0-9.-]+))?'
             r'(?:,AIR(\d+)\/(\d+))?',
-            arg
+            arg.decode('utf-8', 'replace')
         )
         base = {
             'number':int(parsed.group(1)),
