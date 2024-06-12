@@ -1,7 +1,7 @@
 # ChamberConnectLibrary (codename: cclibrary-py3) 
 
 ESPEC Chamber Connect Library for Python 3 is offered "as is" without 
-technical support or guaranttee. However, the offered product here has been prepared and carefully tested by ESPEC software engineer to ensure its operability and compatibility. The library also comes with a long list various sample programs to help ESPEC customers or the public to get started with their project.
+technical support, guaranttee or liability. However, the offered product here has been prepared and carefully tested by ESPEC software engineer to ensure its operability and compatibility. The library also comes with a long list various sample programs to help ESPEC customers or the public to get started with their project.
 
 This library for interfacing with ESPEC North America chambers supports the following controllers: ESPEC P300 and P300 w/ vibration, SCP-220, ES-102, Watlow F4T and Watlow F4S/D controllers. Interfacing can be configured to use Serial RS232C or TCP/IP. 
 
