@@ -22,11 +22,12 @@ ChamberConnectLibrary to connect to "especinteract.py" program which in
 turn communicates with the "p300.py" library offer and utilize the 
 operational features from "p300.py" in the chamberconenctlibrary directory. 
 
-Note: "especinteract.py" supports both features of communication protocl: 
+Note: "especinteract.py" supports both features of communication protocol: 
     1. Serial RS-232/RS485
     2. TCP/IP
 
-This sample program utilizes and explains the use of option 1. 
+This sample program utilizes and explains the use of option 1 and option 2
+with correct setup for TCP/IP communication. 
 
 The programmer may add the additional methods or program sections to call 
 the library for the exact feature(s) not implemented here to meet their 
@@ -226,9 +227,10 @@ def set_time_signal(state):
     '''
     try:
         ts_num = int(input('Enter TS number: '))
-        if isinstance(ts_num, int) and ts_num in range(1,9):
-            CONTROLLER.set_event(ts_num,state)
-            print ('\nrsp> DONE') 
+        if isinstance(ts_num, int) and ts_num in range(1,13):
+            print ('\nrsp> To be implemented by programmer...')
+            #CONTROLLER.set_event(ts_num,state)
+            #print ('\nrsp> DONE') 
         else:
             print ('\nrsp> Invalid TS number.')
     except ValueError:
@@ -238,7 +240,7 @@ def read_time_signal():
     '''Read TS value on the select TS number
     '''
     print ('\nrsp> ')
-    for i in range(8):
+    for i in range(12):
         ts_list = CONTROLLER.get_event(i+1)
         tsout = 'ON' if ts_list['current'] == True else 'OFF'
         print (f'    Time signal #{i+1} : {tsout}')
@@ -475,10 +477,10 @@ if __name__ == "__main__":
     #    'adr':1
     #}
     # SELECT_OPT = 1 for P300 via TCP/IP
-    # IP addr is requried to use this interface. 
+    # IP addr is required to use this interface. 
     interface_params = {
             'interface':'TCP',
-            'host':'10.30.200.237'  # use correct IP addr
+            'host':'10.30.100.115'  # use correct IP addr
     }
 
     CONTROLLER = Espec(
