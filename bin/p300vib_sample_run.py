@@ -23,11 +23,12 @@ ChamberConnectLibrary to connect to "especinteract.py" program which in
 turn communicates with the "p300.py" library offer and utilize the 
 operational features from "p300.py" in the chamberconenctlibrary directory. 
 
-Note: "especinteract.py" supports both features of communication protocl: 
+Note: "especinteract.py" supports both features of communication protocol: 
     1. Serial RS-232/RS485
     2. TCP/IP
 
-This sample program utilizes and explains the use of option 1. 
+This sample program utilizes and explains the use of option 1 and option 2
+with correct setup for TCP/IP communication. 
 
 The programmer may add the additional methods or program sections to call 
 the library for the exact feature(s) not implemented here to meet their 
@@ -204,20 +205,17 @@ def prog_mode(mode):
             CONTROLLER.prgm_pause()
         if "SKIP" in mode:
             print ('\nrsp> Skip to next step in program...') 
-            CONTROLLER.prgm_next_step()
-        if "RESUME" in mode:
-            print (nlist['run'])
-            CONTROLLER.prgm_resume()     
+            CONTROLLER.prgm_next_step()   
     elif "Program Paused" in str: 
-        if mode == 'RESUME':
+        if 'RESUME' in mode:
             print (nlist["act"])
             CONTROLLER.prgm_resume()
-        if mode == 'STOP':
+        if 'STOP' in mode:
             print (nlist["act"])
             CONTROLLER.stop()
-        if mode == 'SKIP':  
+        if 'SKIP' in mode:  
             print (nlist["pau"])
-        if mode == 'PAUSE':  
+        if 'PAUSE' in mode:  
             print (nlist["pau"])
     else:
         print (nlist['nact']) 
@@ -227,9 +225,10 @@ def set_time_signal(state):
     '''
     try:
         ts_num = int(input('Enter TS number: '))
-        if isinstance(ts_num, int) and ts_num in range(1,9):
-            CONTROLLER.set_event(ts_num,state)
-            print ('\nrsp> DONE') 
+        if isinstance(ts_num, int) and ts_num in range(1,13):
+            print ('\nrsp> Requires implementation from programmer.')
+            # must know what number of relays are... 
+            #print ('\nrsp> DONE') #CONTROLLER.set_event(ts_num,state)
         else:
             print ('\nrsp> Invalid TS number.')
     except ValueError:
@@ -239,7 +238,7 @@ def read_time_signal():
     '''Read TS value on the select TS number
     '''
     print ('\nrsp> ')
-    for i in range(8):
+    for i in range(12):
         ts_list = CONTROLLER.get_event(i+1)
         tsout = 'ON' if ts_list['current'] == True else 'OFF'
         print (f'    Time signal #{i+1} : {tsout}')
@@ -480,7 +479,7 @@ if __name__ == "__main__":
     # TCP port preconfigured using 10001
     interface_params = {
         'interface':'TCP',
-        'host':'10.30.100.115'  # use correct IP addr
+        'host':'10.30.200.238'  # use correct IP addr
     }    
     
     CONTROLLER = EspecVib(
