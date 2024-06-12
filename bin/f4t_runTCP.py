@@ -53,6 +53,7 @@ def ip_addr():
     while True:
         try:
             ip_addr = input('Enter F4T IP address (e.g., 192.168.0.101): ')
+            #ip_addr = "10.30.100.165"
             chk_ip = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", ip_addr)
             if chk_ip:
                 print ('\n')
@@ -101,7 +102,7 @@ def read_val(str,loop):
     time.sleep(0.5)
     currentSP = CONTROLLER.get_loop_sp(loop)
     currentPV = CONTROLLER.get_loop_pv(loop)
-    print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}')
+    print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}') 
 
 def operation_status(): 
     '''Check current status of chamber before executing a new program
@@ -236,7 +237,7 @@ def temp_controller():
     def temp_menu(choice):
         '''return Temp menu option'''
         return {
-            'r': lambda: read_val('Temp',1),
+            'r': lambda: read_val('Temp',1),  # 'r': lambda: read_val('Temp',1),
             't': lambda: set_loop('Temp',1),
             'z': lambda: main_menu()
         }.get(choice, lambda: print ('\nrsp> Not a valid option.') )()  
@@ -438,7 +439,6 @@ if __name__ == "__main__":
     # to manually enter IP address of Watlow F4T 
     interface_params = {'interface':'TCP', 'host':ip_addr()}
 
-
     # Chamber models: BTU-??? or BTZ-??? with temp only 
     # for these two types, uncomment the following block of lines 
     CONTROLLER = WatlowF4T(
@@ -453,6 +453,21 @@ if __name__ == "__main__":
         **interface_params
     )
 
+    # chamber models: BTU-??? or BTZ-????
+    # Temp only w/ product temp (PTCON or cascade) 
+    #CONTROLLER = WatlowF4T(
+    #    alarms=8, # the number of available alarms
+    #    profiles=True, # the controller has programming
+    #    loops=0, # the number of control loops (ie temperature)
+    #    cond_event=9, # the event that enables/disables conditioning
+    #    cond_event_toggle=False, # is the condition momentary(False), or maintained(True)
+    #    run_module=1, # The io module that has the chamber run output
+    #    run_io=1, # The run output on the mdoule that has the chamber run out put
+    #    limits=[5], # A list of modules that contain limit type cards.
+    #    cascades=1, # the number of cascade loops (ie temperature with PTCON)
+    #    cascade_ctl_event=[7,0,0,0], # orig:[7,0,0,0] the event that enables PTCON
+    #    **interface_params
+    #)
     '''
     # Chamber models: BTL-??? or BTX-??? with temperature and humidity
     # for thes two types, uncomment the following block of lines 
