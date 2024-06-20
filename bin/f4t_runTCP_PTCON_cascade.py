@@ -63,7 +63,7 @@ def ip_addr():
             print ('Invalid IP address.')
     return ip_addr
     
-def set_loop(str, loop):
+def set_loop(str0, loop):
     '''set new temp/PTCON value
     '''
     # recording temp range 
@@ -94,23 +94,23 @@ def set_loop(str, loop):
     time.sleep(0.5)
     currentSP = CONTROLLER.get_cascade_sp(loop)
     currentPV = CONTROLLER.get_cascade_pv(loop)
-    print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}')
+    print(f'\nrsp> {str0} status:\n     PV: {currentPV}\n     SP: {currentSP}')
 
-def read_val(str,loop):
+def read_val(str0,loop):
     """
     Read current values from cascade -- PTCON SP and PV
     """
     time.sleep(0.5)
     currentSP = CONTROLLER.get_cascade_sp(loop)
     currentPV = CONTROLLER.get_cascade_pv(loop)
-    print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}') 
+    print(f'\nrsp> {str0} status:\n     PV: {currentPV}\n     SP: {currentSP}') 
 
 def operation_status(): 
     '''Check current status of chamber before executing a new program
     '''
-    str = CONTROLLER.get_status()
+    str0 = CONTROLLER.get_status()
     time.sleep(0.5)
-    if 'Program Running' in str or 'Program Paused' in str:
+    if 'Program Running' in str0 or 'Program Paused' in str0:
         print ('\nrsp> Program execution in progress... must first terminate it.') 
     else:
         # execute new program 
@@ -153,9 +153,9 @@ def prog_mode(mode):
         'pau' : f'\nrsp> Program is in paused...request is ignored.',
         'run' : f'\nrsp> Program is running...request is ignored.',
     }
-    str = CONTROLLER.get_status()
+    str0 = CONTROLLER.get_status()
     time.sleep(0.5)
-    if "Program Running" in str:
+    if "Program Running" in str0:
         if mode == 'STOP':
             print (nlist["act"])
             CONTROLLER.stop()        
@@ -167,7 +167,7 @@ def prog_mode(mode):
             CONTROLLER.prgm_next_step()
         if mode == 'RESUME':
             print (nlist['run'])
-    elif "Program Paused" in str: 
+    elif "Program Paused" in str0: 
         if mode == 'RESUME':
             print (nlist["act"])
             CONTROLLER.prgm_resume()
@@ -206,12 +206,12 @@ def read_time_signal():
 def const_start():
     '''Start Constant mode on chamber
     '''
-    str = CONTROLLER.get_status()
+    str0 = CONTROLLER.get_status()
     time.sleep(0.5)
-    if ('Program Running' in str) or ('Program Paused' in str):
-        print (f'\nrsp> Chamber is running in {str} mode. Must stop it first.')
-    elif 'Constant' in str:
-        print (f'\nrsp> Chamber is already in {str} mode.')
+    if ('Program Running' in str0) or ('Program Paused' in str0):
+        print (f'\nrsp> Chamber is running in {str0} mode. Must stop it first.')
+    elif 'Constant' in str0:
+        print (f'\nrsp> Chamber is already in {str0} mode.')
     else:
         CONTROLLER.const_start()
         time.sleep(0.5)
@@ -220,14 +220,14 @@ def const_start():
 def stop_const():
     '''Stop constant mode on chamber
     '''
-    str = CONTROLLER.get_status()
+    str0 = CONTROLLER.get_status()
     time.sleep(0.5)
-    if 'Constant' in str:
+    if 'Constant' in str0:
         CONTROLLER.stop()
         time.sleep(0.5) 
         print ('\nrsp > Done ')
-    elif ('Program Running' in str) or ('Program Paused' in str):
-        print (f'\nrsp> Chamber is in {str} mode. Request ignored.')
+    elif ('Program Running' in str0) or ('Program Paused' in str0):
+        print (f'\nrsp> Chamber is in {str0} mode. Request ignored.')
     else:    
         print ("\nrsp> Chamber not in Constant mode. Nothing to do.")
 
@@ -238,13 +238,13 @@ def temp_controller():
     def temp_menu(choice):
         '''return Temp menu option'''
         return {
-            'r': lambda: read_val('Temp',1),  # 'r': lambda: read_val('Temp',1),
-            't': lambda: set_loop('Temp',1),
+            'r': lambda: read_val('Air Temp/PTCON',1),
+            't': lambda: set_loop('Air Temp/PTCON',1),
             'z': lambda: main_menu()
         }.get(choice, lambda: print ('\nrsp> Not a valid option.') )()  
 
     while(True):
-        print_menu('2','Temp')
+        print_menu('2','Air Temp/PTCON')
         option = input('Select option (r, t, z): ')
         temp_menu(option)
 
@@ -354,7 +354,7 @@ def menu(choice):
     '''
     # main menu 
     main_menu = {
-        't': 'Temp SP control               ',
+        't': 'Temp/PTCON SP control         ',
         'p': 'Program control               ',
         'e': 'Event control                 ',        
         's': 'Chamber operating mode        ',
@@ -363,8 +363,8 @@ def menu(choice):
 
     # temp and humi ctrl menu
     th_menu = {
-        'r': 'Read Temperature SP and PV    ',
-        't': 'New Temperature Set Point     ',
+        'r': 'Read Air Temp/PTCON SP and PV ',
+        't': 'New Air Temp/PTCON Set Point  ',
         'z': 'Return to Main Menu           '
     }
 
