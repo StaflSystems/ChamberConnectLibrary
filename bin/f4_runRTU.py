@@ -69,11 +69,15 @@ def ip_addr():
 def set_loop(str, loop):
     '''set new temp value
     '''
-    print ('\n<Applying new Set Point>')
+    loop_num = [1,2]
+    val_range = CONTROLLER.get_cascade_range(loop)
+    str1 = "Temperature Range" if loop == 1 else "Humidity Range"
+    print (f'\n{str1}:\nMAX: {val_range["max"]}\nMIN: {val_range["min"]}')
+    print ('\n<Apply new Set Point>')
     try:
         while True:
             try:
-                val = float(input('Enter new SP value: '))
+                val = float(input('Enter new SP value (Ctrl-C to cancel): '))
                 if isinstance(val, int) or isinstance(val,float):
                     CONTROLLER.set_loop_sp(loop,val)
                     break
