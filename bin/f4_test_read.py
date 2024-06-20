@@ -29,6 +29,7 @@ import minimalmodbus
 # comm port selected from PC selection 
 # NOTE: Check the COM no. selected and used by the OS.
 #       modify the COM no. to the one used by the OS. 
+#BTZ133 = minimalmodbus.Instrument("/dev/ttyUSB0", 1)
 BTZ133 = minimalmodbus.Instrument("COM5", 1)
 
 # Set baudrate
