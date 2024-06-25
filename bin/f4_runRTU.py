@@ -66,11 +66,11 @@ def ip_addr():
             print ('Invalid IP address.')
     return ip_addr
     
-def set_loop(str, loop):
+def set_loop(str1, loop):
     '''set new temp value
     '''
-    loop_num = [1,2]
-    val_range = CONTROLLER.get_cascade_range(loop)
+    loop_num = [1,2] 
+    val_range = CONTROLLER.get_loop_range(loop)
     str1 = "Temperature Range" if loop == 1 else "Humidity Range"
     print (f'\n{str1}:\nMAX: {val_range["max"]}\nMIN: {val_range["min"]}')
     print ('\n<Apply new Set Point>')
@@ -92,27 +92,31 @@ def set_loop(str, loop):
     time.sleep(0.5)
     currentSP = CONTROLLER.get_loop_sp(loop)
     currentPV = CONTROLLER.get_loop_pv(loop)
-    print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}')
+    print(f'\nrsp> {str1} status:\n     PV: {currentPV}\n     SP: {currentSP}')
 
-def read_val(str,loop):
+def read_val(str1,loop):
     """
     Read current values of Temp SP and PV
     """
     time.sleep(0.5)
     currentSP = CONTROLLER.get_loop_sp(loop)
     currentPV = CONTROLLER.get_loop_pv(loop)
-    print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}')
+    print(f'\nrsp> {str1} status:\n     PV: {currentPV}\n     SP: {currentSP}')
 
 def operation_status(): 
     '''Check current status of chamber before executing a new program
     '''
-    str = CONTROLLER.get_status()
-    time.sleep(0.5)
-    if 'Program Running' in str or 'Program Paused' in str:
-        print ('\nrsp> Program execution in progress... must first terminate it.') 
-    else:
-        # execute new program 
-        run_prog() 
+    chk_alarm = CONTROLLER.get_status() 
+    if chk_alarm == 'Alarm': 
+        print ("\nrsp> Chamber is in alarm state and must be cleared first.")
+    else: 
+        str1 = CONTROLLER.get_status()
+        time.sleep(0.5)
+        if 'Program Running' in str1 or 'Program Paused' in str1 or 'Constant' in str1:
+            print ('\nrsp> Program execution in progress or chamber in Constant mode... must be terminated first.') 
+        else:
+            # execute new program 
+            run_prog() 
 
 def run_prog(): 
     '''select and set profile for execution.
@@ -120,7 +124,7 @@ def run_prog():
     print ('\n<Select a profile to execute>')
     try: 
         while True:
-            pn = int(input('Enter profile number (Ctrl+C to exit profile execution): '))
+            pn = int(input('Enter profile number (Ctrl+C to cancel): '))
             if isinstance(pn, int) and 1 <= pn <= 40:
                 psteps = CONTROLLER.get_prgm_steps(pn)
                 sn = int(input('Enter step number: '))
@@ -151,9 +155,9 @@ def prog_mode(mode):
         'pau' : f'\nrsp> Program is in paused...request is ignored.',
         'run' : f'\nrsp> Program is running...request is ignored.',
     }
-    str = CONTROLLER.get_status()
+    str1 = CONTROLLER.get_status()
     time.sleep(0.5)
-    if "Program Running" in str:
+    if "Program Running" in str1:
         if mode == 'STOP':
             print (nlist["act"])
             CONTROLLER.stop()        
@@ -165,7 +169,7 @@ def prog_mode(mode):
             CONTROLLER.prgm_next_step()
         if mode == 'RESUME':
             print (nlist['run'])
-    elif "Program Paused" in str: 
+    elif "Program Paused" in str1: 
         if mode == 'RESUME':
             print (nlist["act"])
             CONTROLLER.prgm_resume()
@@ -201,15 +205,15 @@ def read_time_signal():
         tsout = 'ON' if ts_list['current'] == True else 'OFF'
         print (f'    Time signal #{i+1} : {tsout}')
 
-def const_start():
+def start_const():
     '''Start Constant mode on chamber
     '''
-    str = CONTROLLER.get_status()
+    str1 = CONTROLLER.get_status()
     time.sleep(0.5)
-    if ('Program Running' in str) or ('Program Paused' in str):
-        print (f'\nrsp> Chamber is running in {str} mode. Must stop it first.')
-    elif 'Constant' in str:
-        print (f'\nrsp> Chamber is already in {str} mode.')
+    if ('Program Running' in str1) or ('Program Paused' in str1):
+        print (f'\nrsp> Chamber is running in {str1} mode. Must stop it first.')
+    elif 'Constant' in str1:
+        print (f'\nrsp> Chamber is already in {str1} mode.')
     else:
         CONTROLLER.const_start()
         time.sleep(0.5)
@@ -294,8 +298,8 @@ def status_menu():
         '''return status options'''
         return {
             's': lambda: print (f'\nrsp> {CONTROLLER.get_status()}'),
-            'c': lambda: const_start(), 
-            'o': lambda: stop_const(), # print (f'\nrsp> {CONTROLLER.stop()}'),
+            'c': lambda: start_const(), 
+            'o': lambda: stop_const(),
             'a': lambda: print (f'\nrsp> {CONTROLLER.get_alarm_status()}'),
             'd': lambda: print (f'\nrsp> {CONTROLLER.get_datetime()}'),
             'z': lambda: main_menu(),
@@ -412,10 +416,10 @@ if __name__ == "__main__":
     # uncomment the following line and check MS Window OS to confirm COM being used 
 
     #example interface_params for RS232 on port 4 (windows) Modbus address=1
-    interface_params = {'interface':'RTU', 'baudrate':19200, 'serialport':'//./COM5', 'adr':1}
+    #interface_params = {'interface':'RTU', 'baudrate':19200, 'serialport':'//./COM5', 'adr':1}
 
     #example interface_params for RS232 on ttyUSB0 (linux) Modbus address=1
-    #interface_params = {'interface':'RTU', 'baudrate':38400, 'serialport':'/dev/ttyUSB0', 'adr':1}
+    interface_params = {'interface':'RTU', 'baudrate':19200, 'serialport':'/dev/ttyUSB0', 'adr':1}
 
     #example for temp only chamber (BTU-??? or BTZ-???)
     CONTROLLER = WatlowF4(
