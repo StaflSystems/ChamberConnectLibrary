@@ -61,11 +61,15 @@ def ip_addr():
 def set_loop(str, loop):
     '''set new temp value
     '''
+    loop_num = [1,2]
+    val_range = CONTROLLER.get_loop_range(loop)
+    str1 = "Temperature Range" if loop == 1 else "Humidity Range"
+    print (f'\n{str1}:\nMAX: {val_range["max"]}\nMIN: {val_range["min"]}')
     print ('\n<Applying new Set Point>')
     try:
         while True:
             try:
-                val = float(input('Enter new SP value: '))
+                val = float(input('Enter new SP value (Ctrl-C to cancel): '))
                 if isinstance(val, int) or isinstance(val,float):
                     CONTROLLER.set_loop_sp(loop,val)
                     break
@@ -96,6 +100,7 @@ def operation_status():
     '''
     str = CONTROLLER.get_status()
     time.sleep(0.5)
+    #print (f'status: {str}')
     if 'Program Running' in str or 'Program Paused' in str:
         print ('\nrsp> Program execution in progress... must first terminate it.') 
     else:
@@ -141,6 +146,7 @@ def prog_mode(mode):
     }
     str = CONTROLLER.get_status()
     time.sleep(0.5)
+    print (f'status: {str}')
     if "Program Running" in str:
         if mode == 'STOP':
             print (nlist["act"])
@@ -400,10 +406,10 @@ if __name__ == "__main__":
     # uncomment the following line and check MS Window OS to confirm COM being used 
 
     #example interface_params for RS232 on port 4 (windows) Modbus address=1
-    interface_params = {'interface':'RTU', 'baudrate':19200, 'serialport':'//./COM5', 'adr':1}
+    #interface_params = {'interface':'RTU', 'baudrate':19200, 'serialport':'//./COM5', 'adr':1}
 
     #example interface_params for RS232 on ttyUSB0 (linux) Modbus address=1
-    #interface_params = {'interface':'RTU', 'baudrate':38400, 'serialport':'/dev/ttyUSB0', 'adr':1}
+    interface_params = {'interface':'RTU', 'baudrate':19200, 'serialport':'/dev/ttyUSB0', 'adr':1}
 
     #example for temp only chamber (BTU-??? or BTZ-???)
     CONTROLLER = WatlowF4(
