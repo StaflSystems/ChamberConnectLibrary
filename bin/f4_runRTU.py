@@ -98,14 +98,17 @@ def read_val(str,loop):
 def operation_status(): 
     '''Check current status of chamber before executing a new program
     '''
-    str = CONTROLLER.get_status()
-    time.sleep(0.5)
-    #print (f'status: {str}')
-    if 'Program Running' in str or 'Program Paused' in str:
-        print ('\nrsp> Program execution in progress... must first terminate it.') 
+    chk_alarm = CONTROLLER.get_status()
+    if chk_alarm == 'Alarm':
+        print ("\nrsp> Chamber is in alarm state and must be cleared first.")
     else:
+        str1 = CONTROLLER.get_status()
+        time.sleep(0.5)
+        if 'Program Running' in str1 or 'Program Paused' in str1 or 'Constant' in str1:
+            print ('\nrsp> Program execution in progress or chamber in Constant mode... must be terminated first.') 
+        else:
         # execute new program 
-        run_prog() 
+            run_prog() 
 
 def run_prog(): 
     '''select and set profile for execution.
@@ -113,7 +116,7 @@ def run_prog():
     print ('\n<Select a profile to execute>')
     try: 
         while True:
-            pn = int(input('Enter profile number (Ctrl+C to exit profile execution): '))
+            pn = int(input('Enter profile number (Ctrl+C to cancel): '))
             if isinstance(pn, int) and 1 <= pn <= 40:
                 psteps = CONTROLLER.get_prgm_steps(pn)
                 sn = int(input('Enter step number: '))
