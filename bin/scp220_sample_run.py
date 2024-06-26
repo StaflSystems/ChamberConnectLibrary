@@ -302,12 +302,12 @@ def prog_menu():  # tested
     def prog_operation(choice):
         '''return status option'''
         return {
-            'm': lambda: print (f'\nrsp> {CONTROLLER.get_mode()}'),
-            'e': lambda: operation_status(),
-            'n': lambda: prog_mode('SKIP'),
-            'p': lambda: prog_mode('PAUSE'),
-            'r': lambda: prog_mode('RESUME'),
-            's': lambda: prog_mode('STOP'),
+            'm': lambda: print (f'\nrsp> not yet implemented'), #{CONTROLLER.get_mode()}'),
+            'e': lambda: print (f'\nrsp> not yet implemented'), #operation_status(),
+            'n': lambda: print (f'\nrsp> not yet implemented'), #prog_mode('SKIP'),
+            'p': lambda: print (f'\nrsp> not yet implemented'), #prog_mode('PAUSE'),
+            'r': lambda: print (f'\nrsp> not yet implemented'), #prog_mode('RESUME'),
+            's': lambda: print (f'\nrsp> not yet implemented'), #prog_mode('STOP'),
             'z': lambda: main_menu(),
         }.get(choice, lambda: print ('\nrsp> Not a valid option') )()
 
@@ -324,8 +324,8 @@ def event_controller():
         '''
         return {
             'r': lambda: read_time_signal(),
-            's': lambda: set_time_signal(True),
-            'o': lambda: set_time_signal(False),
+            's': lambda: print (f'\nrsp> not yet implemented'), #set_time_signal(True),
+            'o': lambda: print (f'\nrsp> not yet implemented'), #set_time_signal(False),
             'z': lambda: main_menu()
         }.get(option, lambda: print ('\nrsp> Not a valid option.') )()
 
@@ -341,9 +341,9 @@ def status_menu():
     def status_option(choice):
         '''return status options'''
         return {
-            'r': lambda: print (f'\nrsp> {CONTROLLER.get_mode()}'),
-            's': lambda: const_start(), 
-            'o': lambda: stop_const(),
+            'r': lambda: print (f'\nrsp> not yet implemented'), #print (f'\nrsp> {CONTROLLER.get_mode()}'),
+            's': lambda: print (f'\nrsp> not yet implemented'), #const_start(), 
+            'o': lambda: print (f'\nrsp> not yet implemented'), #stop_const(),
             'a': lambda: print (f'\nrsp> {CONTROLLER.get_alarm_status()}'),
             'd': lambda: print (f'\nrsp> {CONTROLLER.get_datetime()}'),
             'i': lambda: print (f'\nrsp> {CONTROLLER.get_rom()}'), 
@@ -465,19 +465,19 @@ if __name__ == "__main__":
     # read the "README" section at the top of this program.
     #
     controller_type = "SCP220"
-    interface_params = {
-        'interface':'Serial',
-        'baudrate':'9600',          # opt: 9600, 19200
-        #'serialport':'//./COM5',    # for MS Windows platform
-        'serialport':'/dev/ttyUSB0', # GNU/Linux platform 
-        'adr':1
-    }
+    #interface_params = {
+    #    'interface':'Serial',
+    #    'baudrate':'9600',          # opt: 9600, 19200
+    #    #'serialport':'//./COM5',    # for MS Windows platform
+    #    'serialport':'/dev/ttyUSB0', # GNU/Linux platform 
+    #    'adr':1
+    #}
     
     # using TCP/IP for communication 
-    #interface_params = {
-    #    'interface':'TCP',
-    #    'host':'10.30.200.252'  # use correct IP addr
-    #}
+    interface_params = {
+        'interface':'TCP',
+        'host':'10.30.100.122'  # use correct IP addr
+    }
    
     CONTROLLER = Espec220(
         ctrl_type=controller_type,
