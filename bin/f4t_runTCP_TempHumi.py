@@ -439,12 +439,21 @@ if __name__ == "__main__":
     ###############################################################################################
     # BEGIN SELECTION OF THE SPECIFIC CHAMBER AND F4T 
     #sepcifically for ESPEC Chambers and Types with Watlow F4T
-    ############################################################################################### 
 
-    #example interface_params for a TCP connection to 10.30.100.55
+    ###############################################################################################
+    # MS Windows 7/10/11 environment
+    # example interface_params for RS232/RS485 on port 7 (windows) Modbus address=1
+    # uncomment the following line and check MS Window OS to confirm COM being used 
+    #interface_params = {'interface':'RTU', 'baudrate':38400, 'serialport':'//./COM7', 'adr':1}
+
+    # GNU/Linux environment
+    # exec ls -l /dev/ttyUSB* to determine USB# being used...
+    # should be USB0 or USB1; the following line must be changed accordingly. 
+    # example interface_params for RS232/RS485 on ttyUSB0 (linux) Modbus address=1
+    #interface_params = {'interface':'RTU', 'baudrate':38400, 'serialport':'/dev/ttyUSB0', 'adr':1}
+
+    # example interface_params for a TCP connection to 10.30.100.55
     #interface_params = {'interface':'TCP', 'host':10.30.100.55}
-    
-    # to manually enter IP address of Watlow F4T 
     interface_params = {'interface':'TCP', 'host':ip_addr()}
 
     '''

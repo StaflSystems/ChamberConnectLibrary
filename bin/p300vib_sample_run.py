@@ -479,7 +479,7 @@ if __name__ == "__main__":
     # TCP port preconfigured using 10001
     interface_params = {
         'interface':'TCP',
-        'host':'10.30.200.238'  # use correct IP addr
+        'host':'10.30.100.115'  # use correct IP addr
     }    
     
     CONTROLLER = EspecVib(
