@@ -43,7 +43,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import time,re
 import os, sys
 import logging
-sys.path.insert(0,'../chamberconnectlibrary')
+sys.path.insert(0,'../chamberconnectlibrary') 
 
 from datetime import datetime 
 from chamberconnectlibrary.watlowf4t import WatlowF4T
@@ -547,5 +547,5 @@ if __name__ == "__main__":
         current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         x += 1
         t -=2.3
-    print ('ENDED')     # test section
+    print ('ENDED')     # test section 
     '''
