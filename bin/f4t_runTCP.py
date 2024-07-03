@@ -526,6 +526,25 @@ if __name__ == "__main__":
     main_menu()
 
     # test section
+    '''
+    current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    x=0
+    t=CONTROLLER.get_loop_sp(1)
+    while x < 20:
+        mode = CONTROLLER.get_loop_modes(1)
+        currentSP = CONTROLLER.get_loop_sp(1)
+        currentPV = CONTROLLER.get_loop_pv(1)
+        print(f'\n{current_datetime} | mode: {mode[0]} | SP: {currentSP} | PV: {currentPV}') 
+        #print(f'\n{current_datetime} | mode: {mode[0]} | SP: {currentSP["air"]} | PV: {currentPV["product"]}')       
+
+        CONTROLLER.set_loop_sp(1,t)
+
+        current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        x += 1
+        t +=2.3
+
+    print ('ENDED') 
+    '''
 
 
