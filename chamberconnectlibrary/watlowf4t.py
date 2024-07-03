@@ -1,4 +1,4 @@
-﻿'''
+'''
 Upper level interface for the Watlow F4T controller
 
 :copyright: (C) Espec North America, INC.
@@ -176,7 +176,7 @@ class WatlowF4T(ControllerInterface):
         '''
         connect to the controller using the paramters provided on class initialization
         '''
-        if self.interface == "RTU":
+        if self.interface in ["RTU", "Serial"]:
             self.client = ModbusRTU(address=self.adr, port=self.serialport, baud=self.baudrate)
         else:
             self.client = ModbusTCP(self.adr, self.host)
@@ -526,6 +526,21 @@ class WatlowF4T(ControllerInterface):
         else:
             self.client.write_holding(kpress, self.inv_watlow_val_dict('up'))
 
+<<<<<<< HEAD
+=======
+    @exclusive
+    def get_air_speed(self):
+        raise NotImplementedError
+
+    @exclusive
+    def get_air_speeds(self):
+        raise NotImplementedError
+
+    @exclusive
+    def set_air_speed(self, value): 
+        raise NotImplementedError
+
+>>>>>>> cclibrary-py3
     @exclusive
     def get_status(self):
         prgmstate = self.client.read_holding(16568, 1)[0]
@@ -855,7 +870,11 @@ class WatlowF4T(ControllerInterface):
             self.client.write_holding(18888, N) #set active profile
             self.client.write_holding(18890, self.inv_watlow_val_dict('delete')) #delete profile
         except ModbusError as exp:
+<<<<<<< HEAD
             exp.message = f'Cannot delete program. (original message: {exp.message})'
+=======
+            exp.message = 'Cannot delete program. (original message: %s)' % exp.message
+>>>>>>> cclibrary-py3
             raise # something else went wrong pass the exception on up.
 
 
@@ -1000,8 +1019,13 @@ class WatlowF4T(ControllerInterface):
         try:
             tlist = ['absoluteTemperature', 'relativeTemperature', 'notsourced']
             if self.watlow_val_dict[profpv] in tlist:
+<<<<<<< HEAD
                 tval = self.client.read_holding(14080 if self.interface == "RTU" else 6730, 1)[0]
                 return '\xb0%s' % self.watlow_val_dict[tval]
+=======
+                tval = self.client.read_holding(14080 if self.interface in ["RTU", "Serial"] else 6730, 1)[0]
+                return u'\xb0%s' % self.watlow_val_dict[tval]
+>>>>>>> cclibrary-py3
             else:
                 return '%s' % self.watlow_val_dict[profpv]
         except LookupError:

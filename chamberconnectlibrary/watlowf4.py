@@ -270,7 +270,7 @@ class WatlowF4(ControllerInterface):
         '''
         connect to the controller using the paramters provided on class initialization
         '''
-        if self.interface == "RTU":
+        if self.interface in ["RTU", "Serial"]:
             self.client = ModbusRTU(
                 address=self.adr,
                 port=self.serialport,
@@ -541,6 +541,18 @@ class WatlowF4(ControllerInterface):
         self.__range_check(N, 1, 8)
         value = value['constant'] if isinstance(value, dict) else value
         self.client.write_holding(2000 + 10*(N-1), 1 if value else 0)
+
+    @exclusive
+    def get_air_speed(self):
+        raise NotImplementedError
+
+    @exclusive
+    def get_air_speeds(self):
+        raise NotImplementedError
+
+    @exclusive
+    def set_air_speed(self, value): 
+        raise NotImplementedError
 
     @exclusive
     def get_status(self):

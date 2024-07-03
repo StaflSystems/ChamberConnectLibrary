@@ -3,8 +3,8 @@
 :author: Paul Nong-Laolam <pnong-laolam@espec.com>
 :license: MIT, see LICENSE for more detail.
 :copyright: (c) 2020, 2022. ESPEC North America, INC.
-:updated: 2023 Included sample call programs to provide ease of use.
-:file: f4t_runTCP_TempHumi.py 
+:updated: 2024 Included sample call programs to provide ease of use.
+:file: f4t_runTCP_PTCON_cascade.py 
 
 Application interface for controlling Watlow F4T operations. 
 This program may be and can be reimplemented with additional
@@ -17,7 +17,8 @@ README:
 
 The following is a sample program call to the Library to control the F4T controller.
 It is programmed to provide a menu to offer some of the operational features
-of the F4T selected from ESPEC ChamberConnectLibrary.
+of the F4T selected from ESPEC ChamberConnectLibrary. This sample program may be used
+to control F4T with Chamber models: BTU-??? or BTZ-???? (w/ PTCON, cascade). 
 
 This sample program applies TCP for communication. 
 
@@ -29,8 +30,6 @@ ChamberConnectLibrary in the Python 3 environment.
 Tested: 
 GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
 MS Windows platform: Python 3.9.x 
-<<<<<<< HEAD
-=======
 
 DISCLAIMER: 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
@@ -39,7 +38,6 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
->>>>>>> cclibrary-py3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 import time,re
@@ -47,6 +45,7 @@ import os, sys
 import logging
 sys.path.insert(0,'../chamberconnectlibrary')
 
+from datetime import datetime 
 from chamberconnectlibrary.watlowf4t import WatlowF4T
 from chamberconnectlibrary.controllerinterface import ControllerInterfaceError
 
@@ -55,11 +54,8 @@ def ip_addr():
     '''
     while True:
         try:
-            ip_addr = input('Enter F4T IP address (e.g., 192.168.0.101): ')
-<<<<<<< HEAD
-=======
-            #ip_addr ='10.30.100.115' # set for testing  
->>>>>>> cclibrary-py3
+            #ip_addr = input('Enter F4T IP address (e.g., 192.168.0.101): ')
+            ip_addr = "10.30.100.165"
             chk_ip = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", ip_addr)
             if chk_ip:
                 print ('\n')
@@ -68,22 +64,12 @@ def ip_addr():
             print ('Invalid IP address.')
     return ip_addr
     
-def set_loop(str, loop):
-    '''set new temp value
+def set_loop(str0, loop):
+    '''set new temp/PTCON value
     '''
-<<<<<<< HEAD
-    print ('\n<Applying new Set Point>')
-    try:
-        while True:
-            try:
-                val = float(input('Enter new SP value: '))
-                if isinstance(val, int) or isinstance(val,float):
-                    CONTROLLER.set_loop_sp(loop,val)
-                    break
-=======
     # recording temp range 
-    loop_num = [1,2] 
-    val_range = CONTROLLER.get_loop_range(loop)
+    loop_num = [1,2]
+    val_range = CONTROLLER.get_cascade_range(loop)
     str1 = "Temperature Range" if loop == 1 else "Humidity Range"
     print (f'\n{str1}:\nMAX: {val_range["max"]}\nMIN: {val_range["min"]}')
     print ('\n<Apply new Set Point>')
@@ -92,13 +78,12 @@ def set_loop(str, loop):
             try:
                 val = float(input('Enter new SP value (Ctrl-C to cancel): '))
                 if isinstance(val, int) or isinstance(val,float):
-                    if loop in loop_num:    #if loop == 1 or loop == 2: 
+                    if loop in loop_num: # if loop == 1:   only one loop (Temp) 
                         if val_range["min"] <= val <= val_range["max"]:
-                            CONTROLLER.set_loop_sp(loop,val)
+                            CONTROLLER.set_cascade_sp(loop,val)
                             break
                         else:
                             print ('ERROR! Value out of range. Try again. \n')
->>>>>>> cclibrary-py3
             except ValueError:
                 print ('Invalid value.\n')
             except KeyboardInterrupt:
@@ -108,31 +93,22 @@ def set_loop(str, loop):
         pass
 
     time.sleep(0.5)
-    currentSP = CONTROLLER.get_loop_sp(loop)
-    currentPV = CONTROLLER.get_loop_pv(loop)
-    print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}')
+    currentSP = CONTROLLER.get_cascade_sp(loop)
+    currentPV = CONTROLLER.get_cascade_pv(loop)
+    print(f'\nrsp> {str0} status:\n     PV: {currentPV}\n     SP: {currentSP}')
 
-def read_val(str,loop):
+def read_val(str0,loop):
     """
-    Read current values of Temp or Temp and Humi SP and PV
+    Read current values from cascade -- PTCON SP and PV
     """
     time.sleep(0.5)
-    currentSP = CONTROLLER.get_loop_sp(loop)
-    currentPV = CONTROLLER.get_loop_pv(loop)
-    print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}')
+    currentSP = CONTROLLER.get_cascade_sp(loop)
+    currentPV = CONTROLLER.get_cascade_pv(loop)
+    print(f'\nrsp> {str0} status:\n     PV: {currentPV}\n     SP: {currentSP}') 
 
 def operation_status(): 
     '''Check current status of chamber before executing a new program
     '''
-<<<<<<< HEAD
-    str = CONTROLLER.get_status()
-    time.sleep(0.5)
-    if 'Program Running' in str or 'Program Paused' in str:
-        print ('\nrsp> Program execution in progress... must first terminate it.') 
-    else:
-        # execute new program 
-        run_prog() 
-=======
     chk_alarm = CONTROLLER.get_status() 
     if chk_alarm == 'Alarm': 
         print ("\nrsp> Chamber is in alarm state and must be cleared first.")
@@ -144,7 +120,6 @@ def operation_status():
         else:
             # execute new program 
             run_prog()
->>>>>>> cclibrary-py3
 
 def run_prog(): 
     '''select and set profile for execution.
@@ -180,12 +155,12 @@ def prog_mode(mode):
     nlist = { 
         'nact': f'\nrsp> No program running. Action terminated.',
         'act' : f'\nrsp> {mode} current program.',
-        'pau' : f'\nrsp> Program is already in paused...request is ignored.',
-        'run' : f'\nrsp> Program is already running...request is ignored.',
+        'pau' : f'\nrsp> Program is in paused...request is ignored.',
+        'run' : f'\nrsp> Program is running...request is ignored.',
     }
-    str = CONTROLLER.get_status()
+    str0 = CONTROLLER.get_status()
     time.sleep(0.5)
-    if "Program Running" in str:
+    if "Program Running" in str0:
         if mode == 'STOP':
             print (nlist["act"])
             CONTROLLER.stop()        
@@ -197,7 +172,7 @@ def prog_mode(mode):
             CONTROLLER.prgm_next_step()
         if mode == 'RESUME':
             print (nlist['run'])
-    elif "Program Paused" in str: 
+    elif "Program Paused" in str0: 
         if mode == 'RESUME':
             print (nlist["act"])
             CONTROLLER.prgm_resume()
@@ -236,12 +211,12 @@ def read_time_signal():
 def const_start():
     '''Start Constant mode on chamber
     '''
-    str = CONTROLLER.get_status()
+    str0 = CONTROLLER.get_status()
     time.sleep(0.5)
-    if ('Program Running' in str) or ('Program Paused' in str):
-        print (f'\nrsp> Chamber is running in {str} mode. Must stop it first.')
-    elif 'Constant' in str:
-        print (f'\nrsp> Chamber is already in {str} mode.')
+    if ('Program Running' in str0) or ('Program Paused' in str0):
+        print (f'\nrsp> Chamber is running in {str0} mode. Must stop it first.')
+    elif 'Constant' in str0:
+        print (f'\nrsp> Chamber is already in {str0} mode.')
     else:
         CONTROLLER.const_start()
         time.sleep(0.5)
@@ -250,41 +225,33 @@ def const_start():
 def stop_const():
     '''Stop constant mode on chamber
     '''
-<<<<<<< HEAD
-    CONTROLLER.stop()
-    time.sleep(0.5) 
-    print ('\nrsp > Done ') 
-=======
-    str = CONTROLLER.get_status()
+    str0 = CONTROLLER.get_status()
     time.sleep(0.5)
-    if 'Constant' in str:
+    if 'Constant' in str0:
         CONTROLLER.stop()
         time.sleep(0.5) 
         print ('\nrsp > Done ')
-    elif ('Program Running' in str) or ('Program Paused' in str):
-        print (f'\nrsp> Chamber is in {str} mode. Request ignored.')
+    elif ('Program Running' in str0) or ('Program Paused' in str0):
+        print (f'\nrsp> Chamber is in {str0} mode. Request ignored.')
     else:    
         print ("\nrsp> Chamber not in Constant mode. Nothing to do.")
->>>>>>> cclibrary-py3
 
-def temp_humi_controller():
+def temp_controller():
     '''
-       set options for Temp and Humi controls
+       set options for Temp controls
     '''
-    def temp_humi_menu(choice):
-        '''return T/H menu option'''
+    def temp_menu(choice):
+        '''return Temp menu option'''
         return {
-            'r': lambda: read_val('Temp',1),
-            't': lambda: set_loop('Temp',1),
-            'h': lambda: read_val('Humi',2),
-            's': lambda: set_loop('Humi',2),
+            'r': lambda: read_val('Air Temp/PTCON',1),
+            't': lambda: set_loop('Air Temp/PTCON',1),
             'z': lambda: main_menu()
         }.get(choice, lambda: print ('\nrsp> Not a valid option.') )()  
 
     while(True):
-        print_menu('2','Temp/Humi')
-        option = input('Select option (r, t, h, s, z): ')
-        temp_humi_menu(option)
+        print_menu('2','Air Temp/PTCON')
+        option = input('Select option (r, t, z): ')
+        temp_menu(option)
 
 def prog_menu():  # test 
     '''set up selection menu for operation
@@ -297,7 +264,7 @@ def prog_menu():  # test
        s: stop program
        z: return to Main Menu 
     '''
-    def prog_operation(choice):
+    def progOperation(choice):
         '''return status option'''
         return {
             'm': lambda: print (f'\nrsp> {CONTROLLER.get_status()}'),
@@ -311,13 +278,13 @@ def prog_menu():  # test
 
     while(True):
         print_menu('3','Program')
-        option = input('Select option (m, e, n, p, r, s, z): ')
-        prog_operation(option)
+        option = input('Select option: ')
+        progOperation(option)
 
 def event_controller():
     '''Test TS events
     '''
-    def event_option(option) :
+    def eventOpt(option) :
         '''get event seelction menu
         '''
         return {
@@ -330,14 +297,14 @@ def event_controller():
     while(True):
         print_menu('4','Event')
         option = ''
-        option = input('Select option (r, s, o, z): ')
-        event_option(option) 
+        option = input('Select option (r, s, z): ')
+        eventOpt(option) 
 
 
 def status_menu():
     '''read chamber status
     '''
-    def status_option(choice):
+    def statOption(choice):
         '''return status options'''
         return {
             's': lambda: print (f'\nrsp> {CONTROLLER.get_status()}'),
@@ -350,8 +317,8 @@ def status_menu():
 
     while(True):
         print_menu('5','Chamber Status')
-        option = input('Select option (s, c, o, a, d, z): ')
-        status_option(option)
+        option = input('Select option: ')
+        statOption(option)
 
 def main_menu(): 
     '''
@@ -360,7 +327,7 @@ def main_menu():
     def main_option(choice):
         '''return main menu options'''
         return {
-            't': lambda: temp_humi_controller(),
+            't': lambda: temp_controller(),
             'p': lambda: prog_menu(),
             'e': lambda: event_controller(),
             's': lambda: status_menu(),
@@ -384,15 +351,15 @@ def print_menu(choice, menu_name):
 def menu(choice):
     '''menu list
     main menu option: 
-       1: main menu
-       2: Temp/Humi menu
-       3: Program menu
+       1: main control menu
+       2: Temp control menu
+       3: Program control menu
        4: Output (Time Signal) menu
        5: Chamber operating mode
     '''
     # main menu 
     main_menu = {
-        't': 'Temp/Humi SP control          ',
+        't': 'Temp/PTCON SP control         ',
         'p': 'Program control               ',
         'e': 'Event control                 ',        
         's': 'Chamber operating mode        ',
@@ -401,10 +368,8 @@ def menu(choice):
 
     # temp and humi ctrl menu
     th_menu = {
-        'r': 'Read Temperature SP and PV    ',
-        't': 'New Temperature Set Point     ',
-        'h': 'Read Humidity SP and Pv       ',
-        's': 'New Humidity Set Point        ',
+        'r': 'Read Air Temp/PTCON SP and PV ',
+        't': 'New Air Temp/PTCON Set Point  ',
         'z': 'Return to Main Menu           '
     }
 
@@ -457,29 +422,10 @@ if __name__ == "__main__":
     # clear terminal; consider MS Windows environment as well...
     os.system('clear||cls')
 
-    # the general setup for Watlow F4T, directly calling T or H loop
-    # connect to watlow F4T via proper IP address using TCP/IP protocol
-    '''
-    LOOP_NAMES = ['Temperature', 'Humidity']
-    CONTROLLER = WatlowF4T(
-        interface='TCP',
-        host=ip_addr(),        # requires the correct IP address of F4T
-        loop_names=LOOP_NAMES  # set loop names for temp and humi 
-    )
-    '''
-
     # BEGIN 
     ###############################################################################################
     # BEGIN SELECTION OF THE SPECIFIC CHAMBER AND F4T 
     #sepcifically for ESPEC Chambers and Types with Watlow F4T
-<<<<<<< HEAD
-    ############################################################################################### 
-
-    #example interface_params for a TCP connection to 10.30.100.55
-    #interface_params = {'interface':'TCP', 'host':10.30.100.55}
-    
-    # to manually enter IP address of Watlow F4T 
-=======
 
     ###############################################################################################
     # MS Windows 7/10/11 environment
@@ -495,39 +441,53 @@ if __name__ == "__main__":
 
     # example interface_params for a TCP connection to 10.30.100.55
     #interface_params = {'interface':'TCP', 'host':10.30.100.55}
->>>>>>> cclibrary-py3
     interface_params = {'interface':'TCP', 'host':ip_addr()}
 
-    '''
     # Chamber models: BTU-??? or BTZ-??? with temp only 
     # for these two types, uncomment the following block of lines 
+    #CONTROLLER = WatlowF4T(
+    #    alarms=8, # the number of available alarms
+    #    profiles=True, # the controller has programming
+    #    loops=1, # the number of control loops (ie temperature)
+    #    cond_event=9, # the event that enables/disables conditioning
+    #    cond_event_toggle=False, # is the condition momentary(False), or maintained(True)
+    #    run_module=1, # The io module that has the chamber run output
+    #    run_io=1, # The run output on the mdoule that has the chamber run out put
+    #    limits=[5], # A list of modules that contain limit type cards.
+    #    **interface_params
+    #)
+
+    # chamber models: BTU-??? or BTZ-????
+    # Temp only w/ product temp (PTCON or cascade) 
     CONTROLLER = WatlowF4T(
         alarms=8, # the number of available alarms
         profiles=True, # the controller has programming
-        loops=1, # the number of control loops (ie temperature)
+        loops=0, # the number of control loops (ie temperature)
         cond_event=9, # the event that enables/disables conditioning
         cond_event_toggle=False, # is the condition momentary(False), or maintained(True)
         run_module=1, # The io module that has the chamber run output
         run_io=1, # The run output on the mdoule that has the chamber run out put
         limits=[5], # A list of modules that contain limit type cards.
+        cascades=1, # the number of cascade loops (ie temperature with PTCON)
+        cascade_ctl_event=[7,0,0,0], # orig:[7,0,0,0] the event that enables PTCON
         **interface_params
     )
     '''
     # Chamber models: BTL-??? or BTX-??? with temperature and humidity
     # for thes two types, uncomment the following block of lines 
     CONTROLLER = WatlowF4T(
-        alarms=8,                # Number of available alarms
-        profiles=True,           # Controller has programming
-        loops=2,                 # Number of control loops (i.e., Temp, Humi)
-        cond_event=9,            # Event that enables/disables conditioning (9 is key 1)
+        alarms=8, # the number of available alarms
+        profiles=True, # the controller has programming
+        loops=2, # the number of control loops (ie temperature)
+        cond_event=9, # the event that enables/disables conditioning (9 is key 1)
         cond_event_toggle=False, # is the condition momentary(False), or maintained(True)
-        run_module=1,            # I/O module that has the chamber run output
-        run_io=1,                # The run output on the mdoule that has the chamber run out put
-        limits=[5],              # List of modules that contain limit type cards.
-        loop_event=[0,2,0,0],    # List of event #'s that enable/disable a control loop
+        run_module=1, # The io module that has the chamber run output
+        run_io=1, # The run output on the mdoule that has the chamber run out put
+        limits=[5], # A list of modules that contain limit type cards.
+        loop_event=[0,2,0,0], # A list of event #'s that enable/disable a control loop
         **interface_params
     )
-    '''
+
     # Chamber models: BTU-??? or BTZ-???
     # with temp only w/ Product temperature control (aka "PTCON" or "cascade") 
     # for these two types, uncomment the following block of lines 
@@ -570,3 +530,22 @@ if __name__ == "__main__":
     main_menu()
 
     # test section
+    '''
+    current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    x=0
+    t=75.2 
+    while x < 20:
+        mode = CONTROLLER.get_cascade_modes(1)
+        currentSP = CONTROLLER.get_cascade_sp(1)
+        currentPV = CONTROLLER.get_cascade_pv(1)
+        print(f'\n{current_datetime} | mode: {mode[0]} | SP: {currentSP} | PV: {currentPV}') 
+        #print(f'\n{current_datetime} | mode: {mode[0]} | SP: {currentSP["air"]} | PV: {currentPV["product"]}')       
+
+        CONTROLLER.set_cascade_sp(1,t)
+
+        current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        x += 1
+        t -=2.3
+    print ('ENDED')     # test section
+    '''

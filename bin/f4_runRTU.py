@@ -34,6 +34,17 @@ DOS command to list COM ports: \> chgport
 
 GNU/Linux: /dev/ttyUSB?    (? = number (0,1,2) assigned by Linux)
 Linux command to list /dev/ttyUSB: $ ls -l /dev/ttyUSB* 
+<<<<<<< HEAD
+=======
+
+DISCLAIMER: 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+>>>>>>> cclibrary-py3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 import time,re
@@ -58,6 +69,7 @@ def ip_addr():
             print ('Invalid IP address.')
     return ip_addr
     
+<<<<<<< HEAD
 def set_loop(str, loop):
     '''set new temp value
     '''
@@ -66,6 +78,16 @@ def set_loop(str, loop):
     str1 = "Temperature Range" if loop == 1 else "Humidity Range"
     print (f'\n{str1}:\nMAX: {val_range["max"]}\nMIN: {val_range["min"]}')
     print ('\n<Applying new Set Point>')
+=======
+def set_loop(str1, loop):
+    '''set new temp value
+    '''
+    loop_num = [1,2] 
+    val_range = CONTROLLER.get_loop_range(loop)
+    str1 = "Temperature Range" if loop == 1 else "Humidity Range"
+    print (f'\n{str1}:\nMAX: {val_range["max"]}\nMIN: {val_range["min"]}')
+    print ('\n<Apply new Set Point>')
+>>>>>>> cclibrary-py3
     try:
         while True:
             try:
@@ -84,30 +106,51 @@ def set_loop(str, loop):
     time.sleep(0.5)
     currentSP = CONTROLLER.get_loop_sp(loop)
     currentPV = CONTROLLER.get_loop_pv(loop)
+<<<<<<< HEAD
     print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}')
 
 def read_val(str,loop):
+=======
+    print(f'\nrsp> {str1} status:\n     PV: {currentPV}\n     SP: {currentSP}')
+
+def read_val(str1,loop):
+>>>>>>> cclibrary-py3
     """
     Read current values of Temp SP and PV
     """
     time.sleep(0.5)
     currentSP = CONTROLLER.get_loop_sp(loop)
     currentPV = CONTROLLER.get_loop_pv(loop)
+<<<<<<< HEAD
     print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}')
+=======
+    print(f'\nrsp> {str1} status:\n     PV: {currentPV}\n     SP: {currentSP}')
+>>>>>>> cclibrary-py3
 
 def operation_status(): 
     '''Check current status of chamber before executing a new program
     '''
+<<<<<<< HEAD
     chk_alarm = CONTROLLER.get_status()
     if chk_alarm == 'Alarm':
         print ("\nrsp> Chamber is in alarm state and must be cleared first.")
     else:
+=======
+    chk_alarm = CONTROLLER.get_status() 
+    if chk_alarm == 'Alarm': 
+        print ("\nrsp> Chamber is in alarm state and must be cleared first.")
+    else: 
+>>>>>>> cclibrary-py3
         str1 = CONTROLLER.get_status()
         time.sleep(0.5)
         if 'Program Running' in str1 or 'Program Paused' in str1 or 'Constant' in str1:
             print ('\nrsp> Program execution in progress or chamber in Constant mode... must be terminated first.') 
         else:
+<<<<<<< HEAD
         # execute new program 
+=======
+            # execute new program 
+>>>>>>> cclibrary-py3
             run_prog() 
 
 def run_prog(): 
@@ -147,10 +190,16 @@ def prog_mode(mode):
         'pau' : f'\nrsp> Program is in paused...request is ignored.',
         'run' : f'\nrsp> Program is running...request is ignored.',
     }
+<<<<<<< HEAD
     str = CONTROLLER.get_status()
     time.sleep(0.5)
     print (f'status: {str}')
     if "Program Running" in str:
+=======
+    str1 = CONTROLLER.get_status()
+    time.sleep(0.5)
+    if "Program Running" in str1:
+>>>>>>> cclibrary-py3
         if mode == 'STOP':
             print (nlist["act"])
             CONTROLLER.stop()        
@@ -162,7 +211,11 @@ def prog_mode(mode):
             CONTROLLER.prgm_next_step()
         if mode == 'RESUME':
             print (nlist['run'])
+<<<<<<< HEAD
     elif "Program Paused" in str: 
+=======
+    elif "Program Paused" in str1: 
+>>>>>>> cclibrary-py3
         if mode == 'RESUME':
             print (nlist["act"])
             CONTROLLER.prgm_resume()
@@ -198,6 +251,7 @@ def read_time_signal():
         tsout = 'ON' if ts_list['current'] == True else 'OFF'
         print (f'    Time signal #{i+1} : {tsout}')
 
+<<<<<<< HEAD
 def const_start():
     '''Start Constant mode on chamber
     '''
@@ -207,6 +261,17 @@ def const_start():
         print (f'\nrsp> Chamber is running in {str} mode. Must stop it first.')
     elif 'Constant' in str:
         print (f'\nrsp> Chamber is already in {str} mode.')
+=======
+def start_const():
+    '''Start Constant mode on chamber
+    '''
+    str1 = CONTROLLER.get_status()
+    time.sleep(0.5)
+    if ('Program Running' in str1) or ('Program Paused' in str1):
+        print (f'\nrsp> Chamber is running in {str1} mode. Must stop it first.')
+    elif 'Constant' in str1:
+        print (f'\nrsp> Chamber is already in {str1} mode.')
+>>>>>>> cclibrary-py3
     else:
         CONTROLLER.const_start()
         time.sleep(0.5)
@@ -291,8 +356,13 @@ def status_menu():
         '''return status options'''
         return {
             's': lambda: print (f'\nrsp> {CONTROLLER.get_status()}'),
+<<<<<<< HEAD
             'c': lambda: const_start(), 
             'o': lambda: stop_const(), # print (f'\nrsp> {CONTROLLER.stop()}'),
+=======
+            'c': lambda: start_const(), 
+            'o': lambda: stop_const(),
+>>>>>>> cclibrary-py3
             'a': lambda: print (f'\nrsp> {CONTROLLER.get_alarm_status()}'),
             'd': lambda: print (f'\nrsp> {CONTROLLER.get_datetime()}'),
             'z': lambda: main_menu(),
@@ -351,7 +421,11 @@ def menu(choice):
 
     # temp and humi ctrl menu
     th_menu = {
+<<<<<<< HEAD
         'r': 'Read Temeprature SP and PV    ',
+=======
+        'r': 'Read Temperature SP and PV    ',
+>>>>>>> cclibrary-py3
         't': 'New Temperature Set Point     ',
         'z': 'Return to Main Menu           '
     }

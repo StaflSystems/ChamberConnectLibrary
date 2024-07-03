@@ -58,6 +58,17 @@ should be listed, such as (for example):
 
 5. Use this number in the program. Example: 
    port = '/dev/ttyUSB0' 
+<<<<<<< HEAD
+=======
+
+DISCLAIMER: 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+>>>>>>> cclibrary-py3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 import time,re
@@ -366,7 +377,11 @@ def menu(choice):
 
     # temp and humi ctrl menu
     th_menu = {
+<<<<<<< HEAD
         'r': 'Read Temeprature SP and PV    ',
+=======
+        'r': 'Read Temperature SP and PV    ',
+>>>>>>> cclibrary-py3
         't': 'New Temperature Set Point     ',
         'z': 'Return to Main Menu           '
     }

@@ -24,14 +24,19 @@ import socket
 import struct
 import time
 import collections
+<<<<<<< HEAD
 import serial, os
+=======
+import serial, os 
+from .controllerinterface import ControllerInterfaceError
+>>>>>>> cclibrary-py3
 
 try:
     collectionsAbc = collections.abc 
 except AttributeError:
     collectionsAbc = collections 
 
-class ModbusError(Exception):
+class ModbusError(ControllerInterfaceError):
     '''Generic Modbus exception.'''
     pass
 
@@ -329,9 +334,12 @@ class Modbus(object):
                         val = float(val) / itm['scalar']
                 itm['value'] = vals if len(vals) > 1 else vals[0]
 
+<<<<<<< HEAD
         # return items to caller
         #print (f'\n428:Result summary: \n{items}\n\n')
 
+=======
+>>>>>>> cclibrary-py3
         return items
 
     def _pack32(self, format, value):
@@ -367,7 +375,12 @@ class Modbus(object):
             ecode = struct.unpack(">B", bytes([packet[2]]))[0]
             ttp = (ecode, self.error_messages.get(ecode, 'Unknown error code'))
 
+<<<<<<< HEAD
             raise ModbusError(f'Modbus Error: Exception code = {ttp}(%s)')
+=======
+            raise ModbusError('Modbus Error: Exception code = {}({})'.format(*ttp))
+            #raise ModbusError('Modbus Error: Exception code = %d(%s)' % ttp)
+>>>>>>> cclibrary-py3
 
         if fcode in [3, 4]: #Read input/holding register(s)
             cnt = struct.unpack(">B", bytes([packet[2]]))[0]/2
@@ -427,6 +440,7 @@ class ModbusRTU(Modbus):
         for i in data:
             crc ^= i     # NOTES: Python 3 stores CRC strings in bytes
 
+<<<<<<< HEAD
             #print (f'\n564: "crc ^= i" = {crc}')     # remove for production 
 
             for _ in range(8):
@@ -438,6 +452,13 @@ class ModbusRTU(Modbus):
 
                 #print ('\n575: crc >> 1 = {crc}')    # remove for production 
 
+=======
+            for _ in range(8):
+                tmp = crc & 1
+
+                crc = crc >> 1
+
+>>>>>>> cclibrary-py3
                 if tmp:
                     crc ^= 0xA001    # crc = crc ^ 0xA001
 
@@ -539,14 +560,24 @@ class ModbusTCP(Modbus):
 
         if len(mbap_raw) != 6:
             ttp = (len(mbap_raw), mbap_raw)
+<<<<<<< HEAD
             raise ModbusError(f'MBAP length error; expected:6, got:{ttp} (%r)')
+=======
+            #raise ModbusError("MBAP length error; expected:6, got:%s (%r)" % ttp)
+            raise ModbusError('MBAP length error; expected:6, got:{} ({})'.format(*ttp))
+>>>>>>> cclibrary-py3
 
         mbap = struct.unpack('>3H', mbap_raw)
         body = self.socket.recv(mbap[2])
 
         if mbap[0] != self.packet_id:
             ttp = (self.packet_id, mbap[0], mbap_raw)
+<<<<<<< HEAD
             raise ModbusError(f'MBAP id error; expected:%r, got:{ttp} (%r)')
+=======
+            #raise ModbusError("MBAP id error; expected:%r, got:%r (%r)" % ttp)
+            raise ModbusError("MBAP id error; expected:{}, got:{} ({})".format(*ttp))
+>>>>>>> cclibrary-py3
         #self.packet_id = self.packet_id + 1 if self.packet_id < 65535 else 0
         return body
 
@@ -558,4 +589,7 @@ if __name__ == "__main__":
     # no tests on local functions warranted
     # refer to sample programs in build/scripts-3.7 folder
     pass
+<<<<<<< HEAD
 
+=======
+>>>>>>> cclibrary-py3

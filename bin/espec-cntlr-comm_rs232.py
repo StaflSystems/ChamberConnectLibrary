@@ -27,6 +27,17 @@ the following configuration parameters:
 This program connects to ESPEC P300/SCP-220 or ES-102 for control and operation. 
 It allows a direct communication with the controller via its native text command. 
 Refer to the communication/command manual for the respective controller. 
+<<<<<<< HEAD
+=======
+
+DISCLAIMER: 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+>>>>>>> cclibrary-py3
 '''
 import time
 import os
@@ -46,12 +57,25 @@ def close():
 
 def options():
     '''list of chamber/controller options'''
+<<<<<<< HEAD
     print ("\nChamber/Controller Option:\n"
            "==================================\n"
            "0. ESPEC ES-102 via RS232\n"
            "1. ESPEC SCP-220 via RS232\n"
            "2. ESPEC P300 via via RS232\n"
            "==================================")
+=======
+    print ("""This program connects to ESPEC controller P300, \n"""
+    + """SCP-220 or ES-102 via RS232 communication interface\n"""
+    + """to allow programmers to issue commands to control and\n"""
+    + """operate the target controller directly via the CLI.""")
+    print ("\nChamber/Controller Selection:\n"
+           "=================================\n"
+           "0. ESPEC ES-102, baud rate: 9600 \n"
+           "1. ESPEC SCP-220, baud rate: 9600\n"
+           "2. ESPEC P300, baud rate: 19200\n"
+           "=================================")
+>>>>>>> cclibrary-py3
 
 def cmd_rsp():
     '''controller command and response'''
@@ -80,7 +104,12 @@ def main():
     cmd_rsp() 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     '''set up low-level communication with ESPEC P300, SCP-220 
+=======
+    '''
+    set up low-level communication with ESPEC P300, SCP-220 
+>>>>>>> cclibrary-py3
     and ES-102 via RS232C
     '''
     os.system('clear||cls')
@@ -89,7 +118,11 @@ if __name__ == '__main__':
     options() 
     while True:
         try:
+<<<<<<< HEAD
             SELECT_OPT = int(input("Make Selection: "))
+=======
+            SELECT_OPT = int(input("Make Selection (0, 1, 2): "))
+>>>>>>> cclibrary-py3
         except ValueError:
             print("Invalid number. Try again.")
             continue
@@ -114,7 +147,11 @@ if __name__ == '__main__':
             break 
 
     CONTROLLER = serial.Serial( 
+<<<<<<< HEAD
         port='/dev/ttyUSB0',    # set '//./COM?/' for MS Windows 
+=======
+        port='/dev/ttyUSB0',    # set '//./COM?' for MS Windows 
+>>>>>>> cclibrary-py3
                                 # set '/dev/ttyUSB?' for GNU/Linux 
         baudrate=baudrate_spd,  # 19200:P300; 9600:ES102,SCP220 
         bytesize=8, 
