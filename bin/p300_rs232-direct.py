@@ -71,8 +71,6 @@ should be listed, such as (for example):
 Tested: 
 GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
 MS Windows platform: Python 3.9.x 
-<<<<<<< HEAD
-=======
 
 DISCLAIMER: 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
@@ -81,7 +79,6 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
->>>>>>> cclibrary-py3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 import time
@@ -123,49 +120,32 @@ def get_temp():
     return get_val 
 
 def get_vib():
-<<<<<<< HEAD
-    '''read vib values'''
-=======
     '''read vib values
     if target chamber only supports temperature only 
     and/or temperature and humidity, it will throw an 
     exception.
     '''
->>>>>>> cclibrary-py3
     try:
        get_val = p300.read_vib()
     except Exception as e: 
        get_val = e 
     return get_val 
 
-<<<<<<< HEAD
-def get_mon():
-    '''read MON value'''
-    try: 
-        mon_val = p300.read_mon()
-=======
 def get_op_mode():
     '''read operating mode value'''
     try: 
         mon_val = p300.read_mode()
->>>>>>> cclibrary-py3
     except Exception as e: 
         mon_val = e        
     return mon_val 
 
 def main():
     '''main driver program'''
-<<<<<<< HEAD
-    print (f'Temperature:\n {get_temp()}')
-    print (f'Vibration:\n {get_vib()}') 
-    print (f'Monitor Status: {get_mon()}')
-=======
     print ("Probing the target controller...")
     time.sleep(1) 
     print (f'\nrsp> Temperature:\n {get_temp()}')
     print (f'\nrsp> Vibration:\n {get_vib()}') 
     print (f'\nrsp> Operating Mode: {get_op_mode()}')
->>>>>>> cclibrary-py3
 
 if __name__ == '__main__':
     '''set up low-level communication with ESPEC P300 via RS232C

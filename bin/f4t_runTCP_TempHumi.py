@@ -29,8 +29,6 @@ ChamberConnectLibrary in the Python 3 environment.
 Tested: 
 GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
 MS Windows platform: Python 3.9.x 
-<<<<<<< HEAD
-=======
 
 DISCLAIMER: 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
@@ -39,7 +37,6 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
->>>>>>> cclibrary-py3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 import time,re
@@ -56,10 +53,7 @@ def ip_addr():
     while True:
         try:
             ip_addr = input('Enter F4T IP address (e.g., 192.168.0.101): ')
-<<<<<<< HEAD
-=======
             #ip_addr ='10.30.100.115' # set for testing  
->>>>>>> cclibrary-py3
             chk_ip = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", ip_addr)
             if chk_ip:
                 print ('\n')
@@ -71,16 +65,6 @@ def ip_addr():
 def set_loop(str, loop):
     '''set new temp value
     '''
-<<<<<<< HEAD
-    print ('\n<Applying new Set Point>')
-    try:
-        while True:
-            try:
-                val = float(input('Enter new SP value: '))
-                if isinstance(val, int) or isinstance(val,float):
-                    CONTROLLER.set_loop_sp(loop,val)
-                    break
-=======
     # recording temp range 
     loop_num = [1,2] 
     val_range = CONTROLLER.get_loop_range(loop)
@@ -98,7 +82,6 @@ def set_loop(str, loop):
                             break
                         else:
                             print ('ERROR! Value out of range. Try again. \n')
->>>>>>> cclibrary-py3
             except ValueError:
                 print ('Invalid value.\n')
             except KeyboardInterrupt:
@@ -124,15 +107,6 @@ def read_val(str,loop):
 def operation_status(): 
     '''Check current status of chamber before executing a new program
     '''
-<<<<<<< HEAD
-    str = CONTROLLER.get_status()
-    time.sleep(0.5)
-    if 'Program Running' in str or 'Program Paused' in str:
-        print ('\nrsp> Program execution in progress... must first terminate it.') 
-    else:
-        # execute new program 
-        run_prog() 
-=======
     chk_alarm = CONTROLLER.get_status() 
     if chk_alarm == 'Alarm': 
         print ("\nrsp> Chamber is in alarm state and must be cleared first.")
@@ -144,7 +118,6 @@ def operation_status():
         else:
             # execute new program 
             run_prog()
->>>>>>> cclibrary-py3
 
 def run_prog(): 
     '''select and set profile for execution.
@@ -472,14 +445,6 @@ if __name__ == "__main__":
     ###############################################################################################
     # BEGIN SELECTION OF THE SPECIFIC CHAMBER AND F4T 
     #sepcifically for ESPEC Chambers and Types with Watlow F4T
-<<<<<<< HEAD
-    ############################################################################################### 
-
-    #example interface_params for a TCP connection to 10.30.100.55
-    #interface_params = {'interface':'TCP', 'host':10.30.100.55}
-    
-    # to manually enter IP address of Watlow F4T 
-=======
 
     ###############################################################################################
     # MS Windows 7/10/11 environment
@@ -495,7 +460,6 @@ if __name__ == "__main__":
 
     # example interface_params for a TCP connection to 10.30.100.55
     #interface_params = {'interface':'TCP', 'host':10.30.100.55}
->>>>>>> cclibrary-py3
     interface_params = {'interface':'TCP', 'host':ip_addr()}
 
     '''

@@ -29,8 +29,6 @@ ChamberConnectLibrary in the Python 3 environment.
 Tested: 
 GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
 MS Windows platform: Python 3.9.x 
-<<<<<<< HEAD
-=======
 
 DISCLAIMER: 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
@@ -39,7 +37,6 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
->>>>>>> cclibrary-py3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 import time,re
@@ -56,10 +53,7 @@ def ip_addr():
     while True:
         try:
             ip_addr = input('Enter F4T IP address (e.g., 192.168.0.101): ')
-<<<<<<< HEAD
-=======
             #ip_addr = "10.30.100.165"
->>>>>>> cclibrary-py3
             chk_ip = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", ip_addr)
             if chk_ip:
                 print ('\n')
@@ -71,16 +65,6 @@ def ip_addr():
 def set_loop(str, loop):
     '''set new temp value
     '''
-<<<<<<< HEAD
-    print ('\n<Applying new Set Point>')
-    try:
-        while True:
-            try:
-                val = float(input('Enter new SP value: '))
-                if isinstance(val, int) or isinstance(val,float):
-                    CONTROLLER.set_loop_sp(loop,val)
-                    break
-=======
     # recording temp range 
     loop_num = [1,2]
     val_range = CONTROLLER.get_loop_range(loop)
@@ -98,7 +82,6 @@ def set_loop(str, loop):
                             break
                         else:
                             print ('ERROR! Value out of range. Try again. \n')
->>>>>>> cclibrary-py3
             except ValueError:
                 print ('Invalid value.\n')
             except KeyboardInterrupt:
@@ -119,11 +102,7 @@ def read_val(str,loop):
     time.sleep(0.5)
     currentSP = CONTROLLER.get_loop_sp(loop)
     currentPV = CONTROLLER.get_loop_pv(loop)
-<<<<<<< HEAD
-    print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}')
-=======
     print(f'\nrsp> {str} status:\n     PV: {currentPV}\n     SP: {currentSP}') 
->>>>>>> cclibrary-py3
 
 def operation_status(): 
     '''Check current status of chamber before executing a new program
@@ -240,11 +219,6 @@ def const_start():
 def stop_const():
     '''Stop constant mode on chamber
     '''
-<<<<<<< HEAD
-    CONTROLLER.stop()
-    time.sleep(0.5) 
-    print ('\nrsp > Done ') 
-=======
     str = CONTROLLER.get_status()
     time.sleep(0.5)
     if 'Constant' in str:
@@ -255,7 +229,6 @@ def stop_const():
         print (f'\nrsp> Chamber is in {str} mode. Request ignored.')
     else:    
         print ("\nrsp> Chamber not in Constant mode. Nothing to do.")
->>>>>>> cclibrary-py3
 
 def temp_controller():
     '''
@@ -264,11 +237,7 @@ def temp_controller():
     def temp_menu(choice):
         '''return Temp menu option'''
         return {
-<<<<<<< HEAD
-            'r': lambda: read_val('Temp',1),
-=======
             'r': lambda: read_val('Temp',1),  # 'r': lambda: read_val('Temp',1),
->>>>>>> cclibrary-py3
             't': lambda: set_loop('Temp',1),
             'z': lambda: main_menu()
         }.get(choice, lambda: print ('\nrsp> Not a valid option.') )()  
@@ -393,11 +362,7 @@ def menu(choice):
 
     # temp and humi ctrl menu
     th_menu = {
-<<<<<<< HEAD
-        'r': 'Read Temeprature SP and PV    ',
-=======
         'r': 'Read Temperature SP and PV    ',
->>>>>>> cclibrary-py3
         't': 'New Temperature Set Point     ',
         'z': 'Return to Main Menu           '
     }
@@ -474,10 +439,6 @@ if __name__ == "__main__":
     # to manually enter IP address of Watlow F4T 
     interface_params = {'interface':'TCP', 'host':ip_addr()}
 
-<<<<<<< HEAD
-
-=======
->>>>>>> cclibrary-py3
     # Chamber models: BTU-??? or BTZ-??? with temp only 
     # for these two types, uncomment the following block of lines 
     CONTROLLER = WatlowF4T(
@@ -492,8 +453,6 @@ if __name__ == "__main__":
         **interface_params
     )
 
-<<<<<<< HEAD
-=======
     # chamber models: BTU-??? or BTZ-????
     # Temp only w/ product temp (PTCON or cascade) 
     #CONTROLLER = WatlowF4T(
@@ -509,7 +468,6 @@ if __name__ == "__main__":
     #    cascade_ctl_event=[7,0,0,0], # orig:[7,0,0,0] the event that enables PTCON
     #    **interface_params
     #)
->>>>>>> cclibrary-py3
     '''
     # Chamber models: BTL-??? or BTX-??? with temperature and humidity
     # for thes two types, uncomment the following block of lines 
@@ -568,9 +526,6 @@ if __name__ == "__main__":
     main_menu()
 
     # test section
-<<<<<<< HEAD
-
-=======
     '''
     current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -591,6 +546,5 @@ if __name__ == "__main__":
 
     print ('ENDED') 
     '''
->>>>>>> cclibrary-py3
 
 

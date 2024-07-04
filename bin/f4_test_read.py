@@ -16,8 +16,6 @@ DOS command to list COM ports: \> chgport
 
 GNU/Linux: /dev/ttyUSB?    (? = number (0,1,2) assigned by Linux)
 Linux command to list /dev/ttyUSB: $ ls -l /dev/ttyUSB* 
-<<<<<<< HEAD
-=======
 
 DISCLAIMER: 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
@@ -26,16 +24,12 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
->>>>>>> cclibrary-py3
 """
 import minimalmodbus
 # comm port selected from PC selection 
 # NOTE: Check the COM no. selected and used by the OS.
 #       modify the COM no. to the one used by the OS. 
-<<<<<<< HEAD
-=======
 #BTZ133 = minimalmodbus.Instrument("/dev/ttyUSB0", 1)
->>>>>>> cclibrary-py3
 BTZ133 = minimalmodbus.Instrument("COM5", 1)
 
 # Set baudrate

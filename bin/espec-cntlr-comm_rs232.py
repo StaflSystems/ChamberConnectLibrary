@@ -104,12 +104,8 @@ def main():
     cmd_rsp() 
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    '''set up low-level communication with ESPEC P300, SCP-220 
-=======
     '''
     set up low-level communication with ESPEC P300, SCP-220 
->>>>>>> cclibrary-py3
     and ES-102 via RS232C
     '''
     os.system('clear||cls')
@@ -118,11 +114,7 @@ if __name__ == '__main__':
     options() 
     while True:
         try:
-<<<<<<< HEAD
-            SELECT_OPT = int(input("Make Selection: "))
-=======
             SELECT_OPT = int(input("Make Selection (0, 1, 2): "))
->>>>>>> cclibrary-py3
         except ValueError:
             print("Invalid number. Try again.")
             continue
@@ -147,11 +139,7 @@ if __name__ == '__main__':
             break 
 
     CONTROLLER = serial.Serial( 
-<<<<<<< HEAD
-        port='/dev/ttyUSB0',    # set '//./COM?/' for MS Windows 
-=======
         port='/dev/ttyUSB0',    # set '//./COM?' for MS Windows 
->>>>>>> cclibrary-py3
                                 # set '/dev/ttyUSB?' for GNU/Linux 
         baudrate=baudrate_spd,  # 19200:P300; 9600:ES102,SCP220 
         bytesize=8, 

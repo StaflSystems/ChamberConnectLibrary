@@ -421,11 +421,7 @@ def menu(choice):
 
     # temp and humi ctrl menu
     th_menu = {
-<<<<<<< HEAD
-        'r': 'Read Temeprature SP and PV    ',
-=======
         'r': 'Read Temperature SP and PV    ',
->>>>>>> cclibrary-py3
         't': 'New Temperature Set Point     ',
         'z': 'Return to Main Menu           '
     }
