@@ -223,11 +223,6 @@ def const_start():
 def stop_const():
     '''Stop constant mode on chamber
     '''
-<<<<<<< HEAD
-    CONTROLLER.stop()
-    time.sleep(0.5) 
-    print ('\nrsp > Done ') 
-=======
     str = CONTROLLER.get_status()
     time.sleep(0.5)
     if 'Constant' in str:
@@ -238,7 +233,6 @@ def stop_const():
         print (f'\nrsp> Chamber is in {str} mode. Request ignored.')
     else:    
         print ("\nrsp> Chamber not in Constant mode. Nothing to do.")
->>>>>>> cclibrary-py3
 
 def temp_humi_controller():
     '''
