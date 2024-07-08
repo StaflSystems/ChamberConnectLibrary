@@ -90,7 +90,7 @@ In the venv, double check that ```python``` symbolic links to ```python3```. Oth
 
 ```sudo venv/bin/python3 bin/p300_sample_run.py```
 
-Questions on how to use the library, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com> .
+Questions on how to use the library, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com>. Limited support will be given. 
 
 ## Documentation
 
