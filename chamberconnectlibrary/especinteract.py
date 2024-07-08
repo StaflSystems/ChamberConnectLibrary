@@ -6,16 +6,7 @@ Handle the actual communication with Espec Corp. Controllers
 
 Code modification for Python 3.6+
 :author: Paul Nong-Laolam  <pnong-laolam@espec.com>
-<<<<<<< HEAD
-:date: 
-    October 2020: partial reimplementation; 
-    July 2022: completely reimplemented and tested on MS Windows and GNU/Linux
-:updated: May 2024: 
-    - bug fixes on byte-string decoding
-    - restructured source code with f-string for simplification on coding
-=======
 :date: May 2024 
->>>>>>> cclibrary-py3
 
 Tested: 
 GNU/Linux platform: Python 3.8.x, 3.9.x, 3.10.x
@@ -82,11 +73,7 @@ class EspecSerial(object):
         self.delimiter = kwargs.get('delimiter', '\r\n')
         self.serial = serial.Serial(
             port=kwargs.get('port'),
-<<<<<<< HEAD
-            baudrate=kwargs.get('baud', 19200), # set option for P300
-=======
             baudrate=kwargs.get('baud', 19200),
->>>>>>> cclibrary-py3
             bytesize=kwargs.get('databits', 8),
             parity=kwargs.get('parity', 'N'),
             stopbits=kwargs.get('stopbits', 1),
@@ -121,13 +108,8 @@ class EspecSerial(object):
         recvs = []
 
         for msg in message:
-<<<<<<< HEAD
-            str_cmd1 = (f'{self.address},{msg}{self.delimiter}')
-            str_cmd2 = (f'{msg}{self.delimiter}')
-=======
             str_cmd1 = f'{self.address},{msg}{self.delimiter}'
             str_cmd2 = f'{msg}{self.delimiter}'
->>>>>>> cclibrary-py3
             
             if self.address:
                 self.serial.write(str_cmd1.encode('ascii', 'ignore'))
@@ -142,15 +124,8 @@ class EspecSerial(object):
                     raise EspecError('Chamber did not respond in time') 
 
                 recv += rbuff
-<<<<<<< HEAD
-                #print (f'TYPE of string: {type(recv)}\n   Raw: {recv}\n   Decode: {recv.decode("ascii", "ignore")}')
-                
-            #if recv.startswith('NA:'):                         # call err msg in response to cmd error 
-            if recv.decode("ascii","ignore").startswith('NA:'): # requires decoding... 
-=======
                 
             if recv.decode("ascii","ignore").startswith('NA:'):
->>>>>>> cclibrary-py3
                 errmsg = recv[3:0-len(self.delimiter)].decode("ascii","ignore")
                 descriptErr=ERROR_DESCIPTIONS.get(errmsg, "missing description")
                 msg = f'EspecError: command:"{message}" generated Error:"{errmsg}"({descriptErr})'
