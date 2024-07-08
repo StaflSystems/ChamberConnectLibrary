@@ -1,7 +1,7 @@
 *.pyc
-/dist/
-/*.egg-info
-/*.egg
-/build/
+dist/
+*.egg-info/
+*.egg
+build/
 .vscode/
 venv/
