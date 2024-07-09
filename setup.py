@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name='chamberconnectlibrary',       # should match the pkg folder
-    version='2.0.0',                    # important for future updates
+    version='3.0.0',                    # important for future updates
     description='A library for interfacing with Espec North America chambers via Python 3.6+',
     long_description=readme(),          # loads the README.md file 
     url='https://github.com/EspecNorthAmerica/ChamberConnectLibrary',
