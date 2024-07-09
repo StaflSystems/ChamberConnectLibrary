@@ -43,8 +43,9 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import time,re
 import os, sys
 import logging
-sys.path.insert(0,'../chamberconnectlibrary')
+sys.path.insert(0,'../chamberconnectlibrary') 
 
+from datetime import datetime 
 from chamberconnectlibrary.watlowf4t import WatlowF4T
 from chamberconnectlibrary.controllerinterface import ControllerInterfaceError
 
@@ -53,8 +54,8 @@ def ip_addr():
     '''
     while True:
         try:
-            ip_addr = input('Enter F4T IP address (e.g., 192.168.0.101): ')
-            #ip_addr = "10.30.100.165"
+            #ip_addr = input('Enter F4T IP address (e.g., 192.168.0.101): ')
+            ip_addr = "10.30.100.165"
             chk_ip = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", ip_addr)
             if chk_ip:
                 print ('\n')
@@ -108,13 +109,17 @@ def read_val(str0,loop):
 def operation_status(): 
     '''Check current status of chamber before executing a new program
     '''
-    str0 = CONTROLLER.get_status()
-    time.sleep(0.5)
-    if 'Program Running' in str0 or 'Program Paused' in str0:
-        print ('\nrsp> Program execution in progress... must first terminate it.') 
-    else:
-        # execute new program 
-        run_prog() 
+    chk_alarm = CONTROLLER.get_status() 
+    if chk_alarm == 'Alarm': 
+        print ("\nrsp> Chamber is in alarm state and must be cleared first.")
+    else: 
+        str = CONTROLLER.get_status()
+        time.sleep(0.5)
+        if 'Program Running' in str or 'Program Paused' in str or 'Constant' in str:
+            print ('\nrsp> Program execution in progress or chamber in Constant mode... must be terminated first.') 
+        else:
+            # execute new program 
+            run_prog()
 
 def run_prog(): 
     '''select and set profile for execution.
@@ -331,7 +336,7 @@ def main_menu():
 
     while(True):
         print_menu('1','Main Menu')
-        option = input('Select option: ')
+        option = input('Select option (t, p, e, s, z): ')
         main_option(option)
 
 def print_menu(choice, menu_name):
@@ -417,27 +422,25 @@ if __name__ == "__main__":
     # clear terminal; consider MS Windows environment as well...
     os.system('clear||cls')
 
-    # the general setup for Watlow F4T, directly calling T or H loop
-    # connect to watlow F4T via proper IP address using TCP/IP protocol
-    '''
-    LOOP_NAMES = ['Temperature', 'Humidity']
-    CONTROLLER = WatlowF4T(
-        interface='TCP',
-        host=ip_addr(),        # requires the correct IP address of F4T
-        loop_names=LOOP_NAMES  # set loop names for temp and humi 
-    )
-    '''
-
     # BEGIN 
     ###############################################################################################
     # BEGIN SELECTION OF THE SPECIFIC CHAMBER AND F4T 
     #sepcifically for ESPEC Chambers and Types with Watlow F4T
-    ############################################################################################### 
 
-    #example interface_params for a TCP connection to 10.30.100.55
+    ###############################################################################################
+    # MS Windows 7/10/11 environment
+    # example interface_params for RS232/RS485 on port 7 (windows) Modbus address=1
+    # uncomment the following line and check MS Window OS to confirm COM being used 
+    #interface_params = {'interface':'RTU', 'baudrate':38400, 'serialport':'//./COM7', 'adr':1}
+
+    # GNU/Linux environment
+    # exec ls -l /dev/ttyUSB* to determine USB# being used...
+    # should be USB0 or USB1; the following line must be changed accordingly. 
+    # example interface_params for RS232/RS485 on ttyUSB0 (linux) Modbus address=1
+    #interface_params = {'interface':'RTU', 'baudrate':38400, 'serialport':'/dev/ttyUSB0', 'adr':1}
+
+    # example interface_params for a TCP connection to 10.30.100.55
     #interface_params = {'interface':'TCP', 'host':10.30.100.55}
-    
-    # to manually enter IP address of Watlow F4T 
     interface_params = {'interface':'TCP', 'host':ip_addr()}
 
     # Chamber models: BTU-??? or BTZ-??? with temp only 
@@ -527,3 +530,22 @@ if __name__ == "__main__":
     main_menu()
 
     # test section
+    '''
+    current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    x=0
+    t=75.2 
+    while x < 20:
+        mode = CONTROLLER.get_cascade_modes(1)
+        currentSP = CONTROLLER.get_cascade_sp(1)
+        currentPV = CONTROLLER.get_cascade_pv(1)
+        print(f'\n{current_datetime} | mode: {mode[0]} | SP: {currentSP} | PV: {currentPV}') 
+        #print(f'\n{current_datetime} | mode: {mode[0]} | SP: {currentSP["air"]} | PV: {currentPV["product"]}')       
+
+        CONTROLLER.set_cascade_sp(1,t)
+
+        current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        x += 1
+        t -=2.3
+    print ('ENDED')     # test section 
+    '''

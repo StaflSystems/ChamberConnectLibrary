@@ -9,7 +9,7 @@ Please read the disclaimer on liability in the LICENSE document as well as in al
 
 The disclaimer is also presented here in its entirety: 
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,  
 INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
 PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
@@ -90,7 +90,7 @@ In the venv, double check that ```python``` symbolic links to ```python3```. Oth
 
 ```sudo venv/bin/python3 bin/p300_sample_run.py```
 
-Questions on how to use the library, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com> .
+Questions on how to use the library, contact Paul Nong-Laolam at ESPEC <pnong-laolam@espec.com>. Limited support will be given. 
 
 ## Documentation
 

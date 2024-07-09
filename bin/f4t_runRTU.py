@@ -499,7 +499,7 @@ if __name__ == "__main__":
         profiles=True, # the controller has programming
         loops=1, # the number of control loops (ie temperature)
         cond_event=9, # the event that enables/disables conditioning (9 is key 1)
-        cond_event_toggle=False, # is the condition momentary(False), or maintained(True)
+        cond_event_toggle=False, # is the condition git config --global --add safe.directory /home/data_share/espec-work/py3-chamberlib/chamberconnectlibrarymomentary(False), or maintained(True)
         run_module=1, # The io module that has the chamber run output
         run_io=1, # The run output on the mdoule that has the chamber run out put
         limits=[5], # A list of modules that contain limit type cards.

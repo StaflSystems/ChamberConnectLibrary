@@ -88,7 +88,7 @@ class EspecSerial(object):
 
     def close(self):
         '''
-        Close the connection the the chamber
+        Close the connection to the chamber
         '''
         self.serial.close()
 

@@ -3,6 +3,10 @@ Upper level interface for the Watlow F4T controller
 
 :copyright: (C) Espec North America, INC.
 :license: MIT, see LICENSE for more details.
+:Updated: 2020, 2022 Paul Nong-Laolam <pnong-laolam@espec.com> 
+:Important Notes:
+     The following code has been updated and tested to run on 
+     Python 3.6.8 and above.  
 '''
 #pylint: disable=W0703
 import time
@@ -77,7 +81,7 @@ class WatlowF4T(ControllerInterface):
         self.__update_loop_map()
         self.watlow_val_dict = {
             1:'2', 2:'3', 3:'50Hz', 4:'60Hz', 9:'ambientError',
-            10:'auto', 11:'b', 13: 'both', 15:u'C', 17:'closeOnAlarm',
+            10:'auto', 11:'b', 13: 'both', 15:'C', 17:'closeOnAlarm',
             22:'current', 23:'d', 24:'deviationAlarm', 26:'e', 27:'end', 28:'error',
             30:'F', 31:'factory', 32:'fail', 34:'fixedTimeBase', 37:'high', 39:'hours',
             40:'hundredths', 44:'inputDryContact', 46:'j', 47:'hold', 48:'k', 49:'latching',
@@ -132,7 +136,7 @@ class WatlowF4T(ControllerInterface):
         try:
             return self.iwatlow_val_dict[key]
         except Exception:
-            self.iwatlow_val_dict = {v: k for k, v in self.watlow_val_dict.items()}
+            self.iwatlow_val_dict = {v: k for k, v in list(self.watlow_val_dict.items())}
             return self.iwatlow_val_dict[key]
 
     def __update_loop_map(self):
@@ -343,7 +347,6 @@ class WatlowF4T(ControllerInterface):
         if isinstance(value, dict):
             value = value['constant']
         self.client.write_holding_float(2784+(N-1)*160, value)
-
 
     @exclusive
     def get_cascade_sp(self, N):
@@ -603,7 +606,7 @@ class WatlowF4T(ControllerInterface):
     def prgm_start(self, N, step):
         self.__range_check(N, 1, 40)
         if step > self.get_prgm_steps(N, exclusive=False):
-            raise ControllerInterfaceError("Program #%d does not have step #%d." % (N, step))
+            raise ControllerInterfaceError(f'Program #{N} does not have step #{step}')
         if self.get_status(exclusive=False).find("Program") >= 0:
             self.client.write_holding(16566, self.inv_watlow_val_dict('terminate'))
             time.sleep(2)
@@ -687,7 +690,7 @@ class WatlowF4T(ControllerInterface):
         self.client.write_holding(18888, N) #set active profile
         step_count = self.client.read_holding(18920, 1)[0] #get the number of steps in the profile
         if not step_count > 0:
-            raise ControllerInterfaceError("Profile %d does not exist." % N)
+            raise ControllerInterfaceError(f'Profile {N} does not exist.')
         prgm_dict = {'name':self.client.read_holding_string(18606, 20),
                      'log':self.client.read_holding(19038, 1)[0] == 106}
         #is wait a valid step type
@@ -1012,9 +1015,9 @@ class WatlowF4T(ControllerInterface):
                 tval = self.client.read_holding(14080 if self.interface in ["RTU", "Serial"] else 6730, 1)[0]
                 return u'\xb0%s' % self.watlow_val_dict[tval]
             else:
-                return u'%s' % self.watlow_val_dict[profpv]
+                return '%s' % self.watlow_val_dict[profpv]
         except LookupError:
-            return u'ERROR'
+            return 'ERROR'
 
     def __get_prgm_empty(self):
         '''
