@@ -63,7 +63,7 @@ running = True
 
 
 
-file = open('data.csv', 'w+', 0)
+file = open('chamber_data_%s.csv' % time.strftime('%Y-%m-%d_%H-%M-%S'), 'w+', 0)
 file.write('timestamp,temperature setpoint (C),temperature current (C),humidity setpoint (%RH),humidity current (%RH)\n')
 
 def signal_handler(signal, frame):
