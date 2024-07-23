@@ -3,29 +3,31 @@ examples of using the chamberconnectlibrary
 '''
 import pprint
 import time
+import signal
+
 from chamberconnectlibrary.watlowf4t import WatlowF4T
 from chamberconnectlibrary.watlowf4 import WatlowF4
 from chamberconnectlibrary.espec import Espec
 
 LOOP_NAMES = ['Temperature', 'Humidity']
 
-CONTROLLER = Espec(
-    interface='Serial',
-    serialport='//./COM10',
-    baudrate=19200,
-    loop_names=LOOP_NAMES
-)
+# CONTROLLER = Espec(
+#     interface='Serial',
+#     serialport='//./COM10',
+#     baudrate=19200,
+#     loop_names=LOOP_NAMES
+# )
 # CONTROLLER = WatlowF4(
 #     interface='RTU',
 #     serialport='//./COM7',
 #     baudrate=19200,
 #     loop_names=LOOP_NAMES
 # )
-# CONTROLLER = WatlowF4T(
-#     interface='TCP',
-#     host='10.30.100.138',
-#     loop_names=LOOP_NAMES
-# )
+CONTROLLER = WatlowF4T(
+    interface='TCP',
+    host='10.10.1.205',
+    loop_names=LOOP_NAMES
+)
 # CONTROLLER = WatlowF4T(
 #     interface='RTU',
 #     serialport='//./COM4',
@@ -57,14 +59,35 @@ print CONTROLLER.process_controller()
 # for i in range(8):
 #     print CONTROLLER.get_event(i+1)
 
-for _ in range(100):
-    print '\nsample'
+running = True
+
+
+
+file = open('data.csv', 'w+', 0)
+file.write('timestamp,temperature setpoint (C),temperature current (C),humidity setpoint (%RH),humidity current (%RH)\n')
+
+def signal_handler(signal, frame):
+    global running
+    running = False
+
+signal.signal(signal.SIGINT, signal_handler)
+
+while running:
     stm = time.time()
     lookup = {'cascade':[], 'loop':[]}
     lookup['loop'].append({'name':'Temperature', 'id': 1, 'number': 1})
     lookup['loop'].append({'name':'Humidity', 'id': 2, 'number': 2})
-    params = {'get_loops':True, 'get_status':True, 'get_alarms':True, 'get_program_status':True, 'get_program_list':True, 'get_refrig':True}
+    params = {'get_loops':True, 'get_status':True, 'get_alarms':True, 'get_program_status':True, 'get_program_list':False, 'get_refrig':True}
     params['get_events'] = [{'N':i+1, 'name':'TS#%d'%(i+1)} for i in range(8)]
     smpl = CONTROLLER.sample(lookup, **params)
-    print("--- %s seconds ---" % (time.time() - stm))
-    print(smpl)
+    
+    pprint.pprint(smpl)
+
+    if len(smpl['loops']) < 2:
+        continue
+
+    print(",")
+    file.write("%s,%s,%s,%s,%s\n" % (time.strftime('%Y-%m-%d %H:%M:%S'), smpl['loops'][0]['setpoint']['current'], smpl['loops'][0]['processvalue']['air'], smpl['loops'][1]['setpoint']['current'], smpl['loops'][1]['processvalue']['air']))
+
+file.close()
+CONTROLLER.close()
